@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:i="urn:com.io7m.aradine:instrument:1"
+            targetNamespace="urn:com.io7m.aradine:instrument:1">
+
+  <xsd:simpleType name="InstrumentID">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-z0-9_]+)(\.[a-z0-9_]+)+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="InstrumentLicenseID">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[A-Z_0-9]+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Qualifier">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-zA-Z_0-9]+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="PortID">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-z_0-9]+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Version">
+    <xsd:complexType>
+      <xsd:attribute name="major"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="minor"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="patch"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="qualifier"
+                     type="i:Qualifier"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Author">
+    <xsd:complexType>
+      <xsd:attribute name="name"
+                     type="xsd:string"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Authors">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="i:Author"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Paragraph">
+    <xsd:complexType mixed="true">
+      <xsd:attribute name="language"
+                     use="required"
+                     type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Documentation">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="i:Paragraph"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ExpectedSignalRange">
+    <xsd:complexType>
+      <xsd:attribute name="minimum"
+                     use="required"
+                     type="xsd:double"/>
+      <xsd:attribute name="maximum"
+                     use="required"
+                     type="xsd:double"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="InputPortSignal">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="i:ExpectedSignalRange"/>
+        <xsd:element ref="i:Documentation"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="id"
+                     use="required"
+                     type="i:PortID"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:group name="InputPortGroup">
+    <xsd:choice>
+      <xsd:element ref="i:InputPortSignal"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="OutputPortSignal">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="i:ExpectedSignalRange"/>
+        <xsd:element ref="i:Documentation"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="id"
+                     use="required"
+                     type="i:PortID"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:group name="OutputPortGroup">
+    <xsd:choice>
+      <xsd:element ref="i:OutputPortSignal"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="InputPorts">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:group ref="i:InputPortGroup"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="OutputPorts">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:group ref="i:OutputPortGroup"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Instrument">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="i:Version"/>
+        <xsd:element ref="i:Authors"/>
+        <xsd:element ref="i:InputPorts"/>
+        <xsd:element ref="i:OutputPorts"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="id"
+                     type="i:InstrumentID"
+                     use="required"/>
+      <xsd:attribute name="readableName"
+                     type="xsd:string"
+                     use="required"/>
+      <xsd:attribute name="licenseId"
+                     type="i:InstrumentLicenseID"
+                     use="required"/>
+      <xsd:attribute name="site"
+                     type="xsd:anyURI"
+                     use="optional"/>
+      <xsd:attribute name="icon"
+                     type="xsd:anyURI"
+                     use="optional"/>
+    </xsd:complexType>
+
+    <xsd:key name="InputPortsUnique">
+      <xsd:selector xpath="i:InputPorts/*"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+
+    <xsd:key name="OutputPortsUnique">
+      <xsd:selector xpath="i:OutputPorts/*"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+  </xsd:element>
+</xsd:schema>

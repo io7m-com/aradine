@@ -27,6 +27,7 @@ module com.io7m.aradine.graph.api
 
   requires transitive com.io7m.jxtrand.api;
   requires transitive com.io7m.aradine.instrument.metadata;
+  requires transitive com.io7m.jcip.annotations;
 
   exports com.io7m.aradine.graph.api;
 }

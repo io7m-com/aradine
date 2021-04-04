@@ -19,6 +19,10 @@ package com.io7m.aradine.graph.api;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
+/**
+ * A connection between two audio ports in the audio graph.
+ */
+
 @ImmutablesStyleType
 @Value.Immutable
 public interface ARAudioGraphConnectionAudioType

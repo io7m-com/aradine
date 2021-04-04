@@ -28,8 +28,9 @@ module com.io7m.aradine.graph.vanilla
   requires transitive com.io7m.aradine.services.api;
   requires transitive com.io7m.jxtrand.api;
 
-  requires org.slf4j;
-  requires com.io7m.jxtrand.vanilla;
+  requires com.io7m.jaffirm.core;
   requires com.io7m.junreachable.core;
+  requires com.io7m.jxtrand.vanilla;
   requires org.jgrapht.core;
+  requires org.slf4j;
 }

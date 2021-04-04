@@ -18,6 +18,7 @@ package com.io7m.aradine.graph.vanilla.internal;
 
 import com.io7m.aradine.graph.api.ARAudioGraphConnectionType;
 import com.io7m.aradine.graph.api.ARAudioGraphNodeType;
+import com.io7m.aradine.graph.vanilla.ARAudioGraph;
 
 import java.util.Objects;
 import java.util.Set;
@@ -25,12 +26,22 @@ import java.util.UUID;
 
 public abstract class ARGraphNode implements ARAudioGraphNodeType
 {
+  private final ARAudioGraph graph;
   private final UUID id;
 
   public ARGraphNode(
+    final ARAudioGraph inGraph,
     final UUID inId)
   {
-    this.id = Objects.requireNonNull(inId, "id");
+    this.graph =
+      Objects.requireNonNull(inGraph, "graph");
+    this.id =
+      Objects.requireNonNull(inId, "id");
+  }
+
+  public final ARAudioGraph graph()
+  {
+    return this.graph;
   }
 
   @Override

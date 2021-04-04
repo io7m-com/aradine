@@ -18,6 +18,7 @@ package com.io7m.aradine.graph.vanilla;
 
 import com.io7m.aradine.graph.api.ARAudioGraphConnectionAudio;
 import com.io7m.aradine.graph.api.ARAudioGraphConnectionType;
+import com.io7m.aradine.graph.api.ARAudioGraphException;
 import com.io7m.aradine.graph.api.ARAudioGraphListenerType;
 import com.io7m.aradine.graph.api.ARAudioGraphLoopbackPair;
 import com.io7m.aradine.graph.api.ARAudioGraphPortSourceAudioType;
@@ -25,11 +26,13 @@ import com.io7m.aradine.graph.api.ARAudioGraphPortTargetAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphProcessingType;
 import com.io7m.aradine.graph.api.ARAudioGraphSettings;
 import com.io7m.aradine.graph.api.ARAudioGraphStringsType;
+import com.io7m.aradine.graph.api.ARAudioGraphSumAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphSystemSourceAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphSystemTargetAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphType;
 import com.io7m.aradine.graph.vanilla.internal.ARGraphNode;
 import com.io7m.aradine.graph.vanilla.internal.ARObjectMap;
+import com.io7m.aradine.graph.vanilla.internal.ARSumAudio;
 import com.io7m.aradine.graph.vanilla.internal.ARSystemSourceAudio;
 import com.io7m.aradine.graph.vanilla.internal.ARSystemTargetAudio;
 import com.io7m.aradine.services.api.ARServiceDirectoryType;
@@ -44,6 +47,10 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+/**
+ * The default implementation of the {@link ARAudioGraphType} interface.
+ */
+
 public final class ARAudioGraph implements ARAudioGraphType
 {
   private static final Logger LOG =
@@ -52,15 +59,18 @@ public final class ARAudioGraph implements ARAudioGraphType
   private final CopyOnWriteArrayList<ARAudioGraphListenerType> listeners;
   private final DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType> graphWorking;
   private final ARObjectMap objects;
+  private final ARAudioGraphStringsType strings;
   private volatile ARAudioGraphSettings settings;
   private volatile DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType> graphCurrent;
 
   private ARAudioGraph(
-    final ARAudioGraphStringsType strings,
+    final ARAudioGraphStringsType inStrings,
     final ARAudioGraphSettings inSettings)
   {
+    this.strings =
+      Objects.requireNonNull(inStrings, "strings");
     this.objects =
-      new ARObjectMap(strings);
+      new ARObjectMap(inStrings);
     this.settings =
       Objects.requireNonNull(inSettings, "settings");
     this.graphWorking =
@@ -70,6 +80,15 @@ public final class ARAudioGraph implements ARAudioGraphType
     this.listeners =
       new CopyOnWriteArrayList<>();
   }
+
+  /**
+   * Create a new audio graph.
+   *
+   * @param services The services
+   * @param settings The initial audio settings
+   *
+   * @return A new graph
+   */
 
   public static ARAudioGraphType create(
     final ARServiceDirectoryType services,
@@ -91,20 +110,20 @@ public final class ARAudioGraph implements ARAudioGraphType
   }
 
   @Override
-  public void updateSettings(
+  public void settingsUpdate(
     final ARAudioGraphSettings newSettings)
   {
     this.settings = Objects.requireNonNull(newSettings, "newSettings");
   }
 
   @Override
-  public ARAudioGraphSystemSourceAudioType createSystemSourceAudio()
+  public ARAudioGraphSystemSourceAudioType createAudioSystemSource()
   {
     return this.objects.withFresh(this::createSystemInputActual);
   }
 
   @Override
-  public ARAudioGraphSystemSourceAudioType createSystemSourceAudio(
+  public ARAudioGraphSystemSourceAudioType createAudioSystemSource(
     final UUID id)
   {
     Objects.requireNonNull(id, "id");
@@ -112,17 +131,31 @@ public final class ARAudioGraph implements ARAudioGraphType
   }
 
   @Override
-  public ARAudioGraphSystemTargetAudioType createSystemTargetAudio()
+  public ARAudioGraphSystemTargetAudioType createAudioSystemTarget()
   {
     return this.objects.withFresh(this::createSystemOutputActual);
   }
 
   @Override
-  public ARAudioGraphSystemTargetAudioType createSystemTargetAudio(
+  public ARAudioGraphSystemTargetAudioType createAudioSystemTarget(
     final UUID id)
   {
     Objects.requireNonNull(id, "id");
     return this.objects.withSpecific(id, this::createSystemOutputActual);
+  }
+
+  @Override
+  public ARAudioGraphSumAudioType createAudioSum()
+  {
+    return this.objects.withFresh(this::createSumAudioActual);
+  }
+
+  @Override
+  public ARAudioGraphSumAudioType createAudioSum(
+    final UUID id)
+  {
+    Objects.requireNonNull(id, "id");
+    return this.objects.withSpecific(id, this::createSumAudioActual);
   }
 
   @Override
@@ -157,9 +190,83 @@ public final class ARAudioGraph implements ARAudioGraphType
   }
 
   @Override
+  public ARAudioGraphStringsType strings()
+  {
+    return this.strings;
+  }
+
+  @Override
   public ARAudioGraphConnectionAudio connectAudio(
     final ARAudioGraphPortSourceAudioType source,
     final ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException
+  {
+    Objects.requireNonNull(source, "source");
+    Objects.requireNonNull(target, "target");
+
+    final var sourceVertex = (ARGraphNode) source.owner();
+    final var targetVertex = (ARGraphNode) target.owner();
+
+    final var incomingEdges = this.graphWorking.incomingEdgesOf(targetVertex);
+    for (final var edge : incomingEdges) {
+      if (Objects.equals(edge.targetPort(), target)) {
+        throw new ARAudioGraphException(
+          "errorPortAlreadyConnected",
+          this.strings.format(
+            "errorPortAlreadyConnected",
+            source.owner().id(),
+            source.id().value(),
+            target.owner().id(),
+            target.id().value()
+          )
+        );
+      }
+    }
+
+    final var connection =
+      ARAudioGraphConnectionAudio.builder()
+        .setSource(sourceVertex)
+        .setSourcePort(source)
+        .setTarget(targetVertex)
+        .setTargetPort(target)
+        .build();
+
+    try {
+      this.graphWorking.addEdge(sourceVertex, targetVertex, connection);
+    } catch (final IllegalArgumentException e) {
+      throw new ARAudioGraphException(
+        "errorCyclic",
+        this.strings.format(
+          "errorCyclic",
+          source.owner().id(),
+          source.id().value(),
+          target.owner().id(),
+          target.id().value()
+        )
+      );
+    }
+
+    for (final var listener : this.listeners) {
+      try {
+        listener.onPortConnect(connection);
+      } catch (final Exception exception) {
+        LOG.error("listener raised exception: ", exception);
+      }
+    }
+
+    targetVertex.onIncomingConnectionsChanged(
+      this.graphWorking.incomingEdgesOf(targetVertex)
+    );
+
+    this.graphCurrent = (DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType>) this.graphWorking.clone();
+    return connection;
+  }
+
+  @Override
+  public void disconnectAudio(
+    final ARAudioGraphPortSourceAudioType source,
+    final ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException
   {
     Objects.requireNonNull(source, "source");
     Objects.requireNonNull(target, "target");
@@ -175,11 +282,23 @@ public final class ARAudioGraph implements ARAudioGraphType
         .setTargetPort(target)
         .build();
 
-    this.graphWorking.addEdge(sourceVertex, targetVertex, connection);
+    final var removed = this.graphWorking.removeEdge(connection);
+    if (!removed) {
+      throw new ARAudioGraphException(
+        "errorPortNotConnected",
+        this.strings.format(
+          "errorPortNotConnected",
+          source.owner().id(),
+          source.id().value(),
+          target.owner().id(),
+          target.id().value()
+        )
+      );
+    }
 
     for (final var listener : this.listeners) {
       try {
-        listener.onConnect(connection);
+        listener.onPortDisconnect(connection);
       } catch (final Exception exception) {
         LOG.error("listener raised exception: ", exception);
       }
@@ -190,7 +309,6 @@ public final class ARAudioGraph implements ARAudioGraphType
     );
 
     this.graphCurrent = (DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType>) this.graphWorking.clone();
-    return connection;
   }
 
   @Override
@@ -219,6 +337,15 @@ public final class ARAudioGraph implements ARAudioGraphType
     return node;
   }
 
+  private ARAudioGraphSumAudioType createSumAudioActual(
+    final UUID uuid)
+  {
+    final var node = new ARSumAudio(this, uuid);
+    this.graphWorking.addVertex(node);
+    this.graphCurrent = (DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType>) this.graphWorking.clone();
+    return node;
+  }
+
   private static final class Context implements ARAudioGraphProcessingType
   {
     private final DirectedAcyclicGraph<ARGraphNode, ARAudioGraphConnectionType> graph;
@@ -237,10 +364,22 @@ public final class ARAudioGraph implements ARAudioGraphType
     @Override
     public void process()
     {
+      final var listeners =
+        this.audioGraph.listeners;
+
+      if (!listeners.isEmpty()) {
+        for (final var listener : this.audioGraph.listeners) {
+          try {
+            listener.onProcessStarted();
+          } catch (final Exception exception) {
+            LOG.error("listener raised exception: ", exception);
+          }
+        }
+      }
+
       final var iter = new TopologicalOrderIterator<>(this.graph);
       while (iter.hasNext()) {
         final var node = iter.next();
-        final var listeners = this.audioGraph.listeners;
         if (!listeners.isEmpty()) {
           for (final var listener : this.audioGraph.listeners) {
             try {
@@ -251,6 +390,16 @@ public final class ARAudioGraph implements ARAudioGraphType
           }
         }
         node.process(this);
+      }
+
+      if (!listeners.isEmpty()) {
+        for (final var listener : this.audioGraph.listeners) {
+          try {
+            listener.onProcessFinished();
+          } catch (final Exception exception) {
+            LOG.error("listener raised exception: ", exception);
+          }
+        }
       }
     }
   }

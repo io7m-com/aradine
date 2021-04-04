@@ -22,11 +22,11 @@ import com.io7m.aradine.graph.api.ARAudioGraphPortTargetAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphProcessingType;
 import com.io7m.aradine.graph.api.ARAudioGraphSettings;
 import com.io7m.aradine.graph.api.ARAudioGraphSystemTargetAudioType;
-import com.io7m.aradine.graph.api.ARAudioGraphType;
+import com.io7m.aradine.graph.vanilla.ARAudioGraph;
 import com.io7m.aradine.instrument.metadata.ARInstrumentPortID;
+import com.io7m.jaffirm.core.Preconditions;
 
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,14 +35,14 @@ public final class ARSystemTargetAudio
   extends ARGraphNode implements ARAudioGraphSystemTargetAudioType
 {
   private final ARPortTargetAudio port;
-  private final double[] sumBuffer;
   private final CopyOnWriteArrayList<ARAudioGraphConnectionType> incomingConnections;
+  private volatile double[] buffer;
 
   public ARSystemTargetAudio(
-    final ARAudioGraphType inGraph,
+    final ARAudioGraph inGraph,
     final UUID inId)
   {
-    super(inId);
+    super(inGraph, inId);
 
     this.port =
       new ARPortTargetAudio(
@@ -51,43 +51,41 @@ public final class ARSystemTargetAudio
         ARInstrumentPortID.of("target")
       );
 
-    this.sumBuffer = new double[inGraph.settings().bufferSamples()];
+    this.buffer = new double[inGraph.settings().bufferSamples()];
     this.incomingConnections = new CopyOnWriteArrayList<>();
   }
 
   @Override
   public String toString()
   {
-    return String.format("[ARSystemOutput %s]", this.id());
+    return String.format("[ARSystemTargetAudio %s]", this.id());
   }
 
   @Override
-  public void updateSettings(
+  public void settingsUpdate(
     final ARAudioGraphSettings newSettings)
   {
     this.port.updateSettings(newSettings);
+    this.buffer = new double[newSettings.bufferSamples()];
   }
 
   @Override
   public void process(
     final ARAudioGraphProcessingType context)
   {
-    Arrays.fill(this.sumBuffer, 0.0);
+    if (!this.incomingConnections.isEmpty()) {
+      final var audioConnection =
+        (ARAudioGraphConnectionAudio) this.incomingConnections.get(0);
+      final var source =
+        audioConnection.sourcePort();
 
-    for (int index = 0; index < this.incomingConnections.size(); ++index) {
-      final var connection = this.incomingConnections.get(index);
-      if (connection instanceof ARAudioGraphConnectionAudio) {
-        final var audioConnection = (ARAudioGraphConnectionAudio) connection;
-        final var source = audioConnection.sourcePort();
-        source.read(data -> {
-          for (int i = 0; i < data.length; ++i) {
-            this.sumBuffer[i] += data[i];
-          }
-        });
-      }
+      final var bufferRef = this.buffer;
+      source.read(data -> {
+        System.arraycopy(data, 0, bufferRef, 0, bufferRef.length);
+      });
     }
 
-    this.port.copyIn(this.sumBuffer);
+    this.port.copyIn(this.buffer);
   }
 
   @Override
@@ -104,9 +102,22 @@ public final class ARSystemTargetAudio
   }
 
   @Override
+  public void copyOut(
+    final double[] output)
+  {
+    this.port.copyOut(output);
+  }
+
+  @Override
   public void onIncomingConnectionsChanged(
     final Set<ARAudioGraphConnectionType> connections)
   {
+    Preconditions.checkPreconditionI(
+      connections.size(),
+      x -> x <= 1,
+      x -> "Must have at most one connection"
+    );
+
     this.incomingConnections.clear();
     this.incomingConnections.addAll(connections);
   }

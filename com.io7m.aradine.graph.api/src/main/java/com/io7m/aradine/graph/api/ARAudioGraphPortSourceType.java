@@ -16,6 +16,10 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A source port in the audio graph.
+ */
+
 public interface ARAudioGraphPortSourceType extends ARAudioGraphPortType
 {
 

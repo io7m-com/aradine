@@ -19,20 +19,45 @@ package com.io7m.aradine.graph.api;
 import com.io7m.aradine.instrument.metadata.ARInstrumentPortID;
 
 /**
- * A port in the audio graph.
+ * A node that sums a set of inputs, writing the result to a single output.
  */
 
-public interface ARAudioGraphPortType
+public interface ARAudioGraphSumAudioType extends ARAudioGraphNodeType
 {
   /**
-   * @return The ID of the port
+   * Create a target port.
+   *
+   * @param portID The port ID
+   *
+   * @return A port
+   *
+   * @throws ARAudioGraphException If a port already exists with the given ID
    */
 
-  ARInstrumentPortID id();
+  ARAudioGraphPortTargetAudioType createPortTarget(
+    ARInstrumentPortID portID)
+    throws ARAudioGraphException;
 
   /**
-   * @return The owner of the port
+   * Create a target port.
+   *
+   * @param portID The port ID
+   *
+   * @return A port
+   *
+   * @throws ARAudioGraphException If a port already exists with the given ID
    */
 
-  ARAudioGraphNodeType owner();
+  default ARAudioGraphPortTargetAudioType createPortTarget(
+    final String portID)
+    throws ARAudioGraphException
+  {
+    return this.createPortTarget(ARInstrumentPortID.of(portID));
+  }
+
+  /**
+   * @return The source port that produces the summed audio
+   */
+
+  ARAudioGraphPortSourceAudioType port();
 }

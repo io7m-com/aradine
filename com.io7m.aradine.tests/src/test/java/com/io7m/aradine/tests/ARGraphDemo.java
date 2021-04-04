@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.graph.api.ARAudioGraphException;
 import com.io7m.aradine.graph.api.ARAudioGraphSettings;
 import com.io7m.aradine.graph.api.ARAudioGraphStringsType;
 import com.io7m.aradine.graph.api.ARAudioGraphSystemSourceAudioType;
@@ -65,7 +66,7 @@ public final class ARGraphDemo
     Client(
       final ARServiceDirectoryType services,
       final Jack inJack)
-      throws JackException
+      throws JackException, ARAudioGraphException
     {
       this.jack = Objects.requireNonNull(inJack, "jack");
 
@@ -100,8 +101,8 @@ public final class ARGraphDemo
           .build();
 
       this.graph = ARAudioGraph.create(services, settings);
-      this.graphSource0 = this.graph.createSystemSourceAudio();
-      this.graphTarget0 = this.graph.createSystemTargetAudio();
+      this.graphSource0 = this.graph.createAudioSystemSource();
+      this.graphTarget0 = this.graph.createAudioSystemTarget();
       this.graphSource0.port().connect(this.graphTarget0.port());
 
       LOG.debug("setting process callback");

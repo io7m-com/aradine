@@ -18,11 +18,31 @@ package com.io7m.aradine.graph.api;
 
 import java.util.UUID;
 
+/**
+ * A node in the audio graph.
+ */
+
 public interface ARAudioGraphNodeType
 {
+  /**
+   * @return The unique ID of the node
+   */
+
   UUID id();
 
-  void updateSettings(ARAudioGraphSettings newSettings);
+  /**
+   * Notify the node that the audio graph settings have changed.
+   *
+   * @param newSettings The new settings
+   */
+
+  void settingsUpdate(ARAudioGraphSettings newSettings);
+
+  /**
+   * Execute processing on the node.
+   *
+   * @param context The processing context
+   */
 
   void process(ARAudioGraphProcessingType context);
 }

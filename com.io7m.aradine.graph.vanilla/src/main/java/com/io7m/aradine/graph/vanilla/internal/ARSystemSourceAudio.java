@@ -21,7 +21,7 @@ import com.io7m.aradine.graph.api.ARAudioGraphPortSourceAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphProcessingType;
 import com.io7m.aradine.graph.api.ARAudioGraphSettings;
 import com.io7m.aradine.graph.api.ARAudioGraphSystemSourceAudioType;
-import com.io7m.aradine.graph.api.ARAudioGraphType;
+import com.io7m.aradine.graph.vanilla.ARAudioGraph;
 import com.io7m.aradine.instrument.metadata.ARInstrumentPortID;
 
 import java.nio.FloatBuffer;
@@ -34,10 +34,10 @@ public final class ARSystemSourceAudio
   private final ARPortSourceAudio port;
 
   public ARSystemSourceAudio(
-    final ARAudioGraphType inGraph,
+    final ARAudioGraph inGraph,
     final UUID inId)
   {
-    super(inId);
+    super(inGraph, inId);
 
     this.port =
       new ARPortSourceAudio(
@@ -50,11 +50,11 @@ public final class ARSystemSourceAudio
   @Override
   public String toString()
   {
-    return String.format("[ARSystemInput %s]", this.id());
+    return String.format("[ARSystemSourceAudio %s]", this.id());
   }
 
   @Override
-  public void updateSettings(
+  public void settingsUpdate(
     final ARAudioGraphSettings newSettings)
   {
     this.port.updateSettings(newSettings);
@@ -76,6 +76,13 @@ public final class ARSystemSourceAudio
   @Override
   public void copyIn(
     final FloatBuffer input)
+  {
+    this.port.copyIn(input);
+  }
+
+  @Override
+  public void copyIn(
+    final double[] input)
   {
     this.port.copyIn(input);
   }

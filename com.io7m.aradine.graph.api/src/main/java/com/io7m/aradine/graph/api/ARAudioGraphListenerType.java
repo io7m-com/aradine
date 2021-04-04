@@ -16,13 +16,63 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A listener that receives changes made to the audio graph.
+ */
+
 public interface ARAudioGraphListenerType
 {
+  /**
+   * Processing a single sampling period has started.
+   *
+   * @throws Exception On errors
+   */
+
+  void onProcessStarted()
+    throws Exception;
+
+  /**
+   * Processing a node in a single sampling period has started.
+   *
+   * @param node The node
+   *
+   * @throws Exception On errors
+   */
+
   void onProcess(
     ARAudioGraphNodeType node)
     throws Exception;
 
-  void onConnect(
+  /**
+   * Processing a single sampling period has finished.
+   *
+   * @throws Exception On errors
+   */
+
+  void onProcessFinished()
+    throws Exception;
+
+  /**
+   * Two ports were connected.
+   *
+   * @param connection The connection
+   *
+   * @throws Exception On errors
+   */
+
+  void onPortConnect(
+    ARAudioGraphConnectionAudio connection)
+    throws Exception;
+
+  /**
+   * Two ports were disconnected.
+   *
+   * @param connection The connection
+   *
+   * @throws Exception On errors
+   */
+
+  void onPortDisconnect(
     ARAudioGraphConnectionAudio connection)
     throws Exception;
 }

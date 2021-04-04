@@ -19,12 +19,24 @@ package com.io7m.aradine.graph.api;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
+/**
+ * A pair of linked loopback nodes.
+ */
+
 @ImmutablesStyleType
 @Value.Immutable
 public interface ARAudioGraphLoopbackPairType
 {
+  /**
+   * @return The loopback source
+   */
+
   @Value.Parameter
   ARAudioGraphLoopbackSourceType source();
+
+  /**
+   * @return The loopback target
+   */
 
   @Value.Parameter
   ARAudioGraphLoopbackTargetType target();

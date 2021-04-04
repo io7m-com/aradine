@@ -18,11 +18,46 @@ package com.io7m.aradine.graph.api;
 
 import java.util.function.Consumer;
 
+/**
+ * A source audio port in the audio graph.
+ */
+
 public interface ARAudioGraphPortSourceAudioType
   extends ARAudioGraphPortSourceType
 {
+  /**
+   * Connect this port to the given target port.
+   *
+   * @param target The target port
+   *
+   * @return The new connection
+   *
+   * @throws ARAudioGraphException For the same reasons as {@code connectAudio}
+   * @see ARAudioGraphType#connectAudio(ARAudioGraphPortSourceAudioType, ARAudioGraphPortTargetAudioType)
+   */
+
   ARAudioGraphConnectionAudio connect(
-    ARAudioGraphPortTargetAudioType target);
+    ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException;
+
+  /**
+   * Disconnect this port from the given target port.
+   *
+   * @param target The target port
+   *
+   * @throws ARAudioGraphException For the same reasons as {@code disconnectAudio}
+   * @see ARAudioGraphType#disconnectAudio(ARAudioGraphPortSourceAudioType, ARAudioGraphPortTargetAudioType)
+   */
+
+  void disconnect(
+    ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException;
+
+  /**
+   * Read samples from the source.
+   *
+   * @param receiver The function that will receive the current source buffer
+   */
 
   void read(
     Consumer<double[]> receiver);

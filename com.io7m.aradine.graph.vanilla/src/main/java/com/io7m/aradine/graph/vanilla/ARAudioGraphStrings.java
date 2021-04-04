@@ -22,6 +22,10 @@ import com.io7m.jxtrand.vanilla.JXTAbstractStrings;
 import java.io.IOException;
 import java.util.Locale;
 
+/**
+ * The default provider of audio graph strings.
+ */
+
 public final class ARAudioGraphStrings
   extends JXTAbstractStrings implements ARAudioGraphStringsType
 {

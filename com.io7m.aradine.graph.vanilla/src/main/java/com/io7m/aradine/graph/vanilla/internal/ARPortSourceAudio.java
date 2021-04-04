@@ -17,6 +17,7 @@
 package com.io7m.aradine.graph.vanilla.internal;
 
 import com.io7m.aradine.graph.api.ARAudioGraphConnectionAudio;
+import com.io7m.aradine.graph.api.ARAudioGraphException;
 import com.io7m.aradine.graph.api.ARAudioGraphNodeType;
 import com.io7m.aradine.graph.api.ARAudioGraphPortSourceAudioType;
 import com.io7m.aradine.graph.api.ARAudioGraphPortTargetAudioType;
@@ -47,8 +48,26 @@ public final class ARPortSourceAudio
   @Override
   public ARAudioGraphConnectionAudio connect(
     final ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException
   {
     return super.graph().connectAudio(this, target);
+  }
+
+  @Override
+  public void disconnect(
+    final ARAudioGraphPortTargetAudioType target)
+    throws ARAudioGraphException
+  {
+    super.graph().disconnectAudio(this, target);
+  }
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[ARPortSourceAudio %s]",
+      this.id().value()
+    );
   }
 
   @Override
@@ -68,7 +87,13 @@ public final class ARPortSourceAudio
   public void updateSettings(
     final ARAudioGraphSettings newSettings)
   {
-    this.buffer = new double[newSettings.bufferSamples()];
+    final var writeLock = this.bufferLock.writeLock();
+    writeLock.lock();
+    try {
+      this.buffer = new double[newSettings.bufferSamples()];
+    } finally {
+      writeLock.unlock();
+    }
   }
 
   public void copyIn(
@@ -82,6 +107,20 @@ public final class ARPortSourceAudio
       for (int index = 0; index < this.buffer.length; ++index) {
         this.buffer[index] = input.get(index);
       }
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public void copyIn(
+    final double[] input)
+  {
+    final var writeLock =
+      this.bufferLock.writeLock();
+
+    writeLock.lock();
+    try {
+      System.arraycopy(input, 0, this.buffer, 0, this.buffer.length);
     } finally {
       writeLock.unlock();
     }

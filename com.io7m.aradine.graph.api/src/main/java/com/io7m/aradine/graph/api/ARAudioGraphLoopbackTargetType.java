@@ -16,7 +16,15 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A loopback target.
+ */
+
 public interface ARAudioGraphLoopbackTargetType extends ARAudioGraphNodeType
 {
+  /**
+   * @return The linked loopback peer
+   */
+
   ARAudioGraphLoopbackSourceType peer();
 }

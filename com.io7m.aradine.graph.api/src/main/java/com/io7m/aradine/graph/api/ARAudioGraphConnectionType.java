@@ -16,13 +16,33 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A connection between two ports in the audio graph.
+ */
+
 public interface ARAudioGraphConnectionType
 {
+  /**
+   * @return The source node
+   */
+
   ARAudioGraphNodeType source();
+
+  /**
+   * @return The source port
+   */
 
   ARAudioGraphPortSourceType sourcePort();
 
+  /**
+   * @return The target node
+   */
+
   ARAudioGraphNodeType target();
+
+  /**
+   * @return The target port
+   */
 
   ARAudioGraphPortTargetType targetPort();
 }

@@ -16,11 +16,16 @@
 
 package com.io7m.aradine.graph.api;
 
-import java.nio.FloatBuffer;
+/**
+ * A node that represents a system source.
+ */
 
-public interface ARAudioGraphSystemSourceType extends ARAudioGraphNodeType
+public interface ARAudioGraphSystemSourceType
+  extends ARAudioGraphNodeType
 {
-  ARAudioGraphPortSourceType port();
+  /**
+   * @return The source port
+   */
 
-  void copyIn(FloatBuffer buffer);
+  ARAudioGraphPortSourceType port();
 }

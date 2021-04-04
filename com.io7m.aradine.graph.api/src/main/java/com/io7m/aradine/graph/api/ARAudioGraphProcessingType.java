@@ -16,7 +16,15 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A sampling period processing operation in progress.
+ */
+
 public interface ARAudioGraphProcessingType
 {
+  /**
+   * Execute all nodes now.
+   */
+
   void process();
 }

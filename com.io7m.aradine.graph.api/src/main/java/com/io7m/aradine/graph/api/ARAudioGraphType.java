@@ -16,40 +16,58 @@
 
 package com.io7m.aradine.graph.api;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
-public interface ARAudioGraphType
+/**
+ * The type of audio graphs.
+ */
+
+public interface ARAudioGraphType extends ARAudioGraphEditingType
 {
+  /**
+   * @return The audio graph string provider
+   */
+
+  ARAudioGraphStringsType strings();
+
+  /**
+   * @return The current audio graph settings
+   */
+
   ARAudioGraphSettings settings();
 
-  void updateSettings(
+  /**
+   * Update the current audio graph settings.
+   *
+   * @param newSettings The new audio graph settings
+   */
+
+  void settingsUpdate(
     ARAudioGraphSettings newSettings);
 
-  ARAudioGraphSystemSourceAudioType createSystemSourceAudio();
-
-  ARAudioGraphSystemSourceAudioType createSystemSourceAudio(UUID id);
-
-  ARAudioGraphSystemTargetAudioType createSystemTargetAudio();
-
-  ARAudioGraphSystemTargetAudioType createSystemTargetAudio(UUID id);
-
-  ARAudioGraphLoopbackPair createLoopbackPair(
-    UUID source,
-    UUID target
-  );
-
-  ARAudioGraphLoopbackPair createLoopbackPair();
+  /**
+   * Add a listener to the audio graph.
+   *
+   * @param listener The listener
+   */
 
   void addListener(
     ARAudioGraphListenerType listener);
 
+  /**
+   * Remove a listener from the audio graph.
+   *
+   * @param listener The listener
+   */
+
   void removeListener(
     ARAudioGraphListenerType listener);
 
-  ARAudioGraphConnectionAudio connectAudio(
-    ARAudioGraphPortSourceAudioType source,
-    ARAudioGraphPortTargetAudioType target);
+  /**
+   * Start processing for a single sampling period.
+   *
+   * @param process A receiver of the processing context
+   */
 
   void execute(
     Consumer<ARAudioGraphProcessingType> process);

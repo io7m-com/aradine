@@ -16,9 +16,25 @@
 
 package com.io7m.aradine.graph.api;
 
+/**
+ * A target audio port in the audio graph.
+ */
+
 public interface ARAudioGraphPortTargetAudioType extends
   ARAudioGraphPortTargetType
 {
+  /**
+   * Connect this port to the given source port.
+   *
+   * @param source The source port
+   *
+   * @return The new connection
+   *
+   * @throws ARAudioGraphException For the same reasons as {@code connectAudio}
+   * @see ARAudioGraphType#connectAudio(ARAudioGraphPortSourceAudioType, ARAudioGraphPortTargetAudioType)
+   */
+
   ARAudioGraphConnectionAudio connect(
-    ARAudioGraphPortSourceAudioType source);
+    ARAudioGraphPortSourceAudioType source)
+    throws ARAudioGraphException;
 }

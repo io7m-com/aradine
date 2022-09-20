@@ -21,6 +21,9 @@
   <url>https://www.github.com/io7m/aradine</url>
 
   <modules>
+    <module>com.io7m.aradine.api</module>
+    <module>com.io7m.aradine.core</module>
+    <module>com.io7m.aradine.tests</module>
   </modules>
 
   <properties>
@@ -252,6 +255,16 @@
         <groupId>org.jaudiolibs</groupId>
         <artifactId>jnajack</artifactId>
         <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>net.jqwik</groupId>
+        <artifactId>jqwik-api</artifactId>
+        <version>1.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>net.jqwik</groupId>
+        <artifactId>jqwik-engine</artifactId>
+        <version>1.6.5</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

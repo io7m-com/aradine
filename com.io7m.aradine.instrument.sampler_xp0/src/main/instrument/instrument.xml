@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Instrument xmlns="urn:com.io7m.aradine:instrument:1"
+            Identifier="com.io7m.aradine.instrument.sampler_xp0">
+
+  <Version Major="0"
+           Minor="0"
+           Patch="0"/>
+
+  <Metadata>
+    <Meta Name="dc.title">Sampler XP-0</Meta>
+  </Metadata>
+
+  <Parameters>
+    <ParameterSampleMap ID="0"
+                        Label="Samples"/>
+
+    <ParameterReal ID="1"
+                   Label="Loop Point"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="1.0"
+                   ValueDefault="0.8"
+                   UnitOfMeasurement="com.io7m.aradine.position_normal"/>
+
+    <ParameterInteger ID="2"
+                      Label="Pitch Bend Range"
+                      ValueMinimumInclusive="1"
+                      ValueMaximumInclusive="120"
+                      ValueDefault="24"
+                      UnitOfMeasurement="com.io7m.aradine.semitones"/>
+  </Parameters>
+
+  <Ports>
+    <PortOutputSampled ID="0"
+                       Label="Output L">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
+    </PortOutputSampled>
+    <PortOutputSampled ID="1"
+                       Label="Output R">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
+    </PortOutputSampled>
+  </Ports>
+
+</Instrument>

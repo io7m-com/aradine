@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+  SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:com.io7m.aradine:instrument:1"
+            xmlns:i="urn:com.io7m.aradine:instrument:1">
+
+  <xsd:annotation>
+    <xsd:documentation>
+      The version 1 Aradine Instrument schema.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="Label">
+    <xsd:annotation>
+      <xsd:documentation>
+        A humanly-readable label.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[A-Za-z0-9\\.:_\\-\\ ]{0,64}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="UnitOfMeasurement">
+    <xsd:annotation>
+      <xsd:documentation>
+        A fully qualified unit of measurement.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- See https://github.com/io7m/lanark -->
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="PortSemantic">
+    <xsd:annotation>
+      <xsd:documentation>
+        Semantic information about a port.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- See https://github.com/io7m/lanark -->
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="ParameterType"
+                   abstract="true">
+    <xsd:attribute name="ID"
+                   type="xsd:unsignedInt"
+                   use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The ID parameter specifies the identifier of the parameter that must be unique within the instrument.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="Label"
+                   type="i:Label"
+                   use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The Label parameter specifies a humanly-readable label for the parameter.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="ParameterIntegerType">
+    <xsd:complexContent>
+      <xsd:extension base="i:ParameterType">
+        <xsd:attribute name="ValueMinimumInclusive"
+                       type="xsd:long"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueMinimumInclusive parameter specifies the minimum inclusive value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="ValueMaximumInclusive"
+                       type="xsd:long"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueMaximumInclusive parameter specifies the maximum inclusive value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="ValueDefault"
+                       type="xsd:long"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueDefault parameter specifies the default value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="UnitOfMeasurement"
+                       type="i:UnitOfMeasurement"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The UnitOfMeasurement parameter specifies the unit of measure for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="ParameterRealType">
+    <xsd:complexContent>
+      <xsd:extension base="i:ParameterType">
+        <xsd:attribute name="ValueMinimumInclusive"
+                       type="xsd:double"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueMinimumInclusive parameter specifies the minimum inclusive value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="ValueMaximumInclusive"
+                       type="xsd:double"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueMaximumInclusive parameter specifies the maximum inclusive value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="ValueDefault"
+                       type="xsd:double"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The ValueDefault parameter specifies the default value for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+
+        <xsd:attribute name="UnitOfMeasurement"
+                       type="i:UnitOfMeasurement"
+                       use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The UnitOfMeasurement parameter specifies the unit of measure for the parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="ParameterSampleMapType">
+    <xsd:annotation>
+      <xsd:documentation>
+        A parameter that accepts the URI of a sample map.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:ParameterType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="ParameterInteger"
+               type="i:ParameterIntegerType"/>
+
+  <xsd:element name="ParameterReal"
+               type="i:ParameterRealType"/>
+
+  <xsd:element name="ParameterSampleMap"
+               type="i:ParameterSampleMapType"/>
+
+  <xsd:group name="ParameterGroup">
+    <xsd:choice>
+      <xsd:element ref="i:ParameterInteger"/>
+      <xsd:element ref="i:ParameterReal"/>
+      <xsd:element ref="i:ParameterSampleMap"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="Parameters">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:group ref="i:ParameterGroup"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="ParameterKey">
+      <xsd:selector xpath="*"/>
+      <xsd:field xpath="@ID"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="PortSemantic">
+    <xsd:complexType>
+      <xsd:attribute name="Value"
+                     type="i:PortSemantic"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="PortType"
+                   abstract="true">
+    <xsd:sequence minOccurs="0"
+                  maxOccurs="unbounded">
+      <xsd:element ref="i:PortSemantic"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="ID"
+                   type="xsd:unsignedInt"
+                   use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The ID parameter specifies the identifier of the port that must be unique within the instrument.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="Label"
+                   type="i:Label"
+                   use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The Label parameter specifies a humanly-readable label for the port.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="PortOutputType"
+                   abstract="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        The base type of output ports.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:PortType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="PortOutputSampledType">
+    <xsd:annotation>
+      <xsd:documentation>
+        A sampled output port represents a stream of 64-bit IEEE754 floating point values.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:PortOutputType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="PortOutputSampled"
+               type="i:PortOutputSampledType"/>
+
+  <xsd:group name="PortGroup">
+    <xsd:choice>
+      <xsd:element ref="i:PortOutputSampled"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="Ports">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of defined ports.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:group ref="i:PortGroup"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="PortKey">
+      <xsd:selector xpath="*"/>
+      <xsd:field xpath="@ID"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:simpleType name="Qualifier">
+    <xsd:annotation>
+      <xsd:documentation>
+        A semantic versioning qualifier.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[A-Za-z0-9\\-]+(\\.[A-Za-z0-9\\-]+)*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Version">
+    <xsd:annotation>
+      <xsd:documentation>
+        A semantic version number.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="Major"
+                     type="xsd:unsignedInt"
+                     use="required"/>
+      <xsd:attribute name="Minor"
+                     type="xsd:unsignedInt"
+                     use="required"/>
+      <xsd:attribute name="Patch"
+                     type="xsd:unsignedInt"
+                     use="required"/>
+      <xsd:attribute name="Qualifier"
+                     type="i:Qualifier"
+                     use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="Identifier">
+    <xsd:annotation>
+      <xsd:documentation>
+        A unique identifier for an instrument.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- See https://github.com/io7m/lanark -->
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="MetaName">
+    <xsd:annotation>
+      <xsd:documentation>
+        A unique identifier for a metadata element.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- See https://github.com/io7m/lanark -->
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Meta">
+    <xsd:annotation>
+      <xsd:documentation>
+        A metadata element.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType mixed="true">
+      <xsd:attribute name="Name"
+                     use="required"
+                     type="i:MetaName"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Metadata">
+    <xsd:annotation>
+      <xsd:documentation>
+        A set of metadata elements.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="i:Meta"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="MetadataKey">
+      <xsd:selector xpath="i:Meta"/>
+      <xsd:field xpath="@Name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="Instrument">
+    <xsd:annotation>
+      <xsd:documentation>
+        The declaration of an instrument.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="i:Version"/>
+        <xsd:element ref="i:Metadata"/>
+        <xsd:element ref="i:Parameters"/>
+        <xsd:element ref="i:Ports"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="Identifier"
+                     type="i:Identifier"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

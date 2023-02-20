@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Instrument xmlns="urn:com.io7m.aradine:instrument:1"
+            Identifier="com.io7m.aradine.instrument.sampler_m0">
+
+  <Version Major="0"
+           Minor="0"
+           Patch="0"/>
+
+  <Metadata>
+    <Meta Name="dc.title">Sampler M0</Meta>
+  </Metadata>
+
+  <Parameters>
+    <ParameterSampleMap ID="0"
+                        Label="Samples"/>
+  </Parameters>
+
+  <Ports>
+    <PortOutputSampled ID="0"
+                       Label="Output L">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
+    </PortOutputSampled>
+    <PortOutputSampled ID="1"
+                       Label="Output R">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
+    </PortOutputSampled>
+  </Ports>
+
+</Instrument>

@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>7.1.0</version>
+    <version>7.5.0</version>
   </parent>
 
   <groupId>com.io7m.aradine</groupId>
@@ -21,26 +21,29 @@
   <url>https://www.github.com/io7m/aradine</url>
 
   <modules>
-    <module>com.io7m.aradine.instrument.metadata.parser.api</module>
-    <module>com.io7m.aradine.instrument.metadata</module>
-    <module>com.io7m.aradine.instrument.strings</module>
-    <module>com.io7m.aradine.services.api</module>
+    <module>com.io7m.aradine.annotations</module>
+    <module>com.io7m.aradine.instrument.codegen</module>
+    <module>com.io7m.aradine.instrument.sampler_m0</module>
+    <module>com.io7m.aradine.instrument.sampler_p0</module>
+    <module>com.io7m.aradine.instrument.sampler_xp0</module>
+    <module>com.io7m.aradine.instrument.spi1.xml</module>
+    <module>com.io7m.aradine.instrument.spi1</module>
+    <module>com.io7m.aradine.maven_plugin</module>
     <module>com.io7m.aradine.tests</module>
-    <module>com.io7m.aradine.xml</module>
-    <module>com.io7m.aradine.graph.api</module>
-    <module>com.io7m.aradine.graph.vanilla</module>
   </modules>
 
   <properties>
     <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
     <com.io7m.blackthorne.version>1.3.1</com.io7m.blackthorne.version>
     <com.io7m.jbssio.version>1.1.1</com.io7m.jbssio.version>
+    <com.io7m.jsamplebuffer.version>0.0.3-SNAPSHOT</com.io7m.jsamplebuffer.version>
     <com.io7m.jsx.version>2.0.0</com.io7m.jsx.version>
     <com.io7m.jxtrand.version>1.1.0</com.io7m.jxtrand.version>
-    <com.io7m.xstructural.version>1.2.0</com.io7m.xstructural.version>
+    <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.1-SNAPSHOT</io7m.api.previousVersion>
-    <junit.version>5.7.0</junit.version>
-    <org.immutables.version>2.8.8</org.immutables.version>
+    <junit.version>5.9.2</junit.version>
+    <org.mockito.version>5.1.1</org.mockito.version>
+    <io7m.maven-api.version>3.8.6</io7m.maven-api.version>
   </properties>
 
   <licenses>
@@ -78,11 +81,11 @@
     </site>
     <repository>
       <id>sonatype-nexus-staging</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -100,7 +103,7 @@
       <dependency>
         <groupId>com.io7m.claypot</groupId>
         <artifactId>com.io7m.claypot.core</artifactId>
-        <version>0.0.6</version>
+        <version>0.0.8</version>
       </dependency>
       <dependency>
         <groupId>com.beust</groupId>
@@ -110,7 +113,7 @@
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>7.1.0</version>
+        <version>7.5.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jbssio</groupId>
@@ -133,6 +136,11 @@
         <version>2.0.0</version>
       </dependency>
       <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.service.component.annotations</artifactId>
+        <version>1.5.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
         <version>${junit.version}</version>
@@ -143,6 +151,11 @@
         <version>${junit.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.io7m.jaffirm</groupId>
         <artifactId>com.io7m.jaffirm.core</artifactId>
         <version>4.0.0</version>
@@ -150,17 +163,12 @@
       <dependency>
         <groupId>com.io7m.jlexing</groupId>
         <artifactId>com.io7m.jlexing.core</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.immutables</groupId>
         <artifactId>value</artifactId>
         <version>${org.immutables.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.io7m.immutables.style</groupId>
-        <artifactId>com.io7m.immutables.style</artifactId>
-        <version>0.0.1</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -175,7 +183,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.10</version>
+        <version>3.13.2</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.junreachable</groupId>
@@ -185,12 +193,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.0-alpha7</version>
+        <version>2.0.6</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.3.0-alpha14</version>
+        <version>1.4.5</version>
       </dependency>
       <dependency>
         <groupId>com.squareup</groupId>
@@ -205,7 +213,12 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>4.4.0</version>
+        <version>${org.mockito.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${org.mockito.version}</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jxe</groupId>
@@ -243,6 +256,16 @@
         <version>${com.io7m.anethum.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.io7m.lanark</groupId>
+        <artifactId>com.io7m.lanark.core</artifactId>
+        <version>1.0.0-beta0001</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.verona</groupId>
+        <artifactId>com.io7m.verona.core</artifactId>
+        <version>0.0.3</version>
+      </dependency>
+      <dependency>
         <groupId>com.io7m.jranges</groupId>
         <artifactId>com.io7m.jranges.core</artifactId>
         <version>5.0.0</version>
@@ -267,26 +290,144 @@
         <artifactId>jnajack</artifactId>
         <version>1.4.0</version>
       </dependency>
+      <dependency>
+        <groupId>net.jqwik</groupId>
+        <artifactId>jqwik-api</artifactId>
+        <version>1.7.2</version>
+      </dependency>
+      <dependency>
+        <groupId>net.jqwik</groupId>
+        <artifactId>jqwik-engine</artifactId>
+        <version>1.7.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jattribute</groupId>
+        <artifactId>com.io7m.jattribute.core</artifactId>
+        <version>0.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>fastutil-core</artifactId>
+        <version>8.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jsamplebuffer</groupId>
+        <artifactId>com.io7m.jsamplebuffer.api</artifactId>
+        <version>${com.io7m.jsamplebuffer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jsamplebuffer</groupId>
+        <artifactId>com.io7m.jsamplebuffer.vanilla</artifactId>
+        <version>${com.io7m.jsamplebuffer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jsamplebuffer</groupId>
+        <artifactId>com.io7m.jsamplebuffer.xmedia</artifactId>
+        <version>${com.io7m.jsamplebuffer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jmulticlose</groupId>
+        <artifactId>com.io7m.jmulticlose.core</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>4.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jodist</groupId>
+        <artifactId>com.io7m.jodist</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>1.10.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>3.7.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-settings</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-model</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-artifact</artifactId>
+        <version>${io7m.maven-api.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
-    <plugins>
-      <!-- Generate immutables.org types -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessorPaths>
-            <dependency>
-              <groupId>org.immutables</groupId>
-              <artifactId>value</artifactId>
-              <version>${org.immutables.version}</version>
-            </dependency>
-          </annotationProcessorPaths>
-        </configuration>
-      </plugin>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jaxb2-maven-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
 
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+            <suppressionsLocation>checkstyle-filter.xml</suppressionsLocation>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.6.4</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.soebes.itf.jupiter.extension</groupId>
+          <artifactId>itf-maven-plugin</artifactId>
+          <version>0.11.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.22.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
       <!-- Generate a site -->
       <plugin>
         <groupId>com.io7m.minisite</groupId>

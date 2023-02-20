@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <artifactId>com.io7m.aradine</artifactId>
     <groupId>com.io7m.aradine</groupId>
+    <artifactId>com.io7m.aradine</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>com.io7m.aradine.tests</artifactId>
@@ -16,7 +16,7 @@
   <packaging>jar</packaging>
   <name>com.io7m.aradine.tests</name>
   <description>Modular programmable synthesis (Test suite)</description>
-  <url>https://www.github.com/io7m/aradine</url>
+  <url>https://www.io7m.com/software/aradine</url>
 
   <properties>
     <mdep.analyze.skip>true</mdep.analyze.skip>
@@ -25,41 +25,62 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.instrument.metadata.parser.api</artifactId>
+      <artifactId>com.io7m.aradine.instrument.spi1</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.xml</artifactId>
+      <artifactId>com.io7m.aradine.instrument.spi1.xml</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.services.api</artifactId>
+      <artifactId>com.io7m.aradine.instrument.sampler_m0</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.graph.api</artifactId>
+      <artifactId>com.io7m.aradine.instrument.sampler_p0</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.graph.vanilla</artifactId>
+      <artifactId>com.io7m.aradine.instrument.sampler_xp0</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.instrument.codegen</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
+      <groupId>com.io7m.jattribute</groupId>
+      <artifactId>com.io7m.jattribute.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.vanilla</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.xmedia</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jmulticlose</groupId>
+      <artifactId>com.io7m.jmulticlose.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>fastutil-core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jaudiolibs</groupId>
       <artifactId>jnajack</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>nl.jqno.equalsverifier</groupId>
-      <artifactId>equalsverifier</artifactId>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -67,11 +88,31 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
+      <artifactId>junit-jupiter-params</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
     </dependency>
   </dependencies>
 

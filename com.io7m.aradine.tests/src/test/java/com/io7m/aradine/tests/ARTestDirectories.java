@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2021 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,12 +19,16 @@ package com.io7m.aradine.tests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.UUID;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class ARTestDirectories
 {
@@ -39,8 +43,12 @@ public final class ARTestDirectories
   public static Path createBaseDirectory()
     throws IOException
   {
-    final var path =
-      Path.of(System.getProperty("java.io.tmpdir")).resolve("aradine");
+    final var property = System.getProperty("java.io.tmpdir");
+    if (property.isBlank() || property.isEmpty()) {
+      throw new IllegalStateException();
+    }
+
+    final var path = Path.of(property).resolve("aradine");
     Files.createDirectories(path);
     return path;
   }
@@ -52,6 +60,17 @@ public final class ARTestDirectories
     final var temp = path.resolve(UUID.randomUUID().toString());
     Files.createDirectories(temp);
     return temp;
+  }
+
+  public static void deleteDirectory(
+    final Path directory)
+    throws IOException
+  {
+    try (var walk = Files.walk(directory)) {
+      walk.sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete);
+    }
   }
 
   public static Path resourceOf(
@@ -82,5 +101,25 @@ public final class ARTestDirectories
     throws IOException
   {
     return Files.newInputStream(resourceOf(clazz, output, name));
+  }
+
+  public static byte[] resourceBytesOf(
+    final Class<?> clazz,
+    final Path output,
+    final String name)
+    throws IOException
+  {
+    try (var stream = resourceStreamOf(clazz, output, name)) {
+      return stream.readAllBytes();
+    }
+  }
+
+  public static String resourceStringOf(
+    final Class<?> clazz,
+    final Path output,
+    final String name)
+    throws IOException
+  {
+    return new String(resourceBytesOf(clazz, output, name), UTF_8);
   }
 }

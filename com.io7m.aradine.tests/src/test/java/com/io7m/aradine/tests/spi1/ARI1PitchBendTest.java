@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.aradine.tests;
+package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1PitchBend;
 import org.junit.jupiter.params.ParameterizedTest;

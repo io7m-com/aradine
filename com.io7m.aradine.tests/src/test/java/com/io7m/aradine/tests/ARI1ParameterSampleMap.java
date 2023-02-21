@@ -17,8 +17,10 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
+import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 
 import java.net.URI;
 import java.util.Objects;
@@ -26,33 +28,99 @@ import java.util.Objects;
 public final class ARI1ParameterSampleMap
   implements ARI1ParameterSampleMapType
 {
-  private volatile URI value;
-  private final ARI1ParameterId id;
-  private volatile String label;
+  private final Int2ObjectRBTreeMap<URI> valueByTime;
+  private final ARI1ParameterDescriptionSampleMapType description;
+
+  /**
+   * The value of this parameter at the start of the processing period. This is
+   * either the value upon which the last period ended, or the default value if
+   * no value has ever been set.
+   */
+
+  private URI valueAtPeriodStart;
+
+  /**
+   * The time of the latest received change in the current period.
+   */
+
+  private int valueLatestTime;
+
+  /**
+   * The value that this parameter will have at the end of the processing
+   * period, assuming that no more events show up at a later time.
+   */
+
+  private URI valueAtPeriodEnd;
 
   public ARI1ParameterSampleMap(
-    final ARI1ParameterId inId)
+    final ARI1ParameterDescriptionSampleMapType inDescription,
+    final URI valueDefault)
   {
-    this.id = Objects.requireNonNull(inId, "inId");
-    this.value = URI.create("aradine:unspecified");
-    this.label = "";
+    this.description =
+      Objects.requireNonNull(inDescription, "description");
+    Objects.requireNonNull(valueDefault, "valueDefault");
+
+    this.valueByTime = new Int2ObjectRBTreeMap<URI>();
+    this.valueLatestTime = 0;
+    this.valueAtPeriodEnd = valueDefault;
+    this.valueAtPeriodStart = valueDefault;
   }
 
-  @Override
-  public URI value()
+  public void valueChangesClear()
   {
-    return this.value;
+    this.valueByTime.clear();
+    this.valueLatestTime = 0;
+    this.valueAtPeriodStart = this.valueAtPeriodEnd;
+  }
+
+  public void valueChange(
+    final int time,
+    final URI value)
+  {
+    this.valueByTime.put(time, value);
+    if (time >= this.valueLatestTime) {
+      this.valueLatestTime = time;
+      this.valueAtPeriodEnd = value;
+    }
   }
 
   @Override
   public ARI1ParameterId id()
   {
-    return this.id;
+    return this.description.id();
   }
 
   @Override
   public String label()
   {
-    return this.label;
+    return this.description.label();
+  }
+
+  @Override
+  public URI value(
+    final int frameIndex)
+  {
+    /*
+     * Get the most recent events that occurred either before or exactly
+     * on the current time.
+     */
+
+    final var relevantEvents =
+      this.valueByTime.headMap(frameIndex + 1);
+
+    /*
+     * If there isn't a relevant event, then return the most recent
+     * value (most likely set in the previous processing period).
+     */
+
+    if (relevantEvents.isEmpty()) {
+      return this.valueAtPeriodStart;
+    }
+
+    /*
+     * Return the value of the most recent change event.
+     */
+
+    return relevantEvents.get(relevantEvents.lastIntKey());
   }
 }

@@ -14,25 +14,51 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+
+package com.io7m.aradine.tests.arbitraries;
+
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.providers.ArbitraryProvider;
+import net.jqwik.api.providers.TypeUsage;
 
 import java.net.URI;
+import java.util.Set;
 
 /**
- * <p>The type of sample map parameters.</p>
+ * A provider of values.
  */
 
-public non-sealed interface ARI1ParameterSampleMapType
-  extends ARI1ParameterType
+public final class ARI1ProviderAradineURIs
+  implements ArbitraryProvider
 {
   /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
+   * A provider of values.
    */
 
-  URI value(int frameIndex);
+  public ARI1ProviderAradineURIs()
+  {
+
+  }
+
+  @Override
+  public boolean canProvideFor(
+    final TypeUsage targetType)
+  {
+    return targetType.isOfType(URI.class);
+  }
+
+  @Override
+  public Set<Arbitrary<?>> provideFor(
+    final TypeUsage targetType,
+    final SubtypeProvider subtypeProvider)
+  {
+    return Set.of(
+      Arbitraries.strings()
+        .alpha()
+        .ofMinLength(1)
+        .ofMaxLength(1024)
+        .map(x -> URI.create("aradine:" + x))
+    );
+  }
 }

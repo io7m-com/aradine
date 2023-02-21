@@ -14,38 +14,8 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
-
-import java.util.List;
-
 /**
- * The type of event buffers.
+ * Modular programmable synthesis (Arbitrary value instances)
  */
 
-public interface ARI1ControlEventBufferType
-{
-  /**
-   * Clear the buffer. This should typically be called at the end of each
-   * processing period.
-   */
-
-  void eventsClear();
-
-  /**
-   * Add an event to the buffer.
-   *
-   * @param event The event
-   */
-
-  void eventAdd(ARI1ControlEventType event);
-
-  /**
-   * Take all events that apply to the given frame index/time.
-   *
-   * @param frameIndex The frame index/time
-   *
-   * @return The events that apply, if any
-   */
-
-  List<ARI1ControlEventType> eventsTake(int frameIndex);
-}
+package com.io7m.aradine.tests.arbitraries;

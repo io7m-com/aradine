@@ -25,7 +25,7 @@ import com.io7m.aradine.annotations.ARTimeFrames;
 public sealed interface ARI1ControlEventType
   permits ARI1ControlEventNoteOff,
   ARI1ControlEventNoteOn,
-  ARI1ControlEventParameterSetType,
+  ARI1ControlEventParameterChanged,
   ARI1ControlEventPitchBend
 {
   /**

@@ -15,8 +15,9 @@
  */
 
 
-package com.io7m.aradine.tests;
+package com.io7m.aradine.tests.spi1.xml;
 
+import com.io7m.anethum.common.ParseException;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
@@ -27,16 +28,23 @@ import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentSerializers;
+import com.io7m.aradine.tests.ARTestDirectories;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class ARI1InstrumentParserTest
 {
@@ -62,6 +70,12 @@ public final class ARI1InstrumentParserTest
   {
     ARTestDirectories.deleteDirectory(this.directory);
   }
+
+  /**
+   * A basic instrument can be parsed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testParseInstrument0()
@@ -135,6 +149,39 @@ public final class ARI1InstrumentParserTest
     }
 
     this.roundTrip(instrument);
+  }
+
+  /**
+   * Invalid inputs must cause errors.
+   */
+
+  @TestFactory
+  public Stream<DynamicTest> testErrors()
+  {
+    return Stream.of(
+      "instrument-error-0.xml",
+      "instrument-error-1.xml",
+      "instrument-error-2.xml",
+      "instrument-error-3.xml",
+      "instrument-error-4.xml",
+      "instrument-error-5.xml"
+    ).map(name -> {
+      return DynamicTest.dynamicTest("testErrors_" + name, () -> {
+        final var file =
+          ARTestDirectories.resourceOf(
+            ARI1InstrumentParserTest.class,
+            this.directory,
+            name
+          );
+
+        final var ex =
+          assertThrows(ParseException.class, () -> {
+            this.parsers.parseFile(file);
+          });
+
+        assertNotEquals(0, ex.statusValues().size());
+      });
+    });
   }
 
   private void roundTrip(

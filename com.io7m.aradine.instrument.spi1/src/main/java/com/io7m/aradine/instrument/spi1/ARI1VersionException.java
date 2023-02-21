@@ -14,35 +14,43 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
+import java.util.Objects;
+
 /**
- * <p>The type of real parameters.</p>
+ * The type of exceptions raised by the API.
  */
 
-public non-sealed interface ARI1ParameterRealType
-  extends ARI1ParameterType
+public final class ARI1VersionException extends Exception
 {
   /**
-   * @return The minimum inclusive value for the parameter
+   * The type of exceptions raised by the API.
+   *
+   * @param message The message
    */
 
-  double valueMinimum();
+  public ARI1VersionException(
+    final String message)
+  {
+    super(Objects.requireNonNull(message, "message"));
+  }
 
   /**
-   * @return The maximum inclusive value for the parameter
+   * The type of exceptions raised by the API.
+   *
+   * @param message The message
+   * @param cause   The cause
    */
 
-  double valueMaximum();
-
-  /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
-   */
-
-  double value(int frameIndex);
+  public ARI1VersionException(
+    final String message,
+    final Throwable cause)
+  {
+    super(
+      Objects.requireNonNull(message, "message"),
+      Objects.requireNonNull(cause, "cause")
+    );
+  }
 }

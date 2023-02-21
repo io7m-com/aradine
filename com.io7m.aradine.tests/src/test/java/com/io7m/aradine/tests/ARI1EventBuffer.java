@@ -17,14 +17,14 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventBufferType;
+import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public final class ARI1EventBuffer implements ARI1ControlEventBufferType
+public final class ARI1EventBuffer implements ARI1EventBufferType
 {
   private final Int2ObjectOpenHashMap<LinkedList<ARI1ControlEventType>> events;
 

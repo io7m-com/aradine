@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.maven_plugin;
 
+import com.io7m.anethum.common.ParseException;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorParameters;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGenerators;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
@@ -149,6 +150,44 @@ public final class CodeGenerationMojo extends AbstractMojo
       this.project.addResource(resource);
 
     } catch (final Exception e) {
+      if (e.getCause() instanceof ParseException x) {
+        final var logger = this.getLog();
+        for (final var status : x.statusValues()) {
+          switch (status.severity()) {
+            case PARSE_ERROR -> {
+              logger.error(
+                String.format(
+                  "%d:%d: %s",
+                  Integer.valueOf(status.lexical().line()),
+                  Integer.valueOf(status.lexical().column()),
+                  x.getMessage()
+                )
+              );
+            }
+            case PARSE_WARNING -> {
+              logger.warn(
+                String.format(
+                  "%d:%d: %s",
+                  Integer.valueOf(status.lexical().line()),
+                  Integer.valueOf(status.lexical().column()),
+                  x.getMessage()
+                )
+              );
+            }
+            case PARSE_INFO -> {
+              logger.info(
+                String.format(
+                  "%d:%d: %s",
+                  Integer.valueOf(status.lexical().line()),
+                  Integer.valueOf(status.lexical().column()),
+                  x.getMessage()
+                )
+              );
+            }
+          }
+        }
+      }
+
       throw new MojoExecutionException(e.getMessage(), e);
     }
   }

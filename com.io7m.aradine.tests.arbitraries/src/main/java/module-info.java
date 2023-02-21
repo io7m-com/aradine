@@ -14,35 +14,27 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterId;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortId;
+import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
- * <p>The type of real parameters.</p>
+ * Modular programmable synthesis (Arbitrary value instances)
  */
 
-public non-sealed interface ARI1ParameterRealType
-  extends ARI1ParameterType
+module com.io7m.aradine.tests.arbitraries
 {
-  /**
-   * @return The minimum inclusive value for the parameter
-   */
+  requires transitive net.jqwik.api;
 
-  double valueMinimum();
+  requires transitive com.io7m.aradine.instrument.spi1;
 
-  /**
-   * @return The maximum inclusive value for the parameter
-   */
+  provides ArbitraryProvider
+    with
+      ARI1ProviderParameterId,
+      ARI1ProviderPortId,
+      ARI1ProviderAradineURIs
+    ;
 
-  double valueMaximum();
-
-  /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
-   */
-
-  double value(int frameIndex);
+  exports com.io7m.aradine.tests.arbitraries;
 }

@@ -20,7 +20,7 @@ package com.io7m.aradine.tests;
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterSetSampleMap;
+import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventPitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
@@ -41,6 +41,7 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jaudiolibs.jnajack.JackOptions.JackNoStartServer;
 import static org.jaudiolibs.jnajack.JackPortFlags.JackPortIsInput;
@@ -76,6 +77,12 @@ public final class ARI1MiniJackHost
       client.registerPort("outL", AUDIO, JackPortIsOutput);
     final var outR =
       client.registerPort("outR", AUDIO, JackPortIsOutput);
+
+    final var inL =
+      client.registerPort("inL", AUDIO, JackPortIsInput);
+    final var inR =
+      client.registerPort("inR", AUDIO, JackPortIsInput);
+
     final var inM =
       client.registerPort("inM", MIDI, JackPortIsInput);
 
@@ -109,11 +116,12 @@ public final class ARI1MiniJackHost
           ARI1PortOutputSampledType.class
         );
 
-    final var samplerMap =
-      services.declaredParameter(
-        new ARI1ParameterId(0),
-        ARI1ParameterSampleMapType.class
-      );
+    final var parameterSampleMap =
+      (ARI1ParameterSampleMap)
+        services.declaredParameter(
+          new ARI1ParameterId(0),
+          ARI1ParameterSampleMapType.class
+        );
 
     final var parameterLoopPoint =
       services.declaredParameter(
@@ -121,24 +129,36 @@ public final class ARI1MiniJackHost
         ARI1ParameterRealType.class
       );
 
-    final var messages =
-      new ConcurrentLinkedQueue<ARI1ControlEventType>();
-
-    messages.add(new ARI1ControlEventParameterSetSampleMap(
-      0,
-      samplerMap.id(),
-      URI.create("file:///anything")
-    ));
+    final var initSampleMap =
+      new AtomicBoolean(true);
 
     client.setProcessCallback((c, nframes) -> {
-      while (!messages.isEmpty()) {
-        final var message = messages.poll();
-        if (message != null) {
-          sampler.receiveEvent(services, message);
-        }
+      if (initSampleMap.compareAndSet(true, false)) {
+        parameterSampleMap.valueChange(0, URI.create("file:///anything"));
+        sampler.receiveEvent(
+          services,
+          new ARI1ControlEventParameterChanged(0, parameterSampleMap.id())
+        );
       }
 
       try {
+        /* XXX: Obviously need some superclass here that can't be observed by instruments. */
+
+        for (final var parameter : services.declaredParameters().values()) {
+          if (parameter instanceof ARI1ParameterInteger p) {
+            p.valueChangesClear();
+            continue;
+          }
+          if (parameter instanceof ARI1ParameterReal r) {
+            r.valueChangesClear();
+            continue;
+          }
+          if (parameter instanceof ARI1ParameterSampleMap s) {
+            s.valueChangesClear();
+            continue;
+          }
+        }
+
         final var eventCount =
           JackMidi.getEventCount(inM);
         final var event =

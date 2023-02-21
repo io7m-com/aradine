@@ -21,7 +21,7 @@ import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
  * Modular programmable synthesis (SPI 1 XML code)
  */
 
-module com.io7m.aradine.instrument.spi1.xml
+open module com.io7m.aradine.instrument.spi1.xml
 {
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;

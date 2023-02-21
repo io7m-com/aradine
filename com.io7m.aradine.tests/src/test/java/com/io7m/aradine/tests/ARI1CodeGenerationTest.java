@@ -22,6 +22,7 @@ import com.io7m.aradine.instrument.codegen.ARI1CodeGenerators;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentSerializers;
+import com.io7m.aradine.tests.spi1.xml.ARI1InstrumentParserTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

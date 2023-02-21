@@ -20,16 +20,30 @@
 
 open module com.io7m.aradine.tests
 {
-  requires com.io7m.aradine.instrument.sampler_p0;
-  requires com.io7m.aradine.instrument.spi1;
-  requires com.io7m.jattribute.core;
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.jsamplebuffer.vanilla;
-  requires com.io7m.jsamplebuffer.xmedia;
-  requires it.unimi.dsi.fastutil.core;
-  requires jnajack;
-  requires org.mockito;
-  requires org.slf4j;
+  requires transitive com.io7m.aradine.annotations;
+  requires transitive com.io7m.aradine.instrument.codegen;
+  requires transitive com.io7m.aradine.instrument.sampler_m0;
+  requires transitive com.io7m.aradine.instrument.sampler_p0;
+  requires transitive com.io7m.aradine.instrument.sampler_xp0;
+  requires transitive com.io7m.aradine.instrument.spi1.xml;
+  requires transitive com.io7m.aradine.instrument.spi1;
+  requires transitive com.io7m.aradine.tests.arbitraries;
+
+  requires transitive com.io7m.anethum.api;
+  requires transitive com.io7m.anethum.common;
+  requires transitive com.io7m.jattribute.core;
+  requires transitive com.io7m.jmulticlose.core;
+  requires transitive com.io7m.jsamplebuffer.vanilla;
+  requires transitive com.io7m.jsamplebuffer.xmedia;
+  requires transitive it.unimi.dsi.fastutil.core;
+  requires transitive jnajack;
+  requires transitive net.jqwik.api;
+  requires transitive net.jqwik.engine;
+  requires transitive org.apiguardian.api;
+  requires transitive org.junit.jupiter.api;
+  requires transitive org.junit.jupiter.engine;
+  requires transitive org.mockito;
+  requires transitive org.slf4j;
 
   exports com.io7m.aradine.tests;
 }

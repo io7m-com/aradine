@@ -36,8 +36,13 @@ public non-sealed interface ARI1ParameterIntegerType
   long valueMaximum();
 
   /**
+   * Retrieve the value of the parameter at time {@code frameIndex} in the
+   * current processing period.
+   *
+   * @param frameIndex The frame index
+   *
    * @return The value of the parameter
    */
 
-  long value();
+  long value(int frameIndex);
 }

@@ -14,35 +14,34 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
 
-/**
- * <p>The type of real parameters.</p>
- */
+package com.io7m.aradine.tests.spi1;
 
-public non-sealed interface ARI1ParameterRealType
-  extends ARI1ParameterType
+import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+public final class ARI1ParameterIdTest
 {
   /**
-   * @return The minimum inclusive value for the parameter
-   */
-
-  double valueMinimum();
-
-  /**
-   * @return The maximum inclusive value for the parameter
-   */
-
-  double valueMaximum();
-
-  /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
+   * Test that the toString method reflects the contents of the class.
    *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
+   * @param id0 Value A
+   * @param id1 Value B
    */
 
-  double value(int frameIndex);
+  @Property
+  public void testParameterIdToString(
+    final @ForAll ARI1ParameterId id0,
+    final @ForAll ARI1ParameterId id1)
+  {
+    if (id0.equals(id1)) {
+      assertEquals(id0.toString(), id1.toString());
+    } else {
+      assertNotEquals(id0.toString(), id1.toString());
+    }
+  }
 }

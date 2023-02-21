@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventBufferType;
+import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
@@ -188,16 +188,16 @@ public final class ARI1MiniInstrumentServices
     for (final var entry : instrumentDescription.parameters().entrySet()) {
       final var id = entry.getKey();
       final var description = entry.getValue();
-      if (description instanceof ARI1ParameterDescriptionIntegerType) {
-        parameters.put(id, new ARI1ParameterInteger(id));
+      if (description instanceof ARI1ParameterDescriptionIntegerType d) {
+        parameters.put(id, new ARI1ParameterInteger(d));
         continue;
       }
-      if (description instanceof ARI1ParameterDescriptionRealType) {
-        parameters.put(id, new ARI1ParameterReal(id));
+      if (description instanceof ARI1ParameterDescriptionRealType d) {
+        parameters.put(id, new ARI1ParameterReal(d));
         continue;
       }
-      if (description instanceof ARI1ParameterDescriptionSampleMapType) {
-        parameters.put(id, new ARI1ParameterSampleMap(id));
+      if (description instanceof ARI1ParameterDescriptionSampleMapType d) {
+        parameters.put(id, new ARI1ParameterSampleMap(d, URI.create("aradine:unspecified")));
         continue;
       }
     }
@@ -205,7 +205,7 @@ public final class ARI1MiniInstrumentServices
   }
 
   @Override
-  public ARI1ControlEventBufferType createEventBuffer()
+  public ARI1EventBufferType createEventBuffer()
   {
     return new ARI1EventBuffer();
   }

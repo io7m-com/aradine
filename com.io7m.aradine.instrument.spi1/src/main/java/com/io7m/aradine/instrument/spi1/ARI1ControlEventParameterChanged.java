@@ -14,47 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 
-import java.util.Objects;
-
 /**
- * A control event to set the value of a real parameter.
+ * The value of a parameter has changed at this time period.
  *
- * @param timeOffsetInFrames The time offset
- * @param parameter          The parameter
- * @param value              The value
+ * @param timeOffsetInFrames The time offset in frames
+ * @param parameter          The parameter ID
  */
 
-public record ARI1ControlEventParameterSetReal(
+public record ARI1ControlEventParameterChanged(
   @ARTimeFrames int timeOffsetInFrames,
-  ARI1ParameterId parameter,
-  double value)
-  implements ARI1ControlEventParameterSetType
+  ARI1ParameterId parameter)
+  implements ARI1ControlEventType
 {
-  /**
-   * A control event to set the value of a real parameter.
-   *
-   * @param timeOffsetInFrames The time offset
-   * @param parameter          The parameter
-   * @param value              The value
-   */
 
-  public ARI1ControlEventParameterSetReal
-  {
-    Objects.requireNonNull(parameter, "parameter");
-  }
-
-  @Override
-  public String toString()
-  {
-    return String.format(
-      "[ARI1ControlEventParameterSetReal [Time %d] %s [Value %f]]",
-      Integer.valueOf(this.timeOffsetInFrames),
-      this.parameter,
-      Double.valueOf(this.value)
-    );
-  }
 }

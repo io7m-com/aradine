@@ -29,6 +29,7 @@
     <module>com.io7m.aradine.instrument.spi1.xml</module>
     <module>com.io7m.aradine.instrument.spi1</module>
     <module>com.io7m.aradine.maven_plugin</module>
+    <module>com.io7m.aradine.tests.arbitraries</module>
     <module>com.io7m.aradine.tests</module>
   </modules>
 

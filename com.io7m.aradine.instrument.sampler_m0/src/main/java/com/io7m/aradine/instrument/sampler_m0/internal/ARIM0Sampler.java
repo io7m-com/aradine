@@ -16,10 +16,10 @@
 
 package com.io7m.aradine.instrument.sampler_m0.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventBufferType;
+import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterSetSampleMap;
+import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventPitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
@@ -36,7 +36,7 @@ import java.util.Objects;
 public final class ARIM0Sampler
   implements ARI1InstrumentType
 {
-  private final ARI1ControlEventBufferType eventBuffer;
+  private final ARI1EventBufferType eventBuffer;
   private final Parameters parameters;
   private final Ports ports;
   private final double[] frame;
@@ -57,7 +57,7 @@ public final class ARIM0Sampler
 
   public ARIM0Sampler(
     final ARI1SampleMapType inSampleMap,
-    final ARI1ControlEventBufferType inEventBuffer,
+    final ARI1EventBufferType inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
   {
@@ -130,23 +130,29 @@ public final class ARIM0Sampler
       return;
     }
 
-    if (event instanceof ARI1ControlEventParameterSetSampleMap eventSet) {
-      this.processEventParameterSetSampleMap(context, eventSet);
+    if (event instanceof ARI1ControlEventParameterChanged eventSet) {
+      this.processEventParameterChanged(context, eventSet);
       return;
     }
 
     context.eventUnhandled(event);
   }
 
-  private void processEventParameterSetSampleMap(
+  private void processEventParameterChanged(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventParameterSetSampleMap event)
+    final ARI1ControlEventParameterChanged eventSet)
   {
-    if (Objects.equals(event.parameter(), this.parameters.samples0.id())) {
-      this.openSampleMap(context, event.location());
+    final var id =
+      eventSet.parameter();
+    final var time =
+      eventSet.timeOffsetInFrames();
+
+    if (Objects.equals(id, this.parameters.samples0.id())) {
+      this.openSampleMap(context, this.parameters.samples0.value(time));
       return;
     }
-    context.eventUnhandled(event);
+
+    context.eventUnhandled(eventSet);
   }
 
   private void processEventPitchBend(

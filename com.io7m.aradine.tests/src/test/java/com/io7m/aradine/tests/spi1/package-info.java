@@ -14,35 +14,8 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
-
 /**
- * <p>The type of real parameters.</p>
+ * Modular programmable synthesis (Test suite)
  */
 
-public non-sealed interface ARI1ParameterRealType
-  extends ARI1ParameterType
-{
-  /**
-   * @return The minimum inclusive value for the parameter
-   */
-
-  double valueMinimum();
-
-  /**
-   * @return The maximum inclusive value for the parameter
-   */
-
-  double valueMaximum();
-
-  /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
-   */
-
-  double value(int frameIndex);
-}
+package com.io7m.aradine.tests.spi1;

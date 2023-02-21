@@ -17,54 +17,119 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
+import it.unimi.dsi.fastutil.ints.Int2DoubleRBTreeMap;
 
 import java.util.Objects;
 
 public final class ARI1ParameterReal
   implements ARI1ParameterRealType
 {
-  private volatile double value;
-  private final ARI1ParameterId id;
-  private volatile String label;
-  private double valueMinimum;
-  private double valueMaximum;
+  private final Int2DoubleRBTreeMap valueByTime;
+  private final ARI1ParameterDescriptionRealType description;
+
+  /**
+   * The value of this parameter at the start of the processing period. This is
+   * either the value upon which the last period ended, or the default value if
+   * no value has ever been set.
+   */
+
+  private double valueAtPeriodStart;
+
+  /**
+   * The time of the latest received change in the current period.
+   */
+
+  private int valueLatestTime;
+
+  /**
+   * The value that this parameter will have at the end of the processing
+   * period, assuming that no more events show up at a later time.
+   */
+
+  private double valueAtPeriodEnd;
 
   public ARI1ParameterReal(
-    final ARI1ParameterId inId)
+    final ARI1ParameterDescriptionRealType inDescription)
   {
-    this.id = Objects.requireNonNull(inId, "inId");
-    this.label = "";
+    this.description =
+      Objects.requireNonNull(inDescription, "description");
+
+    this.valueByTime = new Int2DoubleRBTreeMap();
+    this.valueLatestTime = 0;
+    this.valueAtPeriodEnd = this.description.valueDefault();
+    this.valueAtPeriodStart = this.description.valueDefault();
+  }
+
+  public void valueChangesClear()
+  {
+    this.valueByTime.clear();
+    this.valueLatestTime = 0;
+    this.valueAtPeriodStart = this.valueAtPeriodEnd;
+  }
+
+  public void valueChange(
+    final int time,
+    final double value)
+  {
+    this.valueByTime.put(time, value);
+    if (time >= this.valueLatestTime) {
+      this.valueLatestTime = time;
+      this.valueAtPeriodEnd = value;
+    }
   }
 
   @Override
   public ARI1ParameterId id()
   {
-    return this.id;
+    return this.description.id();
   }
 
   @Override
   public String label()
   {
-    return this.label;
+    return this.description.label();
   }
 
   @Override
   public double valueMinimum()
   {
-    return this.valueMinimum;
+    return this.description.valueMinimum();
   }
 
   @Override
   public double valueMaximum()
   {
-    return this.valueMaximum;
+    return this.description.valueMaximum();
   }
 
   @Override
-  public double value()
+  public double value(
+    final int frameIndex)
   {
-    return this.value;
+    /*
+     * Get the most recent events that occurred either before or exactly
+     * on the current time.
+     */
+
+    final var relevantEvents =
+      this.valueByTime.headMap(frameIndex + 1);
+
+    /*
+     * If there isn't a relevant event, then return the most recent
+     * value (most likely set in the previous processing period).
+     */
+
+    if (relevantEvents.isEmpty()) {
+      return this.valueAtPeriodStart;
+    }
+
+    /*
+     * Return the value of the most recent change event.
+     */
+
+    return relevantEvents.get(relevantEvents.lastIntKey());
   }
 }

@@ -326,14 +326,14 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
       this.publishError(
         "sax-exception",
         LexicalPositions.zero(),
-        e.getMessage()
+        Objects.requireNonNullElse(e.getMessage(), e.getClass().getName())
       );
       throw this.parseException();
     } catch (final JAXBException e) {
       this.publishError(
         "jaxb-exception",
         LexicalPositions.zero(),
-        e.getMessage()
+        Objects.requireNonNullElse(e.getMessage(), e.getClass().getName())
       );
       throw this.parseException();
     }

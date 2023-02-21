@@ -14,22 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.aradine.instrument.spi1;
 
+import java.util.List;
+
 /**
- * The type of control events that can set the values of parameters.
+ * The type of event buffers.
  */
 
-public sealed interface ARI1ControlEventParameterSetType
-  extends ARI1ControlEventType
-  permits ARI1ControlEventParameterSetInteger,
-  ARI1ControlEventParameterSetReal,
-  ARI1ControlEventParameterSetSampleMap
+public interface ARI1EventBufferType
 {
   /**
-   * @return The parameter
+   * Clear the buffer. This should typically be called at the end of each
+   * processing period.
    */
 
-  ARI1ParameterId parameter();
+  void eventsClear();
+
+  /**
+   * Add an event to the buffer.
+   *
+   * @param event The event
+   */
+
+  void eventAdd(ARI1ControlEventType event);
+
+  /**
+   * Take all events that apply to the given frame index/time.
+   *
+   * @param frameIndex The frame index/time
+   *
+   * @return The events that apply, if any
+   */
+
+  List<ARI1ControlEventType> eventsTake(int frameIndex);
 }

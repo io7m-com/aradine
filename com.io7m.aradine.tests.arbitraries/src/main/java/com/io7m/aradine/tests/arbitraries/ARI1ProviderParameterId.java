@@ -14,35 +14,48 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+
+package com.io7m.aradine.tests.arbitraries;
+
+import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.providers.ArbitraryProvider;
+import net.jqwik.api.providers.TypeUsage;
+
+import java.util.Set;
 
 /**
- * <p>The type of real parameters.</p>
+ * A provider of values.
  */
 
-public non-sealed interface ARI1ParameterRealType
-  extends ARI1ParameterType
+public final class ARI1ProviderParameterId
+  implements ArbitraryProvider
 {
   /**
-   * @return The minimum inclusive value for the parameter
+   * A provider of values.
    */
 
-  double valueMinimum();
+  public ARI1ProviderParameterId()
+  {
 
-  /**
-   * @return The maximum inclusive value for the parameter
-   */
+  }
 
-  double valueMaximum();
+  @Override
+  public boolean canProvideFor(
+    final TypeUsage targetType)
+  {
+    return targetType.isOfType(ARI1ParameterId.class);
+  }
 
-  /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
-   */
-
-  double value(int frameIndex);
+  @Override
+  public Set<Arbitrary<?>> provideFor(
+    final TypeUsage targetType,
+    final SubtypeProvider subtypeProvider)
+  {
+    return Set.of(
+      Arbitraries.integers()
+        .map(ARI1ParameterId::new)
+    );
+  }
 }

@@ -26,7 +26,7 @@ public interface ARI1InstrumentServiceImplementationObjectsType
    * @return A new empty event buffer
    */
 
-  ARI1ControlEventBufferType createEventBuffer();
+  ARI1EventBufferType createEventBuffer();
 
   /**
    * Create an empty integer map.

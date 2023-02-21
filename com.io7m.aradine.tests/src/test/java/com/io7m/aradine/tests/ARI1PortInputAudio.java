@@ -18,42 +18,34 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1PortOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortInputAudioType;
 
 import java.nio.DoubleBuffer;
 import java.util.Objects;
 
-public final class ARI1PortOutputSampled
-  implements ARI1PortOutputSampledType
+public final class ARI1PortInputAudio
+  implements ARI1PortInputAudioType
 {
-  private DoubleBuffer outputBuffer;
+  private DoubleBuffer inputBuffer;
   private final ARI1PortId id;
 
-  public ARI1PortOutputSampled(
+  public ARI1PortInputAudio(
     final ARI1PortId inId,
     final int sizeInitial)
   {
     this.id =
       Objects.requireNonNull(inId, "inName");
-    this.outputBuffer =
+    this.inputBuffer =
       DoubleBuffer.allocate(sizeInitial);
   }
 
-  @Override
-  public void write(
-    final int frame,
-    final double value)
-  {
-    this.outputBuffer.put(frame, value);
-  }
-
   /**
-   * @return The current output buffer
+   * @return The current input buffer
    */
 
   public DoubleBuffer buffer()
   {
-    return this.outputBuffer;
+    return this.inputBuffer;
   }
 
   @Override
@@ -71,6 +63,13 @@ public final class ARI1PortOutputSampled
   public void setBufferSize(
     final int newValue)
   {
-    this.outputBuffer = DoubleBuffer.allocate(newValue);
+    this.inputBuffer = DoubleBuffer.allocate(newValue);
+  }
+
+  @Override
+  public double read(
+    final int frame)
+  {
+    return this.inputBuffer.get(frame);
   }
 }

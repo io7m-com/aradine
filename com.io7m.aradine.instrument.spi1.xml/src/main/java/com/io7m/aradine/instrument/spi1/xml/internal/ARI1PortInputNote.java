@@ -14,40 +14,41 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
 
-import java.util.List;
+package com.io7m.aradine.instrument.spi1.xml.internal;
+
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortId;
+
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * The type of event buffers.
+ * The description of a note input port.
  *
- * @param <T> The supertype of events in the buffer
+ * @param id        The port ID
+ * @param semantics The port semantics
+ * @param label     The port label
  */
 
-public interface ARI1EventBufferType<T extends ARI1EventType>
+public record ARI1PortInputNote(
+  ARI1PortId id,
+  Set<String> semantics,
+  String label)
+  implements ARI1PortDescriptionInputNoteType
 {
   /**
-   * Clear the buffer. This should typically be called at the end of each
-   * processing period.
+   * The description of a note input port.
+   *
+   * @param id        The port ID
+   * @param semantics The port semantics
+   * @param label     The port label
    */
 
-  void eventsClear();
-
-  /**
-   * Add an event to the buffer.
-   *
-   * @param event The event
-   */
-
-  void eventAdd(T event);
-
-  /**
-   * Take all events that apply to the given frame index/time.
-   *
-   * @param frameIndex The frame index/time
-   *
-   * @return The events that apply, if any
-   */
-
-  List<? extends T> eventsTake(int frameIndex);
+  public ARI1PortInputNote
+  {
+    Objects.requireNonNull(id, "id");
+    Objects.requireNonNull(semantics, "semantics");
+    Objects.requireNonNull(label, "label");
+  }
 }

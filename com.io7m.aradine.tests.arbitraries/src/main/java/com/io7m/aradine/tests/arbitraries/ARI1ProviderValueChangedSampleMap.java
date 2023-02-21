@@ -22,21 +22,20 @@ import net.jqwik.api.Arbitrary;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 
-import java.net.URI;
 import java.util.Set;
 
 /**
  * A provider of values.
  */
 
-public final class ARI1ProviderAradineURIs
+public final class ARI1ProviderValueChangedSampleMap
   implements ArbitraryProvider
 {
   /**
    * A provider of values.
    */
 
-  public ARI1ProviderAradineURIs()
+  public ARI1ProviderValueChangedSampleMap()
   {
 
   }
@@ -45,7 +44,7 @@ public final class ARI1ProviderAradineURIs
   public boolean canProvideFor(
     final TypeUsage targetType)
   {
-    return targetType.isOfType(URI.class);
+    return targetType.isOfType(ARI1ValueChangedSampleMap.class);
   }
 
   @Override
@@ -53,19 +52,24 @@ public final class ARI1ProviderAradineURIs
     final TypeUsage targetType,
     final SubtypeProvider subtypeProvider)
   {
-    return Set.of(aradineURIs());
+    return Set.of(get());
   }
 
   /**
-   * @return A source of aradine URIs
+   * @return An arbitrary instance
    */
 
-  public static Arbitrary<URI> aradineURIs()
+  public static Arbitrary<ARI1ValueChangedSampleMap> get()
   {
-    return Arbitraries.strings()
-      .alpha()
-      .ofMinLength(1)
-      .ofMaxLength(1024)
-      .map(x -> URI.create("aradine:" + x));
+    final var ai =
+      Arbitraries.integers()
+        .between(0, 100_000_000);
+
+    final var al =
+      ARI1ProviderAradineURIs.aradineURIs();
+
+    return ai.flatMap(time -> al.map(v -> {
+      return new ARI1ValueChangedSampleMap(time.intValue(), v);
+    }));
   }
 }

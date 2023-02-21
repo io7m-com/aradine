@@ -44,5 +44,5 @@ public interface ARI1InstrumentType
 
   void receiveEvent(
     ARI1InstrumentServicesType context,
-    ARI1ControlEventType event);
+    ARI1EventConfigurationType event);
 }

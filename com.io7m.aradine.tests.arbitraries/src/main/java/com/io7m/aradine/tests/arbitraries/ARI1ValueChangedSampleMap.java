@@ -14,16 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+package com.io7m.aradine.tests.arbitraries;
+
+import java.net.URI;
 
 /**
- * An input port.
+ * A sample-map-typed value changed.
+ *
+ * @param time  The change time
+ * @param value The value
  */
 
-public sealed interface ARI1PortInputType
-  extends ARI1PortType
-  permits ARI1PortInputAudioType,
-  ARI1PortInputNoteType
+public record ARI1ValueChangedSampleMap(
+  int time,
+  URI value)
 {
 
 }

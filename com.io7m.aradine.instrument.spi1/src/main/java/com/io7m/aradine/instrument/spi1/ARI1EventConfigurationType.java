@@ -16,24 +16,13 @@
 
 package com.io7m.aradine.instrument.spi1;
 
-import com.io7m.aradine.annotations.ARNormalizedUnsigned;
-import com.io7m.aradine.annotations.ARNote;
-import com.io7m.aradine.annotations.ARTimeFrames;
-
 /**
- * A note has started.
- *
- * @param timeOffsetInFrames The offset of the note from the start of the
- *                           processing period
- * @param note               The note number
- * @param velocity           The velocity
+ * The base type of configuration events.
  */
 
-public record ARI1ControlEventNoteOn(
-  @ARTimeFrames int timeOffsetInFrames,
-  @ARNote int note,
-  @ARNormalizedUnsigned double velocity)
-  implements ARI1ControlEventType
+public sealed interface ARI1EventConfigurationType
+  extends ARI1EventType
+  permits ARI1EventConfigurationParameterChanged
 {
 
 }

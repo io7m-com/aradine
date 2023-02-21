@@ -17,35 +17,35 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * The description of a sampled output port.
+ * The description of an audio input port.
  *
  * @param id        The port ID
  * @param semantics The port semantics
  * @param label     The port label
  */
 
-public record ARI1PortOutputSampled(
+public record ARI1PortInputAudio(
   ARI1PortId id,
   Set<String> semantics,
   String label)
-  implements ARI1PortDescriptionOutputSampledType
+  implements ARI1PortDescriptionInputAudioType
 {
   /**
-   * The description of a sampled output port.
+   * The description of an audio input port.
    *
    * @param id        The port ID
    * @param semantics The port semantics
    * @param label     The port label
    */
 
-  public ARI1PortOutputSampled
+  public ARI1PortInputAudio
   {
     Objects.requireNonNull(id, "id");
     Objects.requireNonNull(semantics, "semantics");

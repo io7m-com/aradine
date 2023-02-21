@@ -23,7 +23,9 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
@@ -36,7 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
@@ -132,20 +133,46 @@ public final class ARI1InstrumentParserTest
 
     {
       final var p =
-        (ARI1PortDescriptionOutputSampledType)
+        (ARI1PortDescriptionOutputAudioType)
           instrument.ports().get(new ARI1PortId(0));
 
       assertEquals("Output L", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.main_left"), p.semantics());
+      assertEquals(Set.of("com.io7m.aradine.port.output.main_left"), p.semantics());
     }
 
     {
       final var p =
-        (ARI1PortDescriptionOutputSampledType)
+        (ARI1PortDescriptionOutputAudioType)
           instrument.ports().get(new ARI1PortId(1));
 
       assertEquals("Output R", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.main_right"), p.semantics());
+      assertEquals(Set.of("com.io7m.aradine.port.output.main_right"), p.semantics());
+    }
+
+    {
+      final var p =
+        (ARI1PortDescriptionInputAudioType)
+          instrument.ports().get(new ARI1PortId(2));
+
+      assertEquals("Input L", p.label());
+      assertEquals(Set.of("com.io7m.aradine.port.input.main_left"), p.semantics());
+    }
+
+    {
+      final var p =
+        (ARI1PortDescriptionInputAudioType)
+          instrument.ports().get(new ARI1PortId(3));
+
+      assertEquals("Input R", p.label());
+      assertEquals(Set.of("com.io7m.aradine.port.input.main_right"), p.semantics());
+    }
+
+    {
+      final var p =
+        (ARI1PortDescriptionInputNoteType)
+          instrument.ports().get(new ARI1PortId(4));
+
+      assertEquals("Note In", p.label());
     }
 
     this.roundTrip(instrument);

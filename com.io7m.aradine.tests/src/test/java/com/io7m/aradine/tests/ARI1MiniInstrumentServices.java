@@ -18,7 +18,8 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
+import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
@@ -28,7 +29,9 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1PropertyIntType;
@@ -167,14 +170,30 @@ public final class ARI1MiniInstrumentServices
       final var id = entry.getKey();
       final var description = entry.getValue();
 
-      if (description instanceof ARI1PortDescriptionOutputSampledType) {
-        final var port = new ARI1PortOutputSampled(id, bufferSizeAttribute.get());
+      if (description instanceof ARI1PortDescriptionOutputAudioType) {
+        final var port = new ARI1PortOutputAudio(id, bufferSizeAttribute.get());
         ports.put(id, port);
         closeables.add(
           bufferSizeAttribute.subscribe((oldValue, newValue) -> {
             port.setBufferSize(newValue);
           })
         );
+        continue;
+      }
+
+      if (description instanceof ARI1PortDescriptionInputAudioType) {
+        final var port = new ARI1PortInputAudio(id, bufferSizeAttribute.get());
+        ports.put(id, port);
+        closeables.add(
+          bufferSizeAttribute.subscribe((oldValue, newValue) -> {
+            port.setBufferSize(newValue);
+          })
+        );
+        continue;
+      }
+
+      if (description instanceof ARI1PortDescriptionInputNoteType) {
+        ports.put(id, new ARI1PortInputNote(id));
         continue;
       }
     }
@@ -282,7 +301,7 @@ public final class ARI1MiniInstrumentServices
 
   @Override
   public void eventUnhandled(
-    final ARI1ControlEventType event)
+    final ARI1EventType event)
   {
     LOG.warn(
       "[{} {}] unhandled event: {}",

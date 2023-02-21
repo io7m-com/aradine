@@ -20,8 +20,9 @@ package com.io7m.aradine.instrument.spi1;
  * An input port.
  */
 
-public non-sealed interface ARI1PortDescriptionInputType
+public sealed interface ARI1PortDescriptionInputType
   extends ARI1PortDescriptionType
+  permits ARI1PortDescriptionInputAudioType, ARI1PortDescriptionInputNoteType
 {
 
 }

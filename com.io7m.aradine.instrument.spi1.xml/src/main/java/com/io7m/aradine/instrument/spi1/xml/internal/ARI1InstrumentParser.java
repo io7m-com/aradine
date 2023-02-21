@@ -34,7 +34,10 @@ import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterRealType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Parameters;
-import com.io7m.aradine.instrument.spi1.xml.jaxb.PortOutputSampledType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortInputAudioType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortInputNoteType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortOutputAudioType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Ports;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Version;
 import com.io7m.jlexing.core.LexicalPosition;
@@ -158,30 +161,89 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
     final Ports ports)
   {
     final var declarations =
-      ports.getPortOutputSampled();
+      ports.getPortInputAudioOrPortInputNoteOrPortOutputAudio();
     final Map<ARI1PortId, ARI1PortDescriptionType> results =
       new HashMap<>(declarations.size());
 
     for (final var declaration : declarations) {
       final var id = new ARI1PortId((int) declaration.getID());
-      if (declaration instanceof PortOutputSampledType) {
-        final var semantics = new HashSet<String>();
-        for (final var sem : declaration.getPortSemantic()) {
-          semantics.add(new RDottedName(sem.getValue()).value());
-        }
+      if (declaration instanceof PortOutputAudioType) {
+        processPortOutputAudio(results, declaration, id);
+        continue;
+      }
 
-        results.put(
-          id,
-          new ARI1PortOutputSampled(
-            id,
-            Set.copyOf(semantics),
-            declaration.getLabel()
-          )
-        );
+      if (declaration instanceof PortInputAudioType) {
+        processPortInputAudio(results, declaration, id);
+        continue;
+      }
+
+      if (declaration instanceof PortInputNoteType) {
+        processPortInputNote(results, declaration, id);
+        continue;
       }
     }
 
     return results;
+  }
+
+  private static void processPortOutputAudio(
+    final Map<ARI1PortId, ARI1PortDescriptionType> results,
+    final PortType declaration,
+    final ARI1PortId id)
+  {
+    final var semantics = new HashSet<String>();
+    for (final var sem : declaration.getPortSemantic()) {
+      semantics.add(new RDottedName(sem.getValue()).value());
+    }
+
+    results.put(
+      id,
+      new ARI1PortOutputAudio(
+        id,
+        Set.copyOf(semantics),
+        declaration.getLabel()
+      )
+    );
+  }
+
+  private static void processPortInputNote(
+    final Map<ARI1PortId, ARI1PortDescriptionType> results,
+    final PortType declaration,
+    final ARI1PortId id)
+  {
+    final var semantics = new HashSet<String>();
+    for (final var sem : declaration.getPortSemantic()) {
+      semantics.add(new RDottedName(sem.getValue()).value());
+    }
+
+    results.put(
+      id,
+      new ARI1PortInputNote(
+        id,
+        Set.copyOf(semantics),
+        declaration.getLabel()
+      )
+    );
+  }
+
+  private static void processPortInputAudio(
+    final Map<ARI1PortId, ARI1PortDescriptionType> results,
+    final PortType declaration,
+    final ARI1PortId id)
+  {
+    final var semantics = new HashSet<String>();
+    for (final var sem : declaration.getPortSemantic()) {
+      semantics.add(new RDottedName(sem.getValue()).value());
+    }
+
+    results.put(
+      id,
+      new ARI1PortInputAudio(
+        id,
+        Set.copyOf(semantics),
+        declaration.getLabel()
+      )
+    );
   }
 
   private static Map<ARI1ParameterId, ARI1ParameterDescriptionType> processParameters(

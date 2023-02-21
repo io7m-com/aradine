@@ -14,19 +14,18 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 
 /**
- * A control rate event.
+ * The base type of events.
  */
 
-public sealed interface ARI1ControlEventType
-  permits ARI1ControlEventNoteOff,
-  ARI1ControlEventNoteOn,
-  ARI1ControlEventParameterChanged,
-  ARI1ControlEventPitchBend
+public sealed interface ARI1EventType
+  permits ARI1EventNoteType,
+  ARI1EventConfigurationType
 {
   /**
    * The offset in frames from the start of the processing period to which the

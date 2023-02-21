@@ -17,11 +17,11 @@
 package com.io7m.aradine.instrument.spi1;
 
 /**
- * A sampled output port.
+ * An audio input port.
  */
 
-public non-sealed interface ARI1PortDescriptionOutputSampledType
-  extends ARI1PortDescriptionOutputType
+public non-sealed interface ARI1PortDescriptionInputAudioType
+  extends ARI1PortDescriptionInputType
 {
 
 }

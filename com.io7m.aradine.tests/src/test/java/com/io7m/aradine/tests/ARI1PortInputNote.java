@@ -14,52 +14,49 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
-import com.io7m.aradine.instrument.spi1.ARI1EventType;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
 
-import java.util.LinkedList;
+import java.nio.DoubleBuffer;
 import java.util.List;
+import java.util.Objects;
 
-public final class ARI1EventBuffer<T extends ARI1EventType>
-  implements ARI1EventBufferType<T>
+public final class ARI1PortInputNote
+  implements ARI1PortInputNoteType
 {
-  private final Int2ObjectOpenHashMap<LinkedList<T>> events;
+  private final ARI1EventBufferType<ARI1EventNoteType> eventBuffer;
+  private final ARI1PortId id;
 
-  public ARI1EventBuffer()
+  public ARI1PortInputNote(
+    final ARI1PortId inId)
   {
-    this.events = new Int2ObjectOpenHashMap<>(1024);
+    this.id =
+      Objects.requireNonNull(inId, "inName");
+    this.eventBuffer =
+      new ARI1EventBuffer<>();
   }
 
   @Override
-  public void eventsClear()
+  public ARI1PortId id()
   {
-    this.events.clear();
+    return this.id;
   }
 
   @Override
+  public List<? extends ARI1EventNoteType> eventsTake(
+    final int frameIndex)
+  {
+    return this.eventBuffer.eventsTake(frameIndex);
+  }
+
   public void eventAdd(
-    final T event)
+    final ARI1EventNoteType event)
   {
-    final var time = event.timeOffsetInFrames();
-    var byArrival = this.events.get(time);
-    if (byArrival == null) {
-      byArrival = new LinkedList<>();
-    }
-    byArrival.add(event);
-    this.events.put(time, byArrival);
-  }
-
-  @Override
-  public List<? extends T> eventsTake(
-    final int time)
-  {
-    final var byArrival = this.events.remove(time);
-    if (byArrival == null) {
-      return List.of();
-    }
-    return byArrival;
+    this.eventBuffer.eventAdd(event);
   }
 }

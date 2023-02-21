@@ -18,16 +18,18 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOff;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterChanged;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventPitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1PortOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
 import org.jaudiolibs.jnajack.Jack;
 import org.jaudiolibs.jnajack.JackClient;
 import org.jaudiolibs.jnajack.JackException;
@@ -40,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jaudiolibs.jnajack.JackOptions.JackNoStartServer;
@@ -103,17 +104,24 @@ public final class ARI1MiniJackHost
       samplers.createInstrument(services);
 
     final var samplerOutL =
-      (ARI1PortOutputSampled)
+      (ARI1PortOutputAudio)
         services.declaredPort(
           new ARI1PortId(0),
-          ARI1PortOutputSampledType.class
+          ARI1PortOutputAudioType.class
         );
 
     final var samplerOutR =
-      (ARI1PortOutputSampled)
+      (ARI1PortOutputAudio)
         services.declaredPort(
           new ARI1PortId(1),
-          ARI1PortOutputSampledType.class
+          ARI1PortOutputAudioType.class
+        );
+
+    final var samplerNoteIn =
+      (ARI1PortInputNote)
+        services.declaredPort(
+          new ARI1PortId(2),
+          ARI1PortInputNoteType.class
         );
 
     final var parameterSampleMap =
@@ -137,7 +145,7 @@ public final class ARI1MiniJackHost
         parameterSampleMap.valueChange(0, URI.create("file:///anything"));
         sampler.receiveEvent(
           services,
-          new ARI1ControlEventParameterChanged(0, parameterSampleMap.id())
+          new ARI1EventConfigurationParameterChanged(0, parameterSampleMap.id())
         );
       }
 
@@ -174,7 +182,8 @@ public final class ARI1MiniJackHost
           if (parsedEvent == null) {
             continue;
           }
-          sampler.receiveEvent(services, parsedEvent);
+
+          samplerNoteIn.eventAdd(parsedEvent);
         }
       } catch (final JackException e) {
         throw new RuntimeException(e);
@@ -208,7 +217,7 @@ public final class ARI1MiniJackHost
     }
   }
 
-  private static ARI1ControlEventType parseEvent(
+  private static ARI1EventNoteType parseEvent(
     final byte[] data,
     final int time)
   {
@@ -220,14 +229,14 @@ public final class ARI1MiniJackHost
         final var note = (int) data[1] & 0xff;
         final var velo = (int) data[2] & 0xff;
         final var velF = (double) velo / 127.0;
-        return new ARI1ControlEventNoteOn(time, note, velF);
+        return new ARI1EventNoteOn(time, note, velF);
       }
 
       if (status == 8) {
         final var note = (int) data[1] & 0xff;
         final var velo = (int) data[2] & 0xff;
         final var velF = (double) velo / 127.0;
-        return new ARI1ControlEventNoteOff(time, note, velF);
+        return new ARI1EventNoteOff(time, note, velF);
       }
 
       if (status == 14) {
@@ -236,7 +245,7 @@ public final class ARI1MiniJackHost
         final var val = (msb << 8) | lsb;
         final var valD = ((double) val) / 32768.0;
         final var valS = (valD * 2.0) - 1.0;
-        return new ARI1ControlEventPitchBend(time, valS);
+        return new ARI1EventNotePitchBend(time, valS);
       }
     }
 

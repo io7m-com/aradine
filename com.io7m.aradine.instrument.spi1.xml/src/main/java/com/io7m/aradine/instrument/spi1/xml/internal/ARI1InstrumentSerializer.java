@@ -24,7 +24,9 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
@@ -36,7 +38,9 @@ import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterRealType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Parameters;
-import com.io7m.aradine.instrument.spi1.xml.jaxb.PortOutputSampledType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortInputAudioType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortInputNoteType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.PortOutputAudioType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.PortSemantic;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Ports;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Version;
@@ -90,25 +94,72 @@ public final class ARI1InstrumentSerializer
     final Map<ARI1PortId, ARI1PortDescriptionType> ports)
   {
     final var r = new Ports();
-    final var p = r.getPortOutputSampled();
+    final var p = r.getPortInputAudioOrPortInputNoteOrPortOutputAudio();
 
     final var ks = new ArrayList<>(ports.keySet());
     Collections.sort(ks);
 
     for (final var k : ks) {
       final var value = ports.get(k);
-      if (value instanceof ARI1PortDescriptionOutputSampledType) {
-        p.add(processPortOutputSampled(value));
+      if (value instanceof ARI1PortDescriptionOutputAudioType v) {
+        p.add(processPortOutputAudio(v));
+        continue;
+      }
+      if (value instanceof ARI1PortDescriptionInputAudioType v) {
+        p.add(processPortInputAudio(v));
+        continue;
+      }
+      if (value instanceof ARI1PortDescriptionInputNoteType v) {
+        p.add(processPortInputNote(v));
+        continue;
       }
     }
 
     return r;
   }
 
-  private static PortOutputSampledType processPortOutputSampled(
-    final ARI1PortDescriptionType value)
+  private static PortInputNoteType processPortInputNote(
+    final ARI1PortDescriptionInputNoteType value)
   {
-    final var m = new PortOutputSampledType();
+    final var m = new PortInputNoteType();
+    m.setID(Integer.toUnsignedLong(value.id().value()));
+    m.setLabel(value.label());
+
+    final var s = m.getPortSemantic();
+    final var ss = new ArrayList<>(value.semantics());
+    Collections.sort(ss);
+
+    for (final var pp : ss) {
+      final var q = new PortSemantic();
+      q.setValue(pp);
+      s.add(q);
+    }
+    return m;
+  }
+
+  private static PortInputAudioType processPortInputAudio(
+    final ARI1PortDescriptionInputAudioType value)
+  {
+    final var m = new PortInputAudioType();
+    m.setID(Integer.toUnsignedLong(value.id().value()));
+    m.setLabel(value.label());
+
+    final var s = m.getPortSemantic();
+    final var ss = new ArrayList<>(value.semantics());
+    Collections.sort(ss);
+
+    for (final var pp : ss) {
+      final var q = new PortSemantic();
+      q.setValue(pp);
+      s.add(q);
+    }
+    return m;
+  }
+
+  private static PortOutputAudioType processPortOutputAudio(
+    final ARI1PortDescriptionOutputAudioType value)
+  {
+    final var m = new PortOutputAudioType();
     m.setID(Integer.toUnsignedLong(value.id().value()));
     m.setLabel(value.label());
 

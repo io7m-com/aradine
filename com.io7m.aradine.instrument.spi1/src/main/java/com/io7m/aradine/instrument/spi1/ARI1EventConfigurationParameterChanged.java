@@ -14,16 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+
 /**
- * An input port.
+ * The value of a parameter has changed at this time period.
+ *
+ * @param timeOffsetInFrames The time offset in frames
+ * @param parameter          The parameter ID
  */
 
-public sealed interface ARI1PortInputType
-  extends ARI1PortType
-  permits ARI1PortInputAudioType,
-  ARI1PortInputNoteType
+public record ARI1EventConfigurationParameterChanged(
+  @ARTimeFrames int timeOffsetInFrames,
+  ARI1ParameterId parameter)
+  implements ARI1EventConfigurationType
 {
 
 }

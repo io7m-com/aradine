@@ -32,10 +32,14 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1PortOutputSampledType;
+import com.io7m.aradine.instrument.spi1.ARI1PortInputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
 import com.io7m.jodist.ClassName;
 import com.io7m.jodist.FieldSpec;
 import com.io7m.jodist.JavaFile;
@@ -122,11 +126,19 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   private static Class<?> generatePortFieldType(
     final ARI1PortDescriptionType description)
   {
-    if (description instanceof ARI1PortDescriptionOutputSampledType p) {
-      return ARI1PortOutputSampledType.class;
+    if (description instanceof ARI1PortDescriptionOutputAudioType) {
+      return ARI1PortOutputAudioType.class;
+    }
+    if (description instanceof ARI1PortDescriptionInputAudioType) {
+      return ARI1PortInputAudioType.class;
+    }
+    if (description instanceof ARI1PortDescriptionInputNoteType) {
+      return ARI1PortInputNoteType.class;
     }
 
-    throw new IllegalStateException();
+    throw new IllegalStateException(
+      "Unmatched port type: " + description.getClass()
+    );
   }
 
   private static FieldSpec generatePortField(

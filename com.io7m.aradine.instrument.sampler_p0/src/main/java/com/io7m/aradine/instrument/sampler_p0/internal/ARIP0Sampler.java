@@ -17,11 +17,12 @@
 package com.io7m.aradine.instrument.sampler_p0.internal;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOff;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterChanged;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventPitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
@@ -42,7 +43,7 @@ public final class ARIP0Sampler
   private final Ports ports;
   private final double[] frameSum;
   private double pitchBend;
-  private final ARI1EventBufferType eventBuffer;
+  private final ARI1EventBufferType<ARI1EventConfigurationType> eventBuffer;
   private final double[] frame;
   private volatile ARI1SampleMapType sampleMap;
 
@@ -59,7 +60,7 @@ public final class ARIP0Sampler
   public ARIP0Sampler(
     final ARI1InstrumentServicesType services,
     final ARI1SampleMapType inSampleMap,
-    final ARI1EventBufferType inEventBuffer,
+    final ARI1EventBufferType<ARI1EventConfigurationType> inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
   {
@@ -85,7 +86,15 @@ public final class ARIP0Sampler
   {
     final var frames = context.statusCurrentBufferSize().get();
     for (int frameIndex = 0; frameIndex < frames; ++frameIndex) {
-      this.processEventsForFrame(context, frameIndex);
+      final var events = this.eventBuffer.eventsTake(frameIndex);
+      for (final var event : events) {
+        this.processEventConfigurationForFrame(context, event);
+      }
+
+      final var noteEvents = this.ports.noteInput2.eventsTake(frameIndex);
+      for (final var event : noteEvents) {
+        this.processEventNoteForFrame(context, event);
+      }
 
       this.frame[0] = 0.0;
       this.frame[1] = 0.0;
@@ -105,36 +114,33 @@ public final class ARIP0Sampler
     this.eventBuffer.eventsClear();
   }
 
-  private void processEventsForFrame(
+  private void processEventNoteForFrame(
     final ARI1InstrumentServicesType context,
-    final int frameIndex)
+    final ARI1EventNoteType event)
   {
-    final var events = this.eventBuffer.eventsTake(frameIndex);
-    for (final var event : events) {
-      this.processEventForFrame(context, event);
-    }
-  }
-
-  private void processEventForFrame(
-    final ARI1InstrumentServicesType context,
-    final ARI1ControlEventType event)
-  {
-    if (event instanceof ARI1ControlEventNoteOn eventNoteOn) {
+    if (event instanceof ARI1EventNoteOn eventNoteOn) {
       this.processEventNoteOn(eventNoteOn);
       return;
     }
 
-    if (event instanceof ARI1ControlEventNoteOff eventNoteOff) {
+    if (event instanceof ARI1EventNoteOff eventNoteOff) {
       this.processEventNoteOff(eventNoteOff);
       return;
     }
 
-    if (event instanceof ARI1ControlEventPitchBend eventPitchBend) {
+    if (event instanceof ARI1EventNotePitchBend eventPitchBend) {
       this.processEventPitchBend(eventPitchBend);
       return;
     }
 
-    if (event instanceof ARI1ControlEventParameterChanged eventSet) {
+    context.eventUnhandled(event);
+  }
+
+  private void processEventConfigurationForFrame(
+    final ARI1InstrumentServicesType context,
+    final ARI1EventConfigurationType event)
+  {
+    if (event instanceof ARI1EventConfigurationParameterChanged eventSet) {
       this.processEventParameterChanged(context, eventSet);
       return;
     }
@@ -144,7 +150,7 @@ public final class ARIP0Sampler
 
   private void processEventParameterChanged(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventParameterChanged event)
+    final ARI1EventConfigurationParameterChanged event)
   {
     final var id =
       event.parameter();
@@ -159,19 +165,19 @@ public final class ARIP0Sampler
   }
 
   private void processEventPitchBend(
-    final ARI1ControlEventPitchBend event)
+    final ARI1EventNotePitchBend event)
   {
     this.pitchBend = event.pitch();
   }
 
   private void processEventNoteOff(
-    final ARI1ControlEventNoteOff event)
+    final ARI1EventNoteOff event)
   {
     this.samplesPlaying.remove(event.note());
   }
 
   private void processEventNoteOn(
-    final ARI1ControlEventNoteOn event)
+    final ARI1EventNoteOn event)
   {
     final var noteIndex = event.note();
     this.samplesPlaying.put(
@@ -187,7 +193,7 @@ public final class ARIP0Sampler
   @Override
   public void receiveEvent(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventType event)
+    final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);
   }

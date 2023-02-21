@@ -22,7 +22,7 @@ package com.io7m.aradine.instrument.spi1;
 
 public sealed interface ARI1PortOutputType
   extends ARI1PortType
-  permits ARI1PortOutputSampledType
+  permits ARI1PortOutputAudioType
 {
 
 }

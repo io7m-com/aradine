@@ -17,20 +17,19 @@
 package com.io7m.aradine.instrument.spi1;
 
 /**
- * A sampled output port.
+ * An input port delivering monophonic audio as 64-bit floating point samples.
  */
 
-public non-sealed interface ARI1PortOutputSampledType
-  extends ARI1PortOutputType
+public non-sealed interface ARI1PortInputAudioType
+  extends ARI1PortInputType
 {
   /**
-   * Write an output value at frame index {@code frame}.
+   * Read a value from frame index {@code frame}.
    *
    * @param frame The frame index
-   * @param value The output value
+   *
+   * @return The input value
    */
 
-  void write(
-    int frame,
-    double value);
+  double read(int frame);
 }

@@ -16,21 +16,21 @@
 
 package com.io7m.aradine.instrument.spi1;
 
-import com.io7m.aradine.annotations.ARNormalizedSigned;
-import com.io7m.aradine.annotations.ARTimeFrames;
-
 /**
- * The pitch bend has changed.
- *
- * @param timeOffsetInFrames The offset of the note from the start of the
- *                           processing period
- * @param pitch              The signed pitch bend value
+ * A sampled output port.
  */
 
-public record ARI1ControlEventPitchBend(
-  @ARTimeFrames int timeOffsetInFrames,
-  @ARNormalizedSigned double pitch)
-  implements ARI1ControlEventType
+public non-sealed interface ARI1PortOutputAudioType
+  extends ARI1PortOutputType
 {
+  /**
+   * Write an output value at frame index {@code frame}.
+   *
+   * @param frame The frame index
+   * @param value The output value
+   */
 
+  void write(
+    int frame,
+    double value);
 }

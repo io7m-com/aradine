@@ -14,16 +14,25 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
+import java.util.List;
+
 /**
- * An input port.
+ * An input port delivering buffered note events.
  */
 
-public sealed interface ARI1PortInputType
-  extends ARI1PortType
-  permits ARI1PortInputAudioType,
-  ARI1PortInputNoteType
+public non-sealed interface ARI1PortInputNoteType
+  extends ARI1PortInputType
 {
+  /**
+   * Take all events that apply to the given frame index/time.
+   *
+   * @param frameIndex The frame index/time
+   *
+   * @return The events that apply, if any
+   */
 
+  List<? extends ARI1EventNoteType> eventsTake(int frameIndex);
 }

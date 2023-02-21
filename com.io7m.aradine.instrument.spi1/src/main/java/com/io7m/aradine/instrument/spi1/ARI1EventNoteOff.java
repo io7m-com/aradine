@@ -14,22 +14,26 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.aradine.instrument.spi1;
 
+import com.io7m.aradine.annotations.ARNormalizedUnsigned;
+import com.io7m.aradine.annotations.ARNote;
 import com.io7m.aradine.annotations.ARTimeFrames;
 
 /**
- * The value of a parameter has changed at this time period.
+ * A note has stopped.
  *
- * @param timeOffsetInFrames The time offset in frames
- * @param parameter          The parameter ID
+ * @param timeOffsetInFrames The offset of the note from the start of the
+ *                           processing period
+ * @param note               The note number
+ * @param velocity           The velocity
  */
 
-public record ARI1ControlEventParameterChanged(
+public record ARI1EventNoteOff(
   @ARTimeFrames int timeOffsetInFrames,
-  ARI1ParameterId parameter)
-  implements ARI1ControlEventType
+  @ARNote int note,
+  @ARNormalizedUnsigned double velocity)
+  implements ARI1EventNoteType
 {
 
 }

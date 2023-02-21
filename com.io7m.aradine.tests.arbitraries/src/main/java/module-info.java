@@ -14,9 +14,6 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs;
-import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterId;
-import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortId;
 import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
@@ -31,9 +28,16 @@ module com.io7m.aradine.tests.arbitraries
 
   provides ArbitraryProvider
     with
-      ARI1ProviderParameterId,
-      ARI1ProviderPortId,
-      ARI1ProviderAradineURIs
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterId,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderPortId,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedReal,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedRealMaps,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMap,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMapMaps
     ;
 
   exports com.io7m.aradine.tests.arbitraries;

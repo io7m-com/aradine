@@ -31,14 +31,18 @@
   </Parameters>
 
   <Ports>
-    <PortOutputSampled ID="0"
-                       Label="Output L">
+    <PortOutputAudio ID="0"
+                     Label="Output L">
       <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
-    </PortOutputSampled>
-    <PortOutputSampled ID="1"
-                       Label="Output R">
+    </PortOutputAudio>
+
+    <PortOutputAudio ID="1"
+                     Label="Output R">
       <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
-    </PortOutputSampled>
+    </PortOutputAudio>
+
+    <PortInputNote ID="2"
+                   Label="Note Input"/>
   </Ports>
 
 </Instrument>

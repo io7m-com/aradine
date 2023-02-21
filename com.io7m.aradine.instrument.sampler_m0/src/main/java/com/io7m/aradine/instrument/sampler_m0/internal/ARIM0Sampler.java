@@ -17,11 +17,12 @@
 package com.io7m.aradine.instrument.sampler_m0.internal;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOff;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventParameterChanged;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventPitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1ControlEventType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
+import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
@@ -36,7 +37,7 @@ import java.util.Objects;
 public final class ARIM0Sampler
   implements ARI1InstrumentType
 {
-  private final ARI1EventBufferType eventBuffer;
+  private final ARI1EventBufferType<ARI1EventConfigurationType> eventBuffer;
   private final Parameters parameters;
   private final Ports ports;
   private final double[] frame;
@@ -57,7 +58,7 @@ public final class ARIM0Sampler
 
   public ARIM0Sampler(
     final ARI1SampleMapType inSampleMap,
-    final ARI1EventBufferType inEventBuffer,
+    final ARI1EventBufferType<ARI1EventConfigurationType> inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
   {
@@ -107,30 +108,42 @@ public final class ARIM0Sampler
   {
     final var events = this.eventBuffer.eventsTake(frameIndex);
     for (final var event : events) {
-      this.processEventForFrame(context, event);
+      this.processEventConfigurationForFrame(context, event);
+    }
+
+    final var noteEvents = this.ports.noteInput2.eventsTake(frameIndex);
+    for (final var event : noteEvents) {
+      this.processEventNoteForFrame(context, event);
     }
   }
 
-  private void processEventForFrame(
+  private void processEventNoteForFrame(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventType event)
+    final ARI1EventNoteType event)
   {
-    if (event instanceof ARI1ControlEventNoteOn eventNoteOn) {
+    if (event instanceof ARI1EventNoteOn eventNoteOn) {
       this.processEventNoteOn(eventNoteOn);
       return;
     }
 
-    if (event instanceof ARI1ControlEventNoteOff) {
+    if (event instanceof ARI1EventNoteOff) {
       this.processEventNoteOff();
       return;
     }
 
-    if (event instanceof ARI1ControlEventPitchBend eventPitchBend) {
+    if (event instanceof ARI1EventNotePitchBend eventPitchBend) {
       this.processEventPitchBend(eventPitchBend);
       return;
     }
 
-    if (event instanceof ARI1ControlEventParameterChanged eventSet) {
+    context.eventUnhandled(event);
+  }
+
+  private void processEventConfigurationForFrame(
+    final ARI1InstrumentServicesType context,
+    final ARI1EventConfigurationType event)
+  {
+    if (event instanceof ARI1EventConfigurationParameterChanged eventSet) {
       this.processEventParameterChanged(context, eventSet);
       return;
     }
@@ -140,7 +153,7 @@ public final class ARIM0Sampler
 
   private void processEventParameterChanged(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventParameterChanged eventSet)
+    final ARI1EventConfigurationParameterChanged eventSet)
   {
     final var id =
       eventSet.parameter();
@@ -156,7 +169,7 @@ public final class ARIM0Sampler
   }
 
   private void processEventPitchBend(
-    final ARI1ControlEventPitchBend event)
+    final ARI1EventNotePitchBend event)
   {
     this.pitchBend = event.pitch();
   }
@@ -170,7 +183,7 @@ public final class ARIM0Sampler
   }
 
   private void processEventNoteOn(
-    final ARI1ControlEventNoteOn event)
+    final ARI1EventNoteOn event)
   {
     this.velocity = event.velocity();
     this.samplePlaying =
@@ -184,7 +197,7 @@ public final class ARIM0Sampler
   @Override
   public void receiveEvent(
     final ARI1InstrumentServicesType context,
-    final ARI1ControlEventType event)
+    final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);
   }

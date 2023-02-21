@@ -19,15 +19,11 @@ package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
-import net.jqwik.api.Arbitraries;
-import net.jqwik.api.Arbitrary;
+import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedInteger;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
-import net.jqwik.api.Provide;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,62 +47,24 @@ public abstract class ARI1ParameterIntegerContract<T extends ARI1ParameterIntege
     T parameter
   );
 
-  private record Update(int time, long value)
-  {
-  }
-
-  @Provide(value = "updates")
-  public static Arbitrary<Update> updates()
-  {
-    final var ai =
-      Arbitraries.integers()
-        .between(0, 100_000_000);
-
-    final var al =
-      Arbitraries.longs();
-
-    return ai.flatMap(time -> al.map(v -> {
-      return new Update(time.intValue(), v.longValue());
-    }));
-  }
-
-  @Provide(value = "updateLists")
-  public static Arbitrary<List<Update>> updateLists()
-  {
-    return updates().list();
-  }
-
-  @Provide(value = "updateMaps")
-  public static Arbitrary<Map<Integer, Update>> updateMaps()
-  {
-    return updates()
-      .list()
-      .reduce(new HashMap<>(), (m, update) -> {
-        m.put(Integer.valueOf(update.time), update);
-        return m;
-      });
-  }
-
   /**
    * The value change with the latest time wins.
-   *
-   * @return The tests
    */
 
   @Property
   public void testEventLastWins(
     @ForAll final ARI1ParameterId id,
     @ForAll final long valueDefault,
-    @ForAll(value = "updateMaps") final Map<Integer, Update> updates)
+    @ForAll final Map<Integer, ARI1ValueChangedInteger> updates)
   {
     final var param =
       this.createParameter(id, Long.MIN_VALUE, Long.MAX_VALUE, valueDefault);
 
     final var sorted = new ArrayList<>(updates.values());
-    sorted.sort((o1, o2) -> Integer.compareUnsigned(o1.time, o2.time));
+    sorted.sort((o1, o2) -> Integer.compareUnsigned(o1.time(), o2.time()));
 
     for (final var update : sorted) {
-      this.setValue(param, update.time, update.value);
+      this.setValue(param, update.time(), update.value());
     }
 
     /*
@@ -125,26 +83,24 @@ public abstract class ARI1ParameterIntegerContract<T extends ARI1ParameterIntege
      */
 
     for (final var update : sorted) {
-      assertEquals(update.value, param.value(update.time));
+      assertEquals(update.value(), param.value(update.time()));
     }
 
     final var last = sorted.get(sorted.size() - 1);
-    assertEquals(last.value, param.value(last.time + 100));
+    assertEquals(last.value(), param.value(last.time() + 100));
 
     /*
      * After clearing, the value is still the last update value.
      */
 
     this.clearChanges(param);
-    assertEquals(last.value, param.value(0));
-    assertEquals(last.value, param.value(1_000));
-    assertEquals(last.value, param.value(1_000_000));
+    assertEquals(last.value(), param.value(0));
+    assertEquals(last.value(), param.value(1_000));
+    assertEquals(last.value(), param.value(1_000_000));
   }
 
   /**
    * The last value change occurring on the same frame wins.
-   *
-   * @return The tests
    */
 
   @Property

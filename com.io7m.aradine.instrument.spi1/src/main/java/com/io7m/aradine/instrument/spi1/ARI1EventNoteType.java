@@ -14,26 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
-import com.io7m.aradine.annotations.ARNormalizedUnsigned;
-import com.io7m.aradine.annotations.ARNote;
-import com.io7m.aradine.annotations.ARTimeFrames;
-
 /**
- * A note has stopped.
- *
- * @param timeOffsetInFrames The offset of the note from the start of the
- *                           processing period
- * @param note               The note number
- * @param velocity           The velocity
+ * The type of events involving notes and supplemental expression data (such as
+ * pitch bend, etc).
  */
 
-public record ARI1ControlEventNoteOff(
-  @ARTimeFrames int timeOffsetInFrames,
-  @ARNote int note,
-  @ARNormalizedUnsigned double velocity)
-  implements ARI1ControlEventType
+public sealed interface ARI1EventNoteType
+  extends ARI1EventType
+  permits ARI1EventNoteOff,
+  ARI1EventNoteOn,
+  ARI1EventNotePitchBend
 {
 
 }

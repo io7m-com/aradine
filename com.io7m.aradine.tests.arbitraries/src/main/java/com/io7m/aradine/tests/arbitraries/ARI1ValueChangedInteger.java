@@ -14,16 +14,18 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+package com.io7m.aradine.tests.arbitraries;
 
 /**
- * An input port.
+ * An integer-typed value changed.
+ *
+ * @param time  The change time
+ * @param value The value
  */
 
-public sealed interface ARI1PortInputType
-  extends ARI1PortType
-  permits ARI1PortInputAudioType,
-  ARI1PortInputNoteType
+public record ARI1ValueChangedInteger(
+  int time,
+  long value)
 {
 
 }

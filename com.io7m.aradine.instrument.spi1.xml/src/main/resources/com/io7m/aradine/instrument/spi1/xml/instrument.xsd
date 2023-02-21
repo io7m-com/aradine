@@ -271,10 +271,10 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PortOutputSampledType">
+  <xsd:complexType name="PortOutputAudioType">
     <xsd:annotation>
       <xsd:documentation>
-        A sampled output port represents a stream of 64-bit IEEE754 floating point values.
+        An audio output port represents a stream of 64-bit IEEE754 floating point values.
       </xsd:documentation>
     </xsd:annotation>
 
@@ -283,12 +283,57 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:element name="PortOutputSampled"
-               type="i:PortOutputSampledType"/>
+  <xsd:element name="PortOutputAudio"
+               type="i:PortOutputAudioType"/>
+
+  <xsd:complexType name="PortInputType"
+                   abstract="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        The base type of input ports.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:PortType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="PortInputAudioType">
+    <xsd:annotation>
+      <xsd:documentation>
+        An audio input port represents a stream of 64-bit IEEE754 floating point values.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:PortInputType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="PortInputAudio"
+               type="i:PortInputAudioType"/>
+
+  <xsd:complexType name="PortInputNoteType">
+    <xsd:annotation>
+      <xsd:documentation>
+        An input port delivering buffered note events.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:PortInputType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="PortInputNote"
+               type="i:PortInputNoteType"/>
 
   <xsd:group name="PortGroup">
     <xsd:choice>
-      <xsd:element ref="i:PortOutputSampled"/>
+      <xsd:element ref="i:PortInputAudio"/>
+      <xsd:element ref="i:PortInputNote"/>
+      <xsd:element ref="i:PortOutputAudio"/>
     </xsd:choice>
   </xsd:group>
 

@@ -14,16 +14,18 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
 
-/**
- * An input port.
- */
+package com.io7m.aradine.tests.spi1;
 
-public sealed interface ARI1PortInputType
-  extends ARI1PortType
-  permits ARI1PortInputAudioType,
-  ARI1PortInputNoteType
+import com.io7m.aradine.instrument.spi1.ARI1EventType;
+import com.io7m.aradine.tests.ARI1EventBuffer;
+
+public final class ARI1EventBufferTest
+  extends ARI1EventBufferContract<ARI1EventBuffer<ARI1EventType>>
 {
-
+  @Override
+  protected ARI1EventBuffer<ARI1EventType> createEventBuffer()
+  {
+    return new ARI1EventBuffer<>();
+  }
 }

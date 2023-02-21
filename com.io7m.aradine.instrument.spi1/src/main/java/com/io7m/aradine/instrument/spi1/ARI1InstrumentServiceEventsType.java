@@ -29,5 +29,5 @@ public interface ARI1InstrumentServiceEventsType
    * @param event The event
    */
 
-  void eventUnhandled(ARI1ControlEventType event);
+  void eventUnhandled(ARI1EventType event);
 }

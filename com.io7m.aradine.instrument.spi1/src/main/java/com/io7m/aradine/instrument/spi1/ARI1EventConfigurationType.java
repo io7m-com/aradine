@@ -22,7 +22,9 @@ package com.io7m.aradine.instrument.spi1;
 
 public sealed interface ARI1EventConfigurationType
   extends ARI1EventType
-  permits ARI1EventConfigurationParameterChanged
+  permits ARI1EventConfigurationBufferSizeChanged,
+  ARI1EventConfigurationParameterChanged,
+  ARI1EventConfigurationSampleRateChanged
 {
 
 }

@@ -17,21 +17,19 @@
 
 package com.io7m.aradine.instrument.spi1;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+
 /**
- * @param <T> The type of underlying values
- *
- * @see ARI1PropertyObjectReadableType
+ * The buffer size changed. Guaranteed to occur at most once in a processing
+ * period, and only at frame index {@code 0}.
  */
 
-public interface ARI1PropertyObjectType<T>
-  extends ARI1PropertyObjectReadableType<T>
+public record ARI1EventConfigurationBufferSizeChanged()
+  implements ARI1EventConfigurationType
 {
-  /**
-   * Set the value of this attribute. Any subscribers of this observable are
-   * notified of the change in value.
-   *
-   * @param value The new value
-   */
-
-  void set(T value);
+  @Override
+  public @ARTimeFrames int timeOffsetInFrames()
+  {
+    return 0;
+  }
 }

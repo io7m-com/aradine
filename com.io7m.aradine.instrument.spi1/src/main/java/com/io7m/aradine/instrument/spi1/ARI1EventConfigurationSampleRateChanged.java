@@ -17,20 +17,19 @@
 
 package com.io7m.aradine.instrument.spi1;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+
 /**
- * A consumer of integer property updates.
+ * The sampling rate changed. Guaranteed to occur at most once in a processing
+ * period, and only at frame index {@code 0}.
  */
 
-public interface ARI1PropertyIntConsumerType
+public record ARI1EventConfigurationSampleRateChanged()
+  implements ARI1EventConfigurationType
 {
-  /**
-   * The value of a property changed.
-   *
-   * @param oldValue The previous value
-   * @param newValue The current value
-   */
-
-  void onUpdate(
-    int oldValue,
-    int newValue);
+  @Override
+  public @ARTimeFrames int timeOffsetInFrames()
+  {
+    return 0;
+  }
 }

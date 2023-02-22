@@ -18,7 +18,6 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
@@ -34,9 +33,9 @@ import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
-import com.io7m.aradine.instrument.spi1.ARI1PropertyIntType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
+import com.io7m.jattribute.core.AttributeType;
 import com.io7m.jattribute.core.Attributes;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
@@ -66,8 +65,8 @@ public final class ARI1MiniInstrumentServices
     LoggerFactory.getLogger(ARI1MiniInstrumentServices.class);
 
   private final ARI1InstrumentDescriptionType instrumentDescription;
-  private final ARI1PropertyInt sampleRate;
-  private final ARI1PropertyInt bufferSize;
+  private final AttributeType<Integer> sampleRate;
+  private final AttributeType<Integer> bufferSize;
   private final ARI1SampleMapEmpty emptyMap;
   private final CloseableCollectionType<ClosingResourceFailedException> closeables;
   private final ExecutorService ioExecutor;
@@ -80,8 +79,8 @@ public final class ARI1MiniInstrumentServices
     final ExecutorService inIOExecutor,
     final SampleBufferRateConverterType inConverter,
     final ARI1InstrumentDescriptionType inInstrumentDescription,
-    final ARI1PropertyInt inSampleRate,
-    final ARI1PropertyInt inBufferSize,
+    final AttributeType<Integer> inSampleRate,
+    final AttributeType<Integer> inBufferSize,
     final Map<ARI1ParameterId, ARI1ParameterType> inParameters,
     final Map<ARI1PortId, ARI1PortType> inPorts)
   {
@@ -115,9 +114,9 @@ public final class ARI1MiniInstrumentServices
       Attributes.create(ex -> LOG.error("exception: ", ex));
 
     final var sampleRateAttribute =
-      new ARI1PropertyInt(attributes, sampleRate);
+      attributes.create(Integer.valueOf(sampleRate));
     final var bufferSizeAttribute =
-      new ARI1PropertyInt(attributes, bufferSize);
+      attributes.create(Integer.valueOf(bufferSize));
 
     final var closeables =
       CloseableCollection.create();
@@ -161,7 +160,7 @@ public final class ARI1MiniInstrumentServices
   }
 
   private static HashMap<ARI1PortId, ARI1PortType> instantiatePorts(
-    final ARI1PropertyInt bufferSizeAttribute,
+    final AttributeType<Integer> bufferSizeAttribute,
     final CloseableCollectionType<ClosingResourceFailedException> closeables,
     final ARI1InstrumentDescriptionType instrumentDescription)
   {
@@ -170,23 +169,25 @@ public final class ARI1MiniInstrumentServices
       final var id = entry.getKey();
       final var description = entry.getValue();
 
+      final var currentBufferSize = bufferSizeAttribute.get().intValue();
       if (description instanceof ARI1PortDescriptionOutputAudioType) {
-        final var port = new ARI1PortOutputAudio(id, bufferSizeAttribute.get());
+        final var port =
+          new ARI1PortOutputAudio(id, currentBufferSize);
         ports.put(id, port);
         closeables.add(
           bufferSizeAttribute.subscribe((oldValue, newValue) -> {
-            port.setBufferSize(newValue);
+            port.setBufferSize(newValue.intValue());
           })
         );
         continue;
       }
 
       if (description instanceof ARI1PortDescriptionInputAudioType) {
-        final var port = new ARI1PortInputAudio(id, bufferSizeAttribute.get());
+        final var port = new ARI1PortInputAudio(id, currentBufferSize);
         ports.put(id, port);
         closeables.add(
           bufferSizeAttribute.subscribe((oldValue, newValue) -> {
-            port.setBufferSize(newValue);
+            port.setBufferSize(newValue.intValue());
           })
         );
         continue;
@@ -237,15 +238,15 @@ public final class ARI1MiniInstrumentServices
   }
 
   @Override
-  public ARI1PropertyIntType statusCurrentSampleRate()
+  public int statusCurrentSampleRate()
   {
-    return this.sampleRate;
+    return this.sampleRate.get().intValue();
   }
 
   @Override
-  public ARI1PropertyIntType statusCurrentBufferSize()
+  public int statusCurrentBufferSize()
   {
-    return this.bufferSize;
+    return this.bufferSize.get().intValue();
   }
 
   @Override
@@ -266,7 +267,7 @@ public final class ARI1MiniInstrumentServices
             sampleDescriptions.put(66, Paths.get("63.wav"));
             future.complete(
               new ARI1SampleMapDescription(sampleDescriptions)
-                .load(this.converter, this.sampleRate.get())
+                .load(this.converter, this.sampleRate.get().intValue())
             );
           } catch (final Throwable e) {
             future.completeExceptionally(e);
@@ -290,13 +291,13 @@ public final class ARI1MiniInstrumentServices
   public void setBufferSize(
     final int size)
   {
-    this.bufferSize.set(size);
+    this.bufferSize.set(Integer.valueOf(size));
   }
 
   public void setSampleRate(
     final int rate)
   {
-    this.sampleRate.set(rate);
+    this.sampleRate.set(Integer.valueOf(rate));
   }
 
   @Override

@@ -18,6 +18,8 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
@@ -42,6 +44,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jaudiolibs.jnajack.JackOptions.JackNoStartServer;
@@ -97,8 +101,19 @@ public final class ARI1MiniJackHost
         client.getBufferSize()
       );
 
-    client.setBuffersizeCallback((c, size) -> services.setBufferSize(size));
-    client.setSampleRateCallback((c, rate) -> services.setSampleRate(rate));
+
+    final var messages =
+      new ConcurrentLinkedQueue<ARI1EventConfigurationType>();
+
+    client.setBuffersizeCallback((c, size) -> {
+      services.setBufferSize(size);
+      messages.add(new ARI1EventConfigurationBufferSizeChanged());
+    });
+
+    client.setSampleRateCallback((c, rate) -> {
+      services.setSampleRate(rate);
+      messages.add(new ARI1EventConfigurationSampleRateChanged());
+    });
 
     final var sampler =
       samplers.createInstrument(services);
@@ -137,16 +152,19 @@ public final class ARI1MiniJackHost
         ARI1ParameterRealType.class
       );
 
-    final var initSampleMap =
-      new AtomicBoolean(true);
+    messages.add(
+      new ARI1EventConfigurationParameterChanged(0, parameterSampleMap.id())
+    );
 
     client.setProcessCallback((c, nframes) -> {
-      if (initSampleMap.compareAndSet(true, false)) {
-        parameterSampleMap.valueChange(0, URI.create("file:///anything"));
-        sampler.receiveEvent(
-          services,
-          new ARI1EventConfigurationParameterChanged(0, parameterSampleMap.id())
-        );
+      while (!messages.isEmpty()) {
+        final var message = messages.poll();
+        if (message instanceof ARI1EventConfigurationParameterChanged e) {
+          if (Objects.equals(e.parameter(), parameterSampleMap.id())) {
+            parameterSampleMap.valueChange(0, URI.create("file:///anything"));
+          }
+        }
+        sampler.receiveEvent(services, message);
       }
 
       try {

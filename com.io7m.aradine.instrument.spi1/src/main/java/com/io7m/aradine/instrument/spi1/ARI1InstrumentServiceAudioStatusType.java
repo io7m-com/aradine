@@ -24,15 +24,14 @@ package com.io7m.aradine.instrument.spi1;
 public interface ARI1InstrumentServiceAudioStatusType
 {
   /**
-   * @return A property advertising the current sampling rate in frames per
-   * second
+   * @return The current sampling rate in frames per second
    */
 
-  ARI1PropertyIntReadableType statusCurrentSampleRate();
+  int statusCurrentSampleRate();
 
   /**
-   * @return A property advertising the current buffer size in frames
+   * @return The current buffer size in frames
    */
 
-  ARI1PropertyIntReadableType statusCurrentBufferSize();
+  int statusCurrentBufferSize();
 }

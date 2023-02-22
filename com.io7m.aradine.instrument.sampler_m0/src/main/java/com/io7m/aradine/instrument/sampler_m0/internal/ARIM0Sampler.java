@@ -17,6 +17,8 @@
 package com.io7m.aradine.instrument.sampler_m0.internal;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
@@ -80,7 +82,7 @@ public final class ARIM0Sampler
   public void process(
     final ARI1InstrumentServicesType context)
   {
-    final var frames = context.statusCurrentBufferSize().get();
+    final var frames = context.statusCurrentBufferSize();
     for (int frameIndex = 0; frameIndex < frames; ++frameIndex) {
       this.processEventsForFrame(context, frameIndex);
 
@@ -143,6 +145,14 @@ public final class ARIM0Sampler
     final ARI1InstrumentServicesType context,
     final ARI1EventConfigurationType event)
   {
+    if (event instanceof ARI1EventConfigurationBufferSizeChanged) {
+      return;
+    }
+
+    if (event instanceof ARI1EventConfigurationSampleRateChanged) {
+      return;
+    }
+
     if (event instanceof ARI1EventConfigurationParameterChanged eventSet) {
       this.processEventParameterChanged(context, eventSet);
       return;

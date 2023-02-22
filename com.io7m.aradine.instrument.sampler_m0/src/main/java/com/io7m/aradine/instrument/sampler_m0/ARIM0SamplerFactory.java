@@ -56,7 +56,6 @@ public final class ARIM0SamplerFactory
     final ARI1InstrumentServicesType services)
   {
     return new ARIM0Sampler(
-      services.sampleMapOpenEmpty(),
       services.createEventBuffer(),
       new Parameters(services),
       new Ports(services)

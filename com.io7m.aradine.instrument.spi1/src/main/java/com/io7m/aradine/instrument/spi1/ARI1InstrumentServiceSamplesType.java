@@ -18,7 +18,6 @@
 package com.io7m.aradine.instrument.spi1;
 
 import java.net.URI;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Methods to asynchronously load samples and sample maps.
@@ -27,18 +26,19 @@ import java.util.concurrent.CompletableFuture;
 public interface ARI1InstrumentServiceSamplesType
 {
   /**
-   * Open a sample map at the given URI.
+   * Retrieve the sample map at the given URI.
    *
    * @param uri The URI
    *
-   * @return A future representing the loading in progress
+   * @return The sample map (or the empty map, if no such sample map has been
+   * loaded)
    */
 
-  CompletableFuture<ARI1SampleMapType> sampleMapOpen(URI uri);
+  ARI1SampleMapType sampleMapGet(URI uri);
 
   /**
    * @return An empty sample map
    */
 
-  ARI1SampleMapType sampleMapOpenEmpty();
+  ARI1SampleMapType sampleMapEmpty();
 }

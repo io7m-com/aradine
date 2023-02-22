@@ -58,7 +58,6 @@ public final class ARIXP0SamplerFactory
   {
     return new ARIXP0Sampler(
       services,
-      services.sampleMapOpenEmpty(),
       services.createEventBuffer(),
       new Parameters(services),
       new Ports(services)

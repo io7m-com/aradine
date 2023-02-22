@@ -27,9 +27,7 @@ import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 
-import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -46,26 +44,21 @@ public final class ARIM0Sampler
   private double pitchBend;
   private double velocity;
   private int notes;
-  private volatile ARI1SampleMapType sampleMap;
-  private volatile ARIM0SampleState samplePlaying;
+  private ARIM0SampleState samplePlaying;
 
   /**
    * A monophonic sampler.
    *
-   * @param inSampleMap   The initial sample map
    * @param inEventBuffer The event buffer
    * @param inParameters The parameters
    * @param inPorts The ports
    */
 
   public ARIM0Sampler(
-    final ARI1SampleMapType inSampleMap,
     final ARI1EventBufferType<ARI1EventConfigurationType> inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
   {
-    this.sampleMap =
-      Objects.requireNonNull(inSampleMap, "inSampleMap");
     this.eventBuffer =
       Objects.requireNonNull(inEventBuffer, "eventBuffer");
     this.parameters =
@@ -124,7 +117,7 @@ public final class ARIM0Sampler
     final ARI1EventNoteType event)
   {
     if (event instanceof ARI1EventNoteOn eventNoteOn) {
-      this.processEventNoteOn(eventNoteOn);
+      this.processEventNoteOn(context, eventNoteOn);
       return;
     }
 
@@ -165,13 +158,8 @@ public final class ARIM0Sampler
     final ARI1InstrumentServicesType context,
     final ARI1EventConfigurationParameterChanged eventSet)
   {
-    final var id =
-      eventSet.parameter();
-    final var time =
-      eventSet.timeOffsetInFrames();
-
+    final var id = eventSet.parameter();
     if (Objects.equals(id, this.parameters.samples0.id())) {
-      this.openSampleMap(context, this.parameters.samples0.value(time));
       return;
     }
 
@@ -193,14 +181,19 @@ public final class ARIM0Sampler
   }
 
   private void processEventNoteOn(
+    final ARI1InstrumentServicesType context,
     final ARI1EventNoteOn event)
   {
-    this.velocity = event.velocity();
-    this.samplePlaying =
-      new ARIM0SampleState(
-        this.sampleMap.forNote(event.note()),
-        this.velocity
+    final var sampleMap =
+      context.sampleMapGet(
+        this.parameters.samples0.value(event.timeOffsetInFrames())
       );
+
+    this.velocity =
+      event.velocity();
+    this.samplePlaying =
+      new ARIM0SampleState(sampleMap.forNote(event.note()), this.velocity);
+
     ++this.notes;
   }
 
@@ -210,17 +203,5 @@ public final class ARIM0Sampler
     final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);
-  }
-
-  private void openSampleMap(
-    final ARI1InstrumentServicesType context,
-    final URI source)
-  {
-    context.sampleMapOpen(source)
-      .whenComplete((samples, throwable) -> {
-        if (samples != null) {
-          this.sampleMap = samples;
-        }
-      });
   }
 }

@@ -42,21 +42,14 @@ import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.jmulticlose.core.ClosingResourceFailedException;
 import com.io7m.jsamplebuffer.api.SampleBufferRateConverterType;
 import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
-import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ARI1MiniInstrumentServices
   implements ARI1InstrumentServicesType, AutoCloseable
@@ -69,15 +62,12 @@ public final class ARI1MiniInstrumentServices
   private final AttributeType<Integer> bufferSize;
   private final ARI1SampleMapEmpty emptyMap;
   private final CloseableCollectionType<ClosingResourceFailedException> closeables;
-  private final ExecutorService ioExecutor;
-  private final SampleBufferRateConverterType converter;
   private final Map<ARI1ParameterId, ARI1ParameterType> parameters;
   private final Map<ARI1PortId, ARI1PortType> ports;
+  private final ConcurrentHashMap<URI, ARI1SampleMapType> sampleMaps;
 
   private ARI1MiniInstrumentServices(
     final CloseableCollectionType<ClosingResourceFailedException> inCloseables,
-    final ExecutorService inIOExecutor,
-    final SampleBufferRateConverterType inConverter,
     final ARI1InstrumentDescriptionType inInstrumentDescription,
     final AttributeType<Integer> inSampleRate,
     final AttributeType<Integer> inBufferSize,
@@ -86,10 +76,6 @@ public final class ARI1MiniInstrumentServices
   {
     this.closeables =
       Objects.requireNonNull(inCloseables, "closeables");
-    this.ioExecutor =
-      Objects.requireNonNull(inIOExecutor, "inIOExecutor");
-    this.converter =
-      Objects.requireNonNull(inConverter, "inConverter");
     this.instrumentDescription =
       Objects.requireNonNull(inInstrumentDescription, "inInstrumentDescription");
     this.sampleRate =
@@ -98,6 +84,8 @@ public final class ARI1MiniInstrumentServices
       Objects.requireNonNull(inBufferSize, "inBufferSize");
     this.emptyMap =
       new ARI1SampleMapEmpty();
+    this.sampleMaps =
+      new ConcurrentHashMap<>();
     this.parameters =
       Map.copyOf(inParameters);
     this.ports =
@@ -135,22 +123,8 @@ public final class ARI1MiniInstrumentServices
     final var ports =
       instantiatePorts(bufferSizeAttribute, closeables, instrumentDescription);
 
-    final var executor =
-      Executors.newFixedThreadPool(4, r -> {
-        final var thread = new Thread(r);
-        thread.setDaemon(true);
-        thread.setName("com.io7m.aradine.tests.io." + thread.getId());
-        thread.setPriority(Thread.MIN_PRIORITY);
-        return thread;
-      });
-
-    final var converters =
-      new SXMSampleBufferRateConverters();
-
     return new ARI1MiniInstrumentServices(
       closeables,
-      executor,
-      converters.createConverter(),
       instrumentDescription,
       sampleRateAttribute,
       bufferSizeAttribute,
@@ -249,41 +223,33 @@ public final class ARI1MiniInstrumentServices
     return this.bufferSize.get().intValue();
   }
 
-  @Override
-  public CompletableFuture<ARI1SampleMapType> sampleMapOpen(
-    final URI uri)
+  public void sampleMapRegister(
+    final URI uri,
+    final ARI1SampleMapType sampleMap)
   {
-    return switch (uri.getScheme()) {
-      case "file" -> {
-        final var future = new CompletableFuture<ARI1SampleMapType>();
-        this.ioExecutor.execute(() -> {
-          final var timeThen = Instant.now();
-
-          try {
-            final var sampleDescriptions = new Int2ObjectRBTreeMap<Path>();
-            sampleDescriptions.put(62, Paths.get("60.wav"));
-            sampleDescriptions.put(64, Paths.get("62.wav"));
-            sampleDescriptions.put(65, Paths.get("61.wav"));
-            sampleDescriptions.put(66, Paths.get("63.wav"));
-            future.complete(
-              new ARI1SampleMapDescription(sampleDescriptions)
-                .load(this.converter, this.sampleRate.get().intValue())
-            );
-          } catch (final Throwable e) {
-            future.completeExceptionally(e);
-          } finally {
-            final var timeNow = Instant.now();
-            LOG.debug("sampleMapOpen: {}", Duration.between(timeThen, timeNow));
-          }
-        });
-        yield future;
-      }
-      default -> CompletableFuture.completedFuture(this.emptyMap);
-    };
+    this.sampleMaps.put(uri, sampleMap);
   }
 
   @Override
-  public ARI1SampleMapType sampleMapOpenEmpty()
+  public ARI1SampleMapType sampleMapGet(
+    final URI uri)
+  {
+    final var map = this.sampleMaps.get(uri);
+    if (map == null) {
+      LOG.warn(
+        "[{} {}] requested nonexistent sample map: {}",
+        this.instrumentDescription.identifier(),
+        this.instrumentDescription.version(),
+        uri
+      );
+      return this.emptyMap;
+    }
+
+    return map;
+  }
+
+  @Override
+  public ARI1SampleMapType sampleMapEmpty()
   {
     return this.emptyMap;
   }

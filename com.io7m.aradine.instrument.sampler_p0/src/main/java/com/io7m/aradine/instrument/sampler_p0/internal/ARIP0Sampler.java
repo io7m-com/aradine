@@ -18,19 +18,17 @@ package com.io7m.aradine.instrument.sampler_p0.internal;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 
-import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -47,13 +45,11 @@ public final class ARIP0Sampler
   private double pitchBend;
   private final ARI1EventBufferType<ARI1EventConfigurationType> eventBuffer;
   private final double[] frame;
-  private volatile ARI1SampleMapType sampleMap;
 
   /**
    * A polyphonic sampler.
    *
    * @param services      The instrument services
-   * @param inSampleMap   The initial sample map
    * @param inEventBuffer The event buffer
    * @param inParameters  The parameters
    * @param inPorts       The ports
@@ -61,13 +57,10 @@ public final class ARIP0Sampler
 
   public ARIP0Sampler(
     final ARI1InstrumentServicesType services,
-    final ARI1SampleMapType inSampleMap,
     final ARI1EventBufferType<ARI1EventConfigurationType> inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
   {
-    this.sampleMap =
-      Objects.requireNonNull(inSampleMap, "inSampleMap");
     this.eventBuffer =
       Objects.requireNonNull(inEventBuffer, "eventBuffer");
     this.parameters =
@@ -121,7 +114,7 @@ public final class ARIP0Sampler
     final ARI1EventNoteType event)
   {
     if (event instanceof ARI1EventNoteOn eventNoteOn) {
-      this.processEventNoteOn(eventNoteOn);
+      this.processEventNoteOn(context, eventNoteOn);
       return;
     }
 
@@ -162,15 +155,11 @@ public final class ARIP0Sampler
     final ARI1InstrumentServicesType context,
     final ARI1EventConfigurationParameterChanged event)
   {
-    final var id =
-      event.parameter();
-    final var time =
-      event.timeOffsetInFrames();
-
+    final var id = event.parameter();
     if (Objects.equals(id, this.parameters.samples0.id())) {
-      this.openSampleMap(context, this.parameters.samples0.value(time));
       return;
     }
+
     context.eventUnhandled(event);
   }
 
@@ -187,13 +176,18 @@ public final class ARIP0Sampler
   }
 
   private void processEventNoteOn(
+    final ARI1InstrumentServicesType context,
     final ARI1EventNoteOn event)
   {
+    final var sampleMap =
+      context.sampleMapGet(
+        this.parameters.samples0.value(event.timeOffsetInFrames()));
+
     final var noteIndex = event.note();
     this.samplesPlaying.put(
       noteIndex,
       new ARIP0SampleState(
-        this.sampleMap.forNote(noteIndex),
+        sampleMap.forNote(noteIndex),
         event.velocity(),
         () -> this.samplesPlaying.remove(noteIndex))
     );
@@ -206,17 +200,5 @@ public final class ARIP0Sampler
     final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);
-  }
-
-  private void openSampleMap(
-    final ARI1InstrumentServicesType context,
-    final URI source)
-  {
-    context.sampleMapOpen(source)
-      .whenComplete((samples, throwable) -> {
-        if (samples != null) {
-          this.sampleMap = samples;
-        }
-      });
   }
 }

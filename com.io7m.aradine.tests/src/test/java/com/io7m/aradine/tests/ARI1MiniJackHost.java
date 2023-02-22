@@ -19,12 +19,12 @@ package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
@@ -32,6 +32,8 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
+import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
+import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import org.jaudiolibs.jnajack.Jack;
 import org.jaudiolibs.jnajack.JackClient;
 import org.jaudiolibs.jnajack.JackException;
@@ -42,11 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jaudiolibs.jnajack.JackOptions.JackNoStartServer;
 import static org.jaudiolibs.jnajack.JackPortFlags.JackPortIsInput;
@@ -101,7 +104,6 @@ public final class ARI1MiniJackHost
         client.getBufferSize()
       );
 
-
     final var messages =
       new ConcurrentLinkedQueue<ARI1EventConfigurationType>();
 
@@ -151,6 +153,26 @@ public final class ARI1MiniJackHost
         new ARI1ParameterId(1),
         ARI1ParameterRealType.class
       );
+
+    final var converters =
+      new SXMSampleBufferRateConverters();
+    final var converter =
+      converters.createConverter();
+
+    final var sampleDescriptions = new Int2ObjectRBTreeMap<Path>();
+    sampleDescriptions.put(62, Paths.get("60.wav"));
+    sampleDescriptions.put(64, Paths.get("62.wav"));
+    sampleDescriptions.put(65, Paths.get("61.wav"));
+    sampleDescriptions.put(66, Paths.get("63.wav"));
+
+    final var sampleMap =
+      new ARI1SampleMapDescription(sampleDescriptions)
+        .load(converter, services.statusCurrentSampleRate());
+
+    services.sampleMapRegister(
+      URI.create("file:///anything"),
+      sampleMap
+    );
 
     messages.add(
       new ARI1EventConfigurationParameterChanged(0, parameterSampleMap.id())

@@ -81,9 +81,11 @@ public final class ARF1LPFOnePoleIRDemo
     styler.setChartBackgroundColor(Color.WHITE);
 
     final var sampleCount =
-      128;
+      256;
     final var impulse =
       DoubleBuffer.allocate(sampleCount);
+
+    impulse.put(63, 1.0);
 
     styler.setXAxisMin(0.0);
     styler.setXAxisMax((double) sampleCount);
@@ -92,8 +94,6 @@ public final class ARF1LPFOnePoleIRDemo
     styler.setYAxisMax(1.0);
     styler.setYAxisMin(0.0);
     styler.setYAxisLogarithmic(false);
-
-    impulse.put(0, 1.0);
 
     for (final var c : cutoffs) {
       final var f = new ARF1LPFOnePole();

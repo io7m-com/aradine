@@ -16,22 +16,27 @@
 
 package com.io7m.aradine.filter.recursive1;
 
-import com.io7m.aradine.annotations.ARIntroducesLatency;
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 
 /**
- * A trivial, recursive, one-pole low pass filter. Filter instances are stateful
+ * <p>A trivial, recursive, one-pole low pass filter. Filter instances are
+ * stateful
  * (they store the most recently processed output frame) and therefore each
- * instance should only be used on a single audio stream.
+ * instance should only be used on a single audio stream.</p>
+ *
+ * <p>The filter, applied naively, has a nonlinear phase response. If this
+ * is an issue, apply the filter once to all samples in a buffer, reset the
+ * filter, and then apply the filter again in reverse order.</p>
  *
  * @see "https://www.dspguide.com/ch19.htm"
  */
 
-@ARIntroducesLatency(frames = 1)
 public final class ARF1LPFOnePole implements ARF1FilterType
 {
   private double cutoff;
   private double previous;
+  private double a0;
+  private double b1;
 
   /**
    * Create a new filter.
@@ -39,8 +44,17 @@ public final class ARF1LPFOnePole implements ARF1FilterType
 
   public ARF1LPFOnePole()
   {
-    this.cutoff = 1.0;
+    this.reset();
+  }
+
+  /**
+   * Reset the internal state of the filter, and set the cutoff to {@code 1.0}.
+   */
+
+  public void reset()
+  {
     this.previous = 0.0;
+    this.setCutoff(1.0);
   }
 
   /**
@@ -58,6 +72,13 @@ public final class ARF1LPFOnePole implements ARF1FilterType
     final @ARNormalizedUnsigned double newCutoff)
   {
     this.cutoff = Math.min(1.0, Math.max(0.0, newCutoff));
+
+    /*
+     * Filter coefficients for a trivial 1 pole LPF.
+     */
+
+    this.a0 = this.cutoff;
+    this.b1 = 1.0 - this.cutoff;
   }
 
   @Override
@@ -65,27 +86,17 @@ public final class ARF1LPFOnePole implements ARF1FilterType
     final double input)
   {
     /*
-     * Filter coefficients for a trivial 1 pole LPF.
+     * Grab the previous output frame.
      */
 
-    final var a0 =
-      this.cutoff;
-    final var b1 =
-      1.0 - this.cutoff;
-
-    /*
-     * Grab the current input frame, and the previous output frame.
-     */
-
-    final var out1 =
-      this.previous;
+    final var out1 = this.previous;
 
     /*
      * Apply the filter kernel.
      */
 
-    final var t0 = a0 * input;
-    final var t1 = b1 * out1;
+    final var t0 = this.a0 * input;
+    final var t1 = this.b1 * out1;
     final var out0 = t0 + t1;
 
     this.previous = out0;

@@ -17,15 +17,11 @@
 
 package com.io7m.aradine.tests.filter.recursive1;
 
-import com.io7m.aradine.filter.recursive1.ARF1HPFOnePole;
-import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
-import com.io7m.jsamplebuffer.api.SampleBufferType;
-import com.io7m.jsamplebuffer.vanilla.SampleBufferDouble;
-import com.io7m.jsamplebuffer.xmedia.SXMSampleBuffers;
+import com.io7m.aradine.filter.recursive1.ARF1LPFOnePole;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioSystem;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
@@ -33,11 +29,10 @@ import java.nio.DoubleBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
-public final class ARF1HPFOnePoleDemo
+public final class ARF1LPFOnePoleIRZeroPhaseDemo
 {
-  private ARF1HPFOnePoleDemo()
+  private ARF1LPFOnePoleIRZeroPhaseDemo()
   {
 
   }
@@ -46,26 +41,18 @@ public final class ARF1HPFOnePoleDemo
     final String[] args)
     throws Exception
   {
-    final SampleBufferType sampleBuffer;
-    try (var stream = ARF1HPFOnePoleDemo.class.getResourceAsStream(
-      "/com/io7m/aradine/tests/white_noise_1.wav")) {
-      try (var audio = AudioSystem.getAudioInputStream(stream)) {
-        sampleBuffer = SXMSampleBuffers.readSampleBufferFromStream(
-          audio, SampleBufferDouble::createWithHeapBuffer
-        );
-      }
-    }
 
-    final var cutoffs = List.of(0.0, 0.125, 0.25, 0.5, 0.75, 0.875, 1.0);
+    final var cutoffs =
+      List.of(0.015625, 0.03125, 0.0625, 0.125, 0.25, 0.5, 0.75, 0.875, 1.0);
 
     final var width = 1280;
     final var height = 800;
 
     final var chart =
       new XYChartBuilder()
-        .title("HPF 1 Pole (White noise input)")
-        .xAxisTitle("Frequency (hz)")
-        .yAxisTitle("Mean Amplitude")
+        .title("LPF 1 Pole (Impulse Response)")
+        .xAxisTitle("Frame Index")
+        .yAxisTitle("Amplitude")
         .width(width)
         .height(height)
         .build();
@@ -87,8 +74,15 @@ public final class ARF1HPFOnePoleDemo
 
     styler.setChartBackgroundColor(Color.WHITE);
 
+    final var sampleCount =
+      256;
+    final var impulse =
+      DoubleBuffer.allocate(sampleCount);
+
+    impulse.put(63, 1.0);
+
     styler.setXAxisMin(0.0);
-    styler.setXAxisMax(22050.0);
+    styler.setXAxisMax((double) sampleCount);
     styler.setXAxisLogarithmic(false);
 
     styler.setYAxisMax(1.0);
@@ -96,36 +90,37 @@ public final class ARF1HPFOnePoleDemo
     styler.setYAxisLogarithmic(false);
 
     for (final var c : cutoffs) {
-      final var f = new ARF1HPFOnePole();
+      final var f = new ARF1LPFOnePole();
       f.setCutoff(c.doubleValue());
 
       final var output =
-        DoubleBuffer.allocate((int) sampleBuffer.frames());
+        DoubleBuffer.allocate(impulse.capacity());
 
-      for (int index = 0; index < sampleBuffer.frames(); ++index) {
-        final var x = f.processOneFrame(sampleBuffer.frameGetExact(index));
+      for (int index = 0; index < impulse.capacity(); ++index) {
+        final var x = f.processOneFrame(impulse.get(index));
         output.put(index, x);
       }
 
-      final var freqStats =
-        ARTestFrequencyAnalysis.calculateFrequencyContent(
-          output,
-          sampleBuffer.sampleRate()
-        );
+      f.reset();
+      f.setCutoff(c.doubleValue());
 
-      final var xData = new ArrayList<Double>();
-      final var yMean = new ArrayList<Double>();
-      final var yStdd = new ArrayList<Double>();
-
-      for (final var entry : freqStats.stats().entrySet()) {
-        final var stat = entry.getValue();
-        xData.add(stat.frequencyBand());
-        yMean.add(stat.meanAmplitude());
-        yStdd.add(stat.standardDeviation());
+      for (int index = impulse.capacity() - 1; index >= 0; --index) {
+        final var x = f.processOneFrame(output.get(index));
+        output.put(index, x);
       }
 
-      chart.addSeries("Cutoff (%f)".formatted(c), xData, yMean);
-      // chart.addSeries("Cutoff (%f) Stddev".formatted(c), xData, yStdd);
+      final var xData = new ArrayList<Integer>();
+      final var yData = new ArrayList<Double>();
+
+      for (int index = 0; index < impulse.capacity(); ++index) {
+        xData.add(index);
+        yData.add(output.get(index));
+      }
+
+      final var s =
+      chart.addSeries("Cutoff (%f)".formatted(c), xData, yData);
+
+      s.setMarker(SeriesMarkers.NONE);
     }
 
     final var image =

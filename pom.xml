@@ -22,6 +22,7 @@
 
   <modules>
     <module>com.io7m.aradine.annotations</module>
+    <module>com.io7m.aradine.filter.chebyshev1</module>
     <module>com.io7m.aradine.filter.recursive1</module>
     <module>com.io7m.aradine.instrument.codegen</module>
     <module>com.io7m.aradine.instrument.sampler_m0</module>

@@ -27,6 +27,8 @@ open module com.io7m.aradine.tests
   requires transitive com.io7m.aradine.instrument.sampler_xp0;
   requires transitive com.io7m.aradine.instrument.spi1.xml;
   requires transitive com.io7m.aradine.instrument.spi1;
+  requires transitive com.io7m.aradine.filter.chebyshev1;
+  requires transitive com.io7m.aradine.filter.recursive1;
   requires transitive com.io7m.aradine.tests.arbitraries;
 
   requires transitive com.io7m.anethum.api;

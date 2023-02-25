@@ -15,42 +15,22 @@
  */
 
 
-package com.io7m.aradine.filter.recursive1;
+package com.io7m.aradine.annotations;
 
-import java.nio.DoubleBuffer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The basic type of version 1 filters.
+ * A real value in the range {@code [0, 100]}.
  */
 
-public interface ARF1FilterType
+@Retention(RetentionPolicy.CLASS)
+@Target(value = {
+  ElementType.TYPE_USE
+})
+public @interface ARPercent
 {
-  /**
-   * Apply a filter to the given frame in the input buffer, writing the filtered
-   * frame to the corresponding frame of the output buffer.
-   *
-   * @param frame  The frame index
-   * @param input  The input buffer
-   * @param output The output buffer
-   */
 
-  default void processOneFrameBuffers(
-    final int frame,
-    final DoubleBuffer input,
-    final DoubleBuffer output)
-  {
-    output.put(frame, this.processOneFrame(input.get(frame)));
-  }
-
-  /**
-   * Process a single input frame.
-   *
-   * @param input The input frame
-   *
-   * @return The output frame
-   */
-
-  double processOneFrame(
-    double input
-  );
 }

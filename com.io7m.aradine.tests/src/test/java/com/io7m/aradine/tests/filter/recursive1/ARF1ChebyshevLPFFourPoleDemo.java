@@ -17,7 +17,8 @@
 
 package com.io7m.aradine.tests.filter.recursive1;
 
-import com.io7m.aradine.filter.recursive1.ARF1HPFOnePole;
+import com.io7m.aradine.filter.chebyshev1.ARF1ChebyshevLPFFourPole;
+import com.io7m.aradine.filter.chebyshev1.ARF1ChebyshevLPFTwoPole;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
 import com.io7m.jsamplebuffer.api.SampleBufferType;
 import com.io7m.jsamplebuffer.vanilla.SampleBufferDouble;
@@ -32,12 +33,11 @@ import java.awt.image.BufferedImage;
 import java.nio.DoubleBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.stream.DoubleStream;
 
-public final class ARF1HPFOnePoleDemo
+public final class ARF1ChebyshevLPFFourPoleDemo
 {
-  private ARF1HPFOnePoleDemo()
+  private ARF1ChebyshevLPFFourPoleDemo()
   {
 
   }
@@ -47,7 +47,7 @@ public final class ARF1HPFOnePoleDemo
     throws Exception
   {
     final SampleBufferType sampleBuffer;
-    try (var stream = ARF1HPFOnePoleDemo.class.getResourceAsStream(
+    try (var stream = ARF1ChebyshevLPFFourPoleDemo.class.getResourceAsStream(
       "/com/io7m/aradine/tests/white_noise_1.wav")) {
       try (var audio = AudioSystem.getAudioInputStream(stream)) {
         sampleBuffer = SXMSampleBuffers.readSampleBufferFromStream(
@@ -56,14 +56,18 @@ public final class ARF1HPFOnePoleDemo
       }
     }
 
-    final var cutoffs = List.of(0.0, 0.125, 0.25, 0.5, 0.75, 0.875, 1.0);
+    final var cutoffs =
+      DoubleStream.iterate(0.0, operand -> operand + 0.01)
+        .limit(49)
+        .boxed()
+        .toList();
 
     final var width = 1280;
     final var height = 800;
 
     final var chart =
       new XYChartBuilder()
-        .title("HPF 1 Pole (White noise input)")
+        .title("LPF 4 Pole (White noise input)")
         .xAxisTitle("Frequency (hz)")
         .yAxisTitle("Mean Amplitude")
         .width(width)
@@ -96,7 +100,7 @@ public final class ARF1HPFOnePoleDemo
     styler.setYAxisLogarithmic(false);
 
     for (final var c : cutoffs) {
-      final var f = new ARF1HPFOnePole();
+      final var f = new ARF1ChebyshevLPFFourPole();
       f.setCutoff(c.doubleValue());
 
       final var output =

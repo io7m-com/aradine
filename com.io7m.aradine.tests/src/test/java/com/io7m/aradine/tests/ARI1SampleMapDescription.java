@@ -68,7 +68,7 @@ public record ARI1SampleMapDescription(
 
       for (final var entry : this.filesByNote.int2ObjectEntrySet()) {
         final var sampleBuffer =
-          SXMSampleBuffers.sampleBufferOfFile(
+          SXMSampleBuffers.readSampleBufferFromFile(
             entry.getValue(),
             SampleBufferDouble::createWithHeapBuffer
           );

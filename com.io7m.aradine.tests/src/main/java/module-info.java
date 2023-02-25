@@ -39,9 +39,12 @@ open module com.io7m.aradine.tests
   requires transitive jnajack;
   requires transitive net.jqwik.api;
   requires transitive net.jqwik.engine;
+  requires transitive org.apache.commons.math4.core;
+  requires transitive org.apache.commons.math4.transform;
   requires transitive org.apiguardian.api;
   requires transitive org.junit.jupiter.api;
   requires transitive org.junit.jupiter.engine;
+  requires transitive org.knowm.xchart;
   requires transitive org.mockito;
   requires transitive org.slf4j;
 

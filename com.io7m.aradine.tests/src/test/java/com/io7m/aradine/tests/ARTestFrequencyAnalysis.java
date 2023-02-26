@@ -40,6 +40,8 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public final class ARTestFrequencyAnalysis
 {
   private final TreeMap<Long, ARTestFrequencyStatistics> freqStats;
@@ -98,8 +100,8 @@ public final class ARTestFrequencyAnalysis
     final Path file)
     throws IOException
   {
-    final var width = 800;
-    final var height = 400;
+    final var width = 1200;
+    final var height = 1000;
 
     final var chart =
       new XYChartBuilder()
@@ -311,6 +313,46 @@ public final class ARTestFrequencyAnalysis
         writer.append(Double.toString(stat.meanAmplitude()));
         writer.newLine();
       }
+    }
+  }
+
+  public void checkReceivedFrequencyContentAgainstThis(
+    final ARTestFrequencyAnalysis receivedAnalysis)
+  {
+    final var receivedStats = receivedAnalysis.stats();
+    for (final var expectedEntry : this.stats().entrySet()) {
+      final var expected = expectedEntry.getValue();
+      final var received = receivedStats.get(expectedEntry.getKey());
+      Objects.requireNonNull(expected, "expected");
+      Objects.requireNonNull(received, "received");
+
+      assertEquals(
+        expected.meanAmplitude(),
+        received.meanAmplitude(),
+        0.00000000000001,
+        () -> {
+          return String.format(
+            "Mean amplitude for frequency %d, expected %f received %f",
+            expectedEntry.getKey(),
+            Double.valueOf(expected.meanAmplitude()),
+            Double.valueOf(received.meanAmplitude())
+          );
+        }
+      );
+
+      assertEquals(
+        expected.standardDeviation(),
+        received.standardDeviation(),
+        0.00000000000001,
+        () -> {
+          return String.format(
+            "Standard deviation for frequency %d, expected %f received %f",
+            expectedEntry.getKey(),
+            Double.valueOf(expected.standardDeviation()),
+            Double.valueOf(received.standardDeviation())
+          );
+        }
+      );
     }
   }
 }

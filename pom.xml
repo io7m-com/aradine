@@ -22,8 +22,10 @@
 
   <modules>
     <module>com.io7m.aradine.annotations</module>
+    <module>com.io7m.aradine.documentation</module>
     <module>com.io7m.aradine.filter.biquad1</module>
     <module>com.io7m.aradine.filter.recursive1</module>
+    <module>com.io7m.aradine.filter.statevar1</module>
     <module>com.io7m.aradine.instrument.codegen</module>
     <module>com.io7m.aradine.instrument.sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_p0</module>

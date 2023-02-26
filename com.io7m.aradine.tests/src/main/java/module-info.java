@@ -21,6 +21,9 @@
 open module com.io7m.aradine.tests
 {
   requires transitive com.io7m.aradine.annotations;
+  requires transitive com.io7m.aradine.filter.biquad1;
+  requires transitive com.io7m.aradine.filter.recursive1;
+  requires transitive com.io7m.aradine.filter.statevar1;
   requires transitive com.io7m.aradine.instrument.codegen;
   requires transitive com.io7m.aradine.instrument.sampler_m0;
   requires transitive com.io7m.aradine.instrument.sampler_p0;

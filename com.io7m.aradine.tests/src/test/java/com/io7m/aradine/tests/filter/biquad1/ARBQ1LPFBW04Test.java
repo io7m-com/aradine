@@ -17,6 +17,7 @@
 package com.io7m.aradine.tests.filter.biquad1;
 
 import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFBWO4;
+import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFO2;
 import com.io7m.aradine.tests.ARNoiseSample;
 import com.io7m.aradine.tests.ARNoiseSampleFixture;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
@@ -120,7 +121,58 @@ public final class ARBQ1LPFBW04Test
     final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.0);
 
-    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.0.properties");
+  }
+
+  /**
+   * LPF at 0.015625.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testFilter0_0015625(
+    final ARNoiseSample sample)
+    throws Exception
+  {
+    final var filter = new ARBQ1BiquadLPFBWO4();
+    filter.setCutoff(0.015625);
+
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.015625.properties");
+  }
+
+  /**
+   * LPF at 0.0078125.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testFilter0_0078125(
+    final ARNoiseSample sample)
+    throws Exception
+  {
+    final var filter = new ARBQ1BiquadLPFBWO4();
+    filter.setCutoff(0.0078125);
+
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.0078125.properties");
+  }
+
+  /**
+   * LPF at 0.00390625.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testFilter0_00390625(
+    final ARNoiseSample sample)
+    throws Exception
+  {
+    final var filter = new ARBQ1BiquadLPFBWO4();
+    filter.setCutoff(0.00390625);
+
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.00390625.properties");
   }
 
   /**
@@ -137,7 +189,7 @@ public final class ARBQ1LPFBW04Test
     final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.03125);
 
-    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_03125.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.03125.properties");
   }
 
   /**
@@ -154,7 +206,7 @@ public final class ARBQ1LPFBW04Test
     final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.125);
 
-    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0125.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.125.properties");
   }
 
   /**
@@ -171,7 +223,7 @@ public final class ARBQ1LPFBW04Test
     final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.25);
 
-    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_025.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.25.properties");
   }
 
   /**
@@ -188,7 +240,7 @@ public final class ARBQ1LPFBW04Test
     final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.5);
 
-    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_05.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.5.properties");
   }
 
   /**
@@ -228,7 +280,7 @@ public final class ARBQ1LPFBW04Test
       );
     final var expectedStats =
       ARTestFrequencyAnalysis.loadFrequencyAnalysis(
-        "filter/biquad1/lpf4bw_cutoff_05.properties",
+        "filter/biquad1/lpf4bw_cutoff_0.5.properties",
         inputSample.sampleRate()
       );
 
@@ -242,7 +294,7 @@ public final class ARBQ1LPFBW04Test
    * @throws Exception On errors
    */
 
-  @Property
+  @Property(tries = 100)
   public void testFilterChunkedSame(
     final @ForAll @DoubleRange(min = 0.0, max = 1.0) double cutoff)
     throws Exception

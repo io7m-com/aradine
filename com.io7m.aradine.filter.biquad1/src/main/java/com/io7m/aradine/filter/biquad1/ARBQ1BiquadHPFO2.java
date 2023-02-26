@@ -19,12 +19,12 @@ package com.io7m.aradine.filter.biquad1;
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 
 /**
- * <p>A simple biquad low-pass filter of order 2 (Two zeroes, two poles).</p>
+ * <p>A simple biquad high-pass filter of order 2 (Two zeroes, two poles).</p>
  *
  * @see "https://www.earlevel.com/main/2012/11/26/biquad-c-source-code/"
  */
 
-public final class ARBQ1BiquadLPFO2 implements ARBQ1BiquadWithQType
+public final class ARBQ1BiquadHPFO2 implements ARBQ1BiquadWithQType
 {
   private double a0;
   private double a1;
@@ -40,9 +40,9 @@ public final class ARBQ1BiquadLPFO2 implements ARBQ1BiquadWithQType
    * Create a new filter.
    */
 
-  public ARBQ1BiquadLPFO2()
+  public ARBQ1BiquadHPFO2()
   {
-    this.cutoff = 0.5;
+    this.cutoff = 0.0;
     this.q = 0.70710678;
   }
 
@@ -66,13 +66,13 @@ public final class ARBQ1BiquadLPFO2 implements ARBQ1BiquadWithQType
   {
     final var k = StrictMath.tan(StrictMath.PI * this.cutoff);
     final var ks = k * k;
-    final var norm = 1.0 / (1.0 + (k / this.q) + ks);
 
-    this.a0 = ks * norm;
-    this.a1 = 2.0 * this.a0;
+    final var norm = 1.0 / (1.0 + k / this.q + ks);
+    this.a0 = norm;
+    this.a1 = -2.0 * this.a0;
     this.a2 = this.a0;
     this.b1 = 2.0 * (ks - 1.0) * norm;
-    this.b2 = ((1.0 - (k / this.q)) + ks) * norm;
+    this.b2 = (1.0 - k / this.q + ks) * norm;
   }
 
   @Override

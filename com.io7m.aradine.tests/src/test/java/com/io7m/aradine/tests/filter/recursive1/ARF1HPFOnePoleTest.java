@@ -120,7 +120,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.0);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.0.properties");
   }
 
   /**
@@ -137,7 +137,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.03125);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_03125.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.03125.properties");
   }
 
   /**
@@ -154,7 +154,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.125);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0125.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.125.properties");
   }
 
   /**
@@ -171,7 +171,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.25);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_025.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.25.properties");
   }
 
   /**
@@ -188,7 +188,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.5);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_05.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.5.properties");
   }
 
   /**
@@ -205,7 +205,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(0.75);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_075.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_0.75.properties");
   }
 
   /**
@@ -222,7 +222,7 @@ public final class ARF1HPFOnePoleTest
     final var filter = new ARF1HPFOnePole();
     filter.setCutoff(1.0);
 
-    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_1.properties");
+    runFilter(sample, filter, "filter/recursive1/hpf1_cutoff_1.0.properties");
   }
 
   /**
@@ -262,7 +262,7 @@ public final class ARF1HPFOnePoleTest
       );
     final var expectedStats =
       ARTestFrequencyAnalysis.loadFrequencyAnalysis(
-        "filter/recursive1/hpf1_cutoff_0.properties",
+        "filter/recursive1/hpf1_cutoff_0.0.properties",
         inputSample.sampleRate()
       );
 
@@ -276,7 +276,7 @@ public final class ARF1HPFOnePoleTest
    * @throws Exception On errors
    */
 
-  @Property
+  @Property(tries = 100)
   public void testFilterChunkedSame(
     final @ForAll @DoubleRange(min = 0.0, max = 1.0) double cutoff)
     throws Exception

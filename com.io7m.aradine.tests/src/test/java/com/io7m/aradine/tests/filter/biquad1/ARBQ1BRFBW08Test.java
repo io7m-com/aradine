@@ -16,8 +16,7 @@
 
 package com.io7m.aradine.tests.filter.biquad1;
 
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFBWO8;
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFO2;
+import com.io7m.aradine.filter.biquad1.ARBQ1BiquadBRFBWO8;
 import com.io7m.aradine.tests.ARNoiseSample;
 import com.io7m.aradine.tests.ARNoiseSampleFixture;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
@@ -34,11 +33,11 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ARNoiseSampleFixture.class)
-public final class ARBQ1LPFBW08Test
+public final class ARBQ1BRFBW08Test
 {
   private static void runFilter(
     final ARNoiseSample sample,
-    final ARBQ1BiquadLPFBWO8 filter,
+    final ARBQ1BiquadBRFBWO8 filter,
     final String name)
     throws Exception
   {
@@ -108,7 +107,7 @@ public final class ARBQ1LPFBW08Test
   }
 
   /**
-   * LPF at 0.0.
+   * BRF at 0.0.
    *
    * @throws Exception On errors
    */
@@ -118,14 +117,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.0);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.0.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.0.properties");
   }
 
   /**
-   * LPF at 0.015625.
+   * BRF at 0.015625.
    *
    * @throws Exception On errors
    */
@@ -135,14 +134,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.015625);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.015625.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.015625.properties");
   }
 
   /**
-   * LPF at 0.0078125.
+   * BRF at 0.0078125.
    *
    * @throws Exception On errors
    */
@@ -152,14 +151,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.0078125);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.0078125.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.0078125.properties");
   }
 
   /**
-   * LPF at 0.00390625.
+   * BRF at 0.00390625.
    *
    * @throws Exception On errors
    */
@@ -169,14 +168,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.00390625);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.00390625.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.00390625.properties");
   }
-
+  
   /**
-   * LPF at 0.03125.
+   * BRF at 0.03125.
    *
    * @throws Exception On errors
    */
@@ -186,14 +185,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.03125);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.03125.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.03125.properties");
   }
 
   /**
-   * LPF at 0.125.
+   * BRF at 0.125.
    *
    * @throws Exception On errors
    */
@@ -203,14 +202,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.125);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.125.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.125.properties");
   }
 
   /**
-   * LPF at 0.25.
+   * BRF at 0.25.
    *
    * @throws Exception On errors
    */
@@ -220,14 +219,14 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.25);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.25.properties");
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.25.properties");
   }
 
   /**
-   * LPF at 0.5.
+   * BRF at 0.5.
    *
    * @throws Exception On errors
    */
@@ -237,54 +236,10 @@ public final class ARBQ1LPFBW08Test
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARBQ1BiquadLPFBWO8();
+    final var filter = new ARBQ1BiquadBRFBWO8();
     filter.setCutoff(0.5);
 
-    runFilter(sample, filter, "filter/biquad1/lpf8bw_cutoff_0.5.properties");
-  }
-
-  /**
-   * The LPF at full cutoff is an identity operation.
-   *
-   * @throws Exception On errors
-   */
-
-  @Test
-  public void testFilterIdentity(
-    final ARNoiseSample sample)
-    throws Exception
-  {
-    final var filter = new ARBQ1BiquadLPFBWO8();
-    filter.setCutoff(0.5);
-
-    final var inputBuffer = sample.noiseBuffer();
-    final var inputSample = sample.noise();
-    final var outputBuffer = sample.outputBuffer();
-
-    for (int index = 0; index < inputSample.frames(); ++index) {
-      filter.processOneFrameBuffers(index, inputBuffer, outputBuffer);
-    }
-
-    for (int index = 1; index < inputBuffer.capacity(); ++index) {
-      assertEquals(
-        inputBuffer.get(index),
-        outputBuffer.get(index),
-        0.000000001
-      );
-    }
-
-    final var receivedStats =
-      ARTestFrequencyAnalysis.calculateFrequencyContent(
-        outputBuffer,
-        inputSample.sampleRate()
-      );
-    final var expectedStats =
-      ARTestFrequencyAnalysis.loadFrequencyAnalysis(
-        "filter/biquad1/lpf8bw_cutoff_0.5.properties",
-        inputSample.sampleRate()
-      );
-
-    checkFrequencyContent(receivedStats, expectedStats);
+    runFilter(sample, filter, "filter/biquad1/brf8bw_cutoff_0.5.properties");
   }
 
   /**
@@ -311,10 +266,10 @@ public final class ARBQ1LPFBW08Test
         pNoiseBuffer.put(index, inputSample.frameGetExact(index));
       }
 
-      final var filterForAll = new ARBQ1BiquadLPFBWO8();
+      final var filterForAll = new ARBQ1BiquadBRFBWO8();
       filterForAll.setCutoff(cutoff);
 
-      final var filterForBlocks = new ARBQ1BiquadLPFBWO8();
+      final var filterForBlocks = new ARBQ1BiquadBRFBWO8();
       filterForBlocks.setCutoff(cutoff);
 
       final var outputBuffer1 =

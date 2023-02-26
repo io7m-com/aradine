@@ -55,17 +55,6 @@ public final class ARBQ1BiquadLPFBWO8 implements ARBQ1BiquadType
     this.stage3.setQ(qs[3]);
   }
 
-  /**
-   * <p>Specify a new frequency cutoff value.</p>
-   *
-   * <p>This a value in the range
-   * {@code [0, 1]} where {@code 0} effectively blocks all frequencies,
-   * {@code 0.5} blocks roughly half of the higher frequency spectrum, and
-   * {@code 1.0} blocks nothing.</p>
-   *
-   * @param newCutoff The cutoff
-   */
-
   @Override
   public void setCutoff(
     final @ARNormalizedUnsigned double newCutoff)
@@ -75,14 +64,6 @@ public final class ARBQ1BiquadLPFBWO8 implements ARBQ1BiquadType
     this.stage2.setCutoff(newCutoff);
     this.stage3.setCutoff(newCutoff);
   }
-
-  /**
-   * Process a single input frame.
-   *
-   * @param input The input frame
-   *
-   * @return The output frame
-   */
 
   @Override
   public double processOneFrame(

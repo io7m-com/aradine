@@ -22,8 +22,11 @@ import org.apache.commons.math4.legacy.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math4.transform.FastFourierTransform;
 import org.apache.commons.numbers.complex.Complex;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.XYStyler;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.DoubleBuffer;
@@ -122,13 +125,30 @@ public final class ARTestFrequencyAnalysis
     final var s1 =
       chart.addSeries("Stddev", xData, yStdd);
 
-    chart.getStyler().setXAxisMin(0.0);
-    chart.getStyler().setXAxisMax(22050.0);
-    chart.getStyler().setXAxisLogarithmic(true);
+    final var font =
+      Font.decode("Terminus (TTF) Bold 13");
 
-    chart.getStyler().setYAxisMax(1.0);
-    chart.getStyler().setYAxisMin(0.0);
-    chart.getStyler().setYAxisLogarithmic(true);
+    final var styler = chart.getStyler();
+    styler.setAntiAlias(false);
+    styler.setBaseFont(font);
+    styler.setCursorFont(font);
+    styler.setAnnotationTextFont(font);
+    styler.setAxisTitleFont(font);
+    styler.setChartTitleFont(font);
+    styler.setAxisTickLabelsFont(font);
+    styler.setToolTipFont(font);
+    styler.setLegendFont(font);
+    styler.setXAxisDecimalPattern(".0");
+
+    styler.setChartBackgroundColor(Color.WHITE);
+
+    styler.setXAxisMin(100.0);
+    styler.setXAxisMax(24000.0);
+    styler.setXAxisLogarithmic(true);
+
+    styler.setYAxisMax(1.0);
+    styler.setYAxisMin(0.0);
+    styler.setYAxisLogarithmic(false);
 
     final var image =
       new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

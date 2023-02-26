@@ -14,9 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.filter.recursive1;
+package com.io7m.aradine.tests.filter.biquad1;
 
-import com.io7m.aradine.filter.recursive1.ARF1LPFOnePole;
+import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFBWO4;
 import com.io7m.aradine.tests.ARNoiseSample;
 import com.io7m.aradine.tests.ARNoiseSampleFixture;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
@@ -33,11 +33,11 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ARNoiseSampleFixture.class)
-public final class ARF1LPFOnePoleTest
+public final class ARBQ1LPFBW04Test
 {
   private static void runFilter(
     final ARNoiseSample sample,
-    final ARF1LPFOnePole filter,
+    final ARBQ1BiquadLPFBWO4 filter,
     final String name)
     throws Exception
   {
@@ -117,10 +117,10 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
+    final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.0);
 
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_0.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0.properties");
   }
 
   /**
@@ -134,10 +134,10 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
+    final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.03125);
 
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_03125.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_03125.properties");
   }
 
   /**
@@ -151,10 +151,10 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
+    final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.125);
 
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_0125.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_0125.properties");
   }
 
   /**
@@ -168,10 +168,10 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
+    final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.25);
 
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_025.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_025.properties");
   }
 
   /**
@@ -185,48 +185,14 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
+    final var filter = new ARBQ1BiquadLPFBWO4();
     filter.setCutoff(0.5);
 
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_05.properties");
+    runFilter(sample, filter, "filter/biquad1/lpf4bw_cutoff_05.properties");
   }
 
   /**
-   * LPF at 0.75.
-   *
-   * @throws Exception On errors
-   */
-
-  @Test
-  public void testFilter0_75(
-    final ARNoiseSample sample)
-    throws Exception
-  {
-    final var filter = new ARF1LPFOnePole();
-    filter.setCutoff(0.75);
-
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_075.properties");
-  }
-
-  /**
-   * LPF at 1.0.
-   *
-   * @throws Exception On errors
-   */
-
-  @Test
-  public void testFilter1(
-    final ARNoiseSample sample)
-    throws Exception
-  {
-    final var filter = new ARF1LPFOnePole();
-    filter.setCutoff(1.0);
-
-    runFilter(sample, filter, "filter/recursive1/lpf1_cutoff_1.properties");
-  }
-
-  /**
-   * The LPF at zero cutoff is an identity operation.
+   * The LPF at full cutoff is an identity operation.
    *
    * @throws Exception On errors
    */
@@ -236,8 +202,8 @@ public final class ARF1LPFOnePoleTest
     final ARNoiseSample sample)
     throws Exception
   {
-    final var filter = new ARF1LPFOnePole();
-    filter.setCutoff(1.0);
+    final var filter = new ARBQ1BiquadLPFBWO4();
+    filter.setCutoff(0.5);
 
     final var inputBuffer = sample.noiseBuffer();
     final var inputSample = sample.noise();
@@ -262,7 +228,7 @@ public final class ARF1LPFOnePoleTest
       );
     final var expectedStats =
       ARTestFrequencyAnalysis.loadFrequencyAnalysis(
-        "filter/recursive1/lpf1_cutoff_1.properties",
+        "filter/biquad1/lpf4bw_cutoff_05.properties",
         inputSample.sampleRate()
       );
 
@@ -293,10 +259,10 @@ public final class ARF1LPFOnePoleTest
         pNoiseBuffer.put(index, inputSample.frameGetExact(index));
       }
 
-      final var filterForAll = new ARF1LPFOnePole();
+      final var filterForAll = new ARBQ1BiquadLPFBWO4();
       filterForAll.setCutoff(cutoff);
 
-      final var filterForBlocks = new ARF1LPFOnePole();
+      final var filterForBlocks = new ARBQ1BiquadLPFBWO4();
       filterForBlocks.setCutoff(cutoff);
 
       final var outputBuffer1 =

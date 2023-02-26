@@ -19,6 +19,8 @@ package com.io7m.aradine.filter.recursive1;
 import com.io7m.aradine.annotations.ARIntroducesLatency;
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 
+import java.nio.DoubleBuffer;
+
 /**
  * A trivial, recursive, one-pole high pass filter. Filter instances are
  * stateful (they store the most recently processed input and output frame) and
@@ -28,11 +30,15 @@ import com.io7m.aradine.annotations.ARNormalizedUnsigned;
  */
 
 @ARIntroducesLatency(frames = 1)
-public final class ARF1HPFOnePole implements ARF1FilterType
+public final class ARF1HPFOnePole
 {
   private double cutoff;
   private double previousOut;
   private double previousIn;
+  private double c;
+  private double a0;
+  private double a1;
+  private double b1;
 
   /**
    * Create a new filter.
@@ -60,21 +66,45 @@ public final class ARF1HPFOnePole implements ARF1FilterType
     final @ARNormalizedUnsigned double newCutoff)
   {
     this.cutoff = Math.min(1.0, Math.max(0.0, newCutoff));
-  }
 
-  @Override
-  public double processOneFrame(
-    final double input)
-  {
     /*
      * Filter coefficients for a trivial 1 pole HPF.
      */
 
-    final var c = 1.0 - this.cutoff;
-    final var a0 = (1.0 + c) / 2.0;
-    final var a1 = -(1.0 + c) / 2.0;
-    final var b1 = c;
+    this.c = 1.0 - this.cutoff;
+    this.a0 = (1.0 + this.c) / 2.0;
+    this.a1 = -(1.0 + this.c) / 2.0;
+    this.b1 = this.c;
+  }
 
+  /**
+   * Apply a filter to the given frame in the input buffer, writing the filtered
+   * frame to the corresponding frame of the output buffer.
+   *
+   * @param frame  The frame index
+   * @param input  The input buffer
+   * @param output The output buffer
+   */
+
+  public void processOneFrameBuffers(
+    final int frame,
+    final DoubleBuffer input,
+    final DoubleBuffer output)
+  {
+    output.put(frame, this.processOneFrame(input.get(frame)));
+  }
+
+  /**
+   * Process a single input frame.
+   *
+   * @param input The input frame
+   *
+   * @return The output frame
+   */
+
+  public double processOneFrame(
+    final double input)
+  {
     /*
      * Grab the current input frame, and the previous output frame.
      */
@@ -87,9 +117,9 @@ public final class ARF1HPFOnePole implements ARF1FilterType
      * Apply the filter kernel.
      */
 
-    final var t0 = a0 * in0;
-    final var t1 = a1 * in1;
-    final var t3 = b1 * out1;
+    final var t0 = this.a0 * in0;
+    final var t1 = this.a1 * in1;
+    final var t3 = this.b1 * out1;
     final var out0 = t0 + t1 + t3;
 
     this.previousOut = out0;

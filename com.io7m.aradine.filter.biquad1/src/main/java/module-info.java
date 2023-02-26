@@ -14,44 +14,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-package com.io7m.aradine.filter.recursive1;
-
-import java.nio.DoubleBuffer;
-
 /**
- * The basic type of version 1 filters.
+ * Modular programmable synthesis (Biquad filter implementation 1)
  */
 
-public interface ARF1FilterType
+module com.io7m.aradine.filter.biquad1
 {
-  /**
-   * Apply a filter to the given frame in the input buffer, writing the filtered
-   * frame to the corresponding frame of the output buffer.
-   *
-   * @param frame  The frame index
-   * @param input  The input buffer
-   * @param output The output buffer
-   */
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+  requires static com.io7m.aradine.annotations;
 
-  default void processOneFrameBuffers(
-    final int frame,
-    final DoubleBuffer input,
-    final DoubleBuffer output
-  )
-  {
-    output.put(frame, this.processOneFrame(input.get(frame)));
-  }
-
-  /**
-   * Process a single input frame.
-   *
-   * @param input The input frame
-   *
-   * @return The output frame
-   */
-
-  double processOneFrame(
-    double input
-  );
+  exports com.io7m.aradine.filter.biquad1;
 }

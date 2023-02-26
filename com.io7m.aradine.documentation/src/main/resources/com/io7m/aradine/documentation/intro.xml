@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         id="b7885f37-90fe-4a85-a9a7-5b7e63d1627f"
+         title="Introduction">
+
+  <Paragraph>
+    The <Term type="package">aradine</Term> package provides a modular system for digital signal processing
+    with an emphasis on musical applications.
+  </Paragraph>
+
+</Section>

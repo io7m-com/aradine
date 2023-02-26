@@ -59,6 +59,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.filter.biquad1</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.aradine.tests.arbitraries</artifactId>
       <version>${project.version}</version>
     </dependency>

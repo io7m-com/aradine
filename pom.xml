@@ -417,6 +417,11 @@
         <artifactId>xchart</artifactId>
         <version>3.8.2</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.primogenitor</groupId>
+        <artifactId>com.io7m.primogenitor.support</artifactId>
+        <version>7.5.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

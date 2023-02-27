@@ -21,5 +21,6 @@
   </Metadata>
 
   <xi:include href="intro.xml"/>
+  <xi:include href="api.xml"/>
 
 </Document>

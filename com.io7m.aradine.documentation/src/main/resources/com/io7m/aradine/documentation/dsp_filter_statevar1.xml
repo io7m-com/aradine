@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="com.io7m.aradine.filter.statevar1"
+         id="8fdc11a6-3ec6-492d-af98-9b706b1611aa">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      The <Term type="module">com.io7m.aradine.filter.statevar1</Term> module contains state variable filter
+      implementations.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Applications">
+    <Subsection title="Overview">
+      <Paragraph>
+        The filter implementations provided in the
+        <Term type="module">com.io7m.aradine.filter.statevar1</Term>
+        module are fairly direct translations of the hardware filters used on many analogue synthesizers. They offer
+        good resolution at all frequencies, but can become unstable at certain frequencies unless
+        <Term type="term">oversampling</Term>
+        is used.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Stability">
+      <Paragraph>
+        State variable filters accept separate <Term type="parameter">Q</Term> and
+        <Term type="parameter">C</Term>
+        parameters, where <Term type="parameter">Q</Term> is a positive real value, and <Term type="parameter">C</Term> is
+        a real value in the range <Term type="expression">[0, 1]</Term>. Filters may become unstable in the sense that
+        particular combinations of
+        <Term type="parameter">Q</Term>
+        and <Term type="parameter">C</Term> values may cause the filter to start oscillating and massively increase the
+        gain of the signal passing through it. This can be directly observed by running the filter on a sample of white
+        noise, picking various <Term type="parameter">Q</Term> and <Term type="parameter">C</Term> values, and seeing if
+        the resulting output contains one or more frequency bands where the amplitude is greater than or equal to
+        <Term type="constant">0.6</Term>. In an unfiltered white noise sample, every frequency band should have an
+        amplitude of roughly <Term type="constant">0.5</Term>, so any band with a value much greater than this can
+        indicate that the filter has begun to self oscillate. The following diagram shows an increasing
+        <Term type="parameter">Q</Term>
+        downwards along the Y axis, and an increasing
+        <Term type="parameter">C</Term>
+        rightwards along the X axis:
+      </Paragraph>
+      <FormalItem title="Stability (1)"
+                  id="83accd86-9c75-4ab3-a73b-a0f9b9523079">
+        <Image source="stable_eval1.png"
+               width="600"
+               height="600">Stability with one filter sample.
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        In the diagram, a green square indicates that no frequency band in the output had an amplitude of greater than
+        or equal to <Term type="constant">0.6</Term>, whilst a red square indicates that one or more frequency bands had
+        an amplitude of greater than or equal to
+        <Term type="constant">0.6</Term>. As should be fairly obvious, much of the parameter space is essentially
+        unusable. Fortunately, this problem can be mitigated through
+        <Term type="term">oversampling</Term>; simply evaluate the filter multiple times per input sample, and discard
+        all but the output sample from the last evaluation.
+      </Paragraph>
+      <FormalItem title="Oversampling">
+        <Verbatim><![CDATA[
+final var input = sampleBuffer.frameGetExact(index);
+for (int oversample = 0; oversample < sampleCount; ++oversample) {
+  f.processOneFrame(input);
+}
+final var output = f.highPassOutput();
+]]></Verbatim>
+      </FormalItem>
+      <Paragraph>
+        Applying the exact same <Term type="parameter">Q</Term> and <Term type="parameter">C</Term> values as in
+        the <Link target="83accd86-9c75-4ab3-a73b-a0f9b9523079">original diagram</Link>, but evaluating the filter four
+        times instead of one, yields the following output instead:
+      </Paragraph>
+      <FormalItem title="Stability (4)"
+                  id="cccc757e-b133-43a6-9d6a-8bd35da798f6">
+        <Image source="stable_eval4.png"
+               width="600"
+               height="600">Stability with four filter samples.
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        The resulting audio output is not drastically different than for the single sample case, but it is clear from
+        the diagram that a much wider range of <Term type="parameter">Q</Term> and
+        <Term type="parameter">C</Term>
+        values have become usable.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="References">
+    <Paragraph>
+      The filter implementation is derived from the description given in
+      <Term type="book">Musical Applications Of Microprocessors</Term>
+      by Hal Chamberlin (ISBN 0-8104-5768-7).
+    </Paragraph>
+  </Subsection>
+
+</Section>

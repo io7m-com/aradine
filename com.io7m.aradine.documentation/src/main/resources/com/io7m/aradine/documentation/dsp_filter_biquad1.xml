@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="com.io7m.aradine.filter.biquad1"
+         id="1ef6f735-d732-4ce6-aca0-2c6d31a5ca39">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      The <Term type="module">com.io7m.aradine.filter.biquad1</Term> module contains biquad filter implementations.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Applications">
+    <Subsection title="Cascading">
+      <Paragraph>
+        Biquad filters can be composed to produce stronger filters. The output signal of one filter is fed into the
+        input of another filter in a process known as <Term type="term">cascading</Term>. The main filter implementation
+        included in the <Term type="module">com.io7m.aradine.filter.biquad1</Term> module is a filter of order <Term type="constant">
+        2
+      </Term> (specifically, it has two poles, and two zeroes). It would be theoretically possible to use the same
+        algorithm with more filter coefficients to produce a single filter of order <Term type="constant">N</Term>, but
+        in practice it is better
+        <Term type="term">cascade</Term>
+        <Term type="expression">N / 2</Term>
+        filters of order <Term type="constant">2</Term>; the resulting filter will be much more numerically stable and
+        less subject to issues such as those involving floating point precision.
+      </Paragraph>
+      <Paragraph>
+        For example, the following code uses four filters of order <Term type="constant">2</Term> to produce an
+        effective filter of order <Term type="constant">8</Term>:
+      </Paragraph>
+      <FormalItem title="Order 8">
+        <Verbatim><![CDATA[
+final var stage0 = new ARBQ1BiquadBPFO2();
+final var stage1 = new ARBQ1BiquadBPFO2();
+final var stage2 = new ARBQ1BiquadBPFO2();
+final var stage3 = new ARBQ1BiquadBPFO2();
+
+final var s0 = stage0.processOneFrame(input);
+final var s1 = stage1.processOneFrame(s0);
+final var s2 = stage2.processOneFrame(s1);
+final var out = stage3.processOneFrame(s2);
+]]></Verbatim>
+      </FormalItem>
+    </Subsection>
+
+    <Subsection title="Uses">
+      <Paragraph>
+        Biquad filters are relatively suitable for use in EQ applications, or when the filter cutoff value is not
+        expected to be modulated over time. For rapidly modulating filter cutoff values, a <Link target="8fdc11a6-3ec6-492d-af98-9b706b1611aa">
+        state variable filter
+      </Link> may be more suitable.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="References">
+    <Paragraph>
+      The filter implementation is loosely based upon the C++ implementation provided at
+      <LinkExternal target="https://www.earlevel.com/main/2012/11/26/biquad-c-source-code/">https://www.earlevel
+        .com/main/2012/11/26/biquad-c-source-code/</LinkExternal>.
+    </Paragraph>
+  </Subsection>
+
+</Section>

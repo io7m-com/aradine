@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="com.io7m.aradine.filter.recursive1"
+         id="96246446-169f-4518-a162-442c4b9776c8">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      The <Term type="module">com.io7m.aradine.filter.recursive1</Term> module contains simple recursive filter
+      implementations.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Applications">
+    <Paragraph>
+      The filter implementations provided in the
+      <Term type="module">com.io7m.aradine.filter.recursive1</Term>
+      module are extremely simple 1-pole filters. They represent the bare minimum in terms of filter implementations and
+      may be useful in terms of eliminating low frequency grounds hum from audio, or reducing high frequency noise.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="References">
+    <Paragraph>
+      The filter implementations are based on the descriptions given in
+      <LinkExternal target="https://www.dspguide.com/ch19.htm">
+        The Scientist and Engineer's Guide to Digital Signal Processing
+      </LinkExternal>
+      by Steven W. Smith (ISBN-13 978-0966017632).
+    </Paragraph>
+  </Subsection>
+
+</Section>

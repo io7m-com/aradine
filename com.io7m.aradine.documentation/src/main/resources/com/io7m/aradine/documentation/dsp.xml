@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="DSP Modules"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="dca26aba-d23f-4dce-8534-4b2a348732a3">
+
+  <!--
+  <Section title="Overview">
+    <Subsection title="Compatibility">
+      <Paragraph>
+        The modules included with the <Term type="package">aradine</Term> package are intended to provide strong
+        guarantees in terms of producing reproducible output decades into the future. It is typical for musicians to make
+        creative use of edge-case behaviour in both software and hardware DSP systems, which can lead to problems if that
+        behaviour happens to be considered to be a bug by the original author and suddenly fixed one day; suddenly the
+        musician can no longer get the sounds that they liked out of the system!
+      </Paragraph>
+      <Paragraph>
+        The intention is that once a DSP module is published, only "bugs" that lead to outright crashes will be fixed;
+        everything else is considered to be the exported "behaviour" of that module and will be preserved in perpetuity.
+        Additionally, extensive unit tests are written for each module in the hope that changes in behaviour will be
+        caught and corrected before those changes make it into a release.
+      </Paragraph>
+    </Subsection>
+  </Section>
+  -->
+
+  <xi:include href="dsp_filter_biquad1.xml"/>
+  <xi:include href="dsp_filter_recursive1.xml"/>
+  <xi:include href="dsp_filter_statevar1.xml"/>
+
+</Section>

@@ -15,11 +15,11 @@
       <Paragraph>
         Biquad filters can be composed to produce stronger filters. The output signal of one filter is fed into the
         input of another filter in a process known as <Term type="term">cascading</Term>. The main filter implementation
-        included in the <Term type="module">com.io7m.aradine.filter.biquad1</Term> module is a filter of order <Term type="constant">
-        2
-      </Term> (specifically, it has two poles, and two zeroes). It would be theoretically possible to use the same
-        algorithm with more filter coefficients to produce a single filter of order <Term type="constant">N</Term>, but
-        in practice it is better
+        included in the <Term type="module">com.io7m.aradine.filter.biquad1</Term> module is a filter of order
+        <Term type="constant">2</Term>
+        (specifically, it has two poles, and two zeroes). It would be theoretically possible to use the same algorithm
+        with more filter coefficients to produce a single filter of order <Term type="constant">N</Term>, but in
+        practice it is better to
         <Term type="term">cascade</Term>
         <Term type="expression">N / 2</Term>
         filters of order <Term type="constant">2</Term>; the resulting filter will be much more numerically stable and
@@ -47,9 +47,9 @@ final var out = stage3.processOneFrame(s2);
     <Subsection title="Uses">
       <Paragraph>
         Biquad filters are relatively suitable for use in EQ applications, or when the filter cutoff value is not
-        expected to be modulated over time. For rapidly modulating filter cutoff values, a <Link target="8fdc11a6-3ec6-492d-af98-9b706b1611aa">
-        state variable filter
-      </Link> may be more suitable.
+        expected to be modulated over time. For rapidly modulating filter cutoff values, a
+        <Link target="8fdc11a6-3ec6-492d-af98-9b706b1611aa">state variable filter</Link>
+        may be more suitable.
       </Paragraph>
     </Subsection>
   </Subsection>
@@ -57,8 +57,8 @@ final var out = stage3.processOneFrame(s2);
   <Subsection title="References">
     <Paragraph>
       The filter implementation is loosely based upon the C++ implementation provided at
-      <LinkExternal target="https://www.earlevel.com/main/2012/11/26/biquad-c-source-code/">https://www.earlevel
-        .com/main/2012/11/26/biquad-c-source-code/</LinkExternal>.
+      <LinkExternal target="https://www.earlevel.com/main/2012/11/26/biquad-c-source-code/">
+        https://www.earlevel.com/main/2012/11/26/biquad-c-source-code/</LinkExternal>.
     </Paragraph>
   </Subsection>
 

@@ -14,39 +14,24 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 
 /**
- * Methods to create objects for instrument implementations.
+ * Modular programmable synthesis (Monophonic sampler)
  */
 
-public interface ARI1InstrumentServiceImplementationObjectsType
+module com.io7m.aradine.instrument.grain_sampler_m0
 {
-  /**
-   * @param <T> The type of events in the buffer
-   *
-   * @return A new empty event buffer
-   */
+  requires static com.io7m.aradine.annotations;
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+  requires static org.osgi.service.component.annotations;
 
-  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
+  requires com.io7m.aradine.instrument.spi1;
 
-  /**
-   * Create an empty integer map.
-   *
-   * @param size The initial map size
-   * @param <T>  The type of values
-   *
-   * @return A new map
-   */
+  provides ARI1InstrumentFactoryType
+    with ARIGM0SamplerFactory;
 
-  <T> ARI1IntMapMutableType<T> createIntMap(int size);
-
-
-  /**
-   * @param seed The seed value
-   *
-   * @return A new RNG
-   */
-
-  ARI1RNGDeterministicType createDeterministicRNG(int seed);
+  exports com.io7m.aradine.instrument.grain_sampler_m0;
 }

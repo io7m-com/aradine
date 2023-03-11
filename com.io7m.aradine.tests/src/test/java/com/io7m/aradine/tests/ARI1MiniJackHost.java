@@ -17,6 +17,7 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
@@ -95,7 +96,7 @@ public final class ARI1MiniJackHost
       client.registerPort("inM", MIDI, JackPortIsInput);
 
     final var samplers =
-      new ARIXP0SamplerFactory();
+      new ARIGM0SamplerFactory();
 
     final var services =
       ARI1MiniInstrumentServices.create(
@@ -148,11 +149,30 @@ public final class ARI1MiniJackHost
           ARI1ParameterSampleMapType.class
         );
 
-    final var parameterLoopPoint =
+    final var parameterSpeed =
+      (ARI1ParameterReal)
       services.declaredParameter(
         new ARI1ParameterId(1),
         ARI1ParameterRealType.class
       );
+
+    final var parameterGrainJitter =
+      (ARI1ParameterReal)
+        services.declaredParameter(
+          new ARI1ParameterId(2),
+          ARI1ParameterRealType.class
+        );
+
+    final var parameterGrainLength =
+      (ARI1ParameterReal)
+        services.declaredParameter(
+          new ARI1ParameterId(3),
+          ARI1ParameterRealType.class
+        );
+
+    parameterSpeed.valueChange(0, 0.5);
+    parameterGrainJitter.valueChange(0, 1.0);
+    parameterGrainLength.valueChange(0, 20.0);
 
     final var converters =
       new SXMSampleBufferRateConverters();
@@ -250,7 +270,14 @@ public final class ARI1MiniJackHost
 
     while (true) {
       try {
-        Thread.sleep(100L);
+        Thread.sleep(1000L);
+
+        parameterSpeed.valueChange(0, Math.random());
+        parameterGrainLength.valueChange(0, Math.random() * 40.0);
+
+        messages.add(new ARI1EventConfigurationParameterChanged(0, parameterSpeed.id()));
+        messages.add(new ARI1EventConfigurationParameterChanged(0, parameterGrainLength.id()));
+
       } catch (final InterruptedException e) {
         Thread.currentThread().interrupt();
       }

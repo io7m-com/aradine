@@ -14,39 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
 /**
- * Methods to create objects for instrument implementations.
+ * A pseudorandom number generator with a published, deterministic
+ * algorithm that is not allowed to change in new versions of the
+ * software.
  */
 
-public interface ARI1InstrumentServiceImplementationObjectsType
+public interface ARI1RNGDeterministicType
 {
   /**
-   * @param <T> The type of events in the buffer
-   *
-   * @return A new empty event buffer
+   * Reset this RNG instance.
    */
 
-  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
+  void reset();
 
   /**
-   * Create an empty integer map.
+   * Generate a random number. Implementations are required to produce
+   * the same sequence of random numbers for the same seed, and are
+   * required to restart the sequence from the beginning after a call
+   * to {@link #reset()}.
    *
-   * @param size The initial map size
-   * @param <T>  The type of values
-   *
-   * @return A new map
+   * @return A random number in the range [0, 1]
    */
 
-  <T> ARI1IntMapMutableType<T> createIntMap(int size);
-
-
-  /**
-   * @param seed The seed value
-   *
-   * @return A new RNG
-   */
-
-  ARI1RNGDeterministicType createDeterministicRNG(int seed);
+  double random();
 }

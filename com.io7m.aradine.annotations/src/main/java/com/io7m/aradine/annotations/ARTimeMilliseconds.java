@@ -14,39 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+
+package com.io7m.aradine.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Methods to create objects for instrument implementations.
+ * A quantity of time expressed in milliseconds.
  */
 
-public interface ARI1InstrumentServiceImplementationObjectsType
+@Retention(RetentionPolicy.CLASS)
+@Target(value = {
+  ElementType.TYPE_USE
+})
+public @interface ARTimeMilliseconds
 {
-  /**
-   * @param <T> The type of events in the buffer
-   *
-   * @return A new empty event buffer
-   */
 
-  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
-
-  /**
-   * Create an empty integer map.
-   *
-   * @param size The initial map size
-   * @param <T>  The type of values
-   *
-   * @return A new map
-   */
-
-  <T> ARI1IntMapMutableType<T> createIntMap(int size);
-
-
-  /**
-   * @param seed The seed value
-   *
-   * @return A new RNG
-   */
-
-  ARI1RNGDeterministicType createDeterministicRNG(int seed);
 }

@@ -14,39 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 package com.io7m.aradine.instrument.spi1;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeMilliseconds;
+
 /**
- * Methods to create objects for instrument implementations.
+ * Time services.
  */
 
-public interface ARI1InstrumentServiceImplementationObjectsType
+public interface ARI1InstrumentServiceTimeType
 {
   /**
-   * @param <T> The type of events in the buffer
+   * Convert the given duration in milliseconds to the nearest equivalent number
+   * of frames at the current sample rate.
    *
-   * @return A new empty event buffer
+   * @param milliseconds The millisecond duration
+   *
+   * @return The number of frames
    */
 
-  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
+  @ARTimeFrames long timeMillisecondsToFrames(
+    @ARTimeMilliseconds double milliseconds);
 
   /**
-   * Create an empty integer map.
+   * Convert the given frame count to a duration in milliseconds based on the
+   * current sample rate.
    *
-   * @param size The initial map size
-   * @param <T>  The type of values
+   * @param frames The frame count
    *
-   * @return A new map
+   * @return The duration of the frames in milliseconds
    */
 
-  <T> ARI1IntMapMutableType<T> createIntMap(int size);
-
-
-  /**
-   * @param seed The seed value
-   *
-   * @return A new RNG
-   */
-
-  ARI1RNGDeterministicType createDeterministicRNG(int seed);
+  @ARTimeMilliseconds double timeFramesToMilliseconds(
+    @ARTimeFrames long frames);
 }

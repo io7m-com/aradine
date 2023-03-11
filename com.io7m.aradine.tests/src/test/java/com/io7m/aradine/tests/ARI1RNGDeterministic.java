@@ -14,39 +14,37 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
 
-/**
- * Methods to create objects for instrument implementations.
- */
+package com.io7m.aradine.tests;
 
-public interface ARI1InstrumentServiceImplementationObjectsType
+import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
+import com.io7m.jmurmur.Murmur3;
+
+public final class ARI1RNGDeterministic
+  implements ARI1RNGDeterministicType
 {
-  /**
-   * @param <T> The type of events in the buffer
-   *
-   * @return A new empty event buffer
-   */
+  private int state;
+  private final int seed;
 
-  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
+  ARI1RNGDeterministic(
+    final int inSeed)
+  {
+    this.seed = inSeed;
+    this.reset();
+  }
 
-  /**
-   * Create an empty integer map.
-   *
-   * @param size The initial map size
-   * @param <T>  The type of values
-   *
-   * @return A new map
-   */
+  @Override
+  public void reset()
+  {
+    this.state = Murmur3.hashIntWithSeed(0, this.seed);
+  }
 
-  <T> ARI1IntMapMutableType<T> createIntMap(int size);
-
-
-  /**
-   * @param seed The seed value
-   *
-   * @return A new RNG
-   */
-
-  ARI1RNGDeterministicType createDeterministicRNG(int seed);
+  @Override
+  public double random()
+  {
+    final var x =
+      StrictMath.abs((double) this.state / (double) Integer.MAX_VALUE);
+    this.state = Murmur3.hashInt(this.state);
+    return x;
+  }
 }

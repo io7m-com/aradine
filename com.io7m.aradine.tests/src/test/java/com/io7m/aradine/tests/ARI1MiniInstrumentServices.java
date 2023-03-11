@@ -17,6 +17,8 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
@@ -33,6 +35,7 @@ import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
+import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
 import com.io7m.jattribute.core.AttributeType;
@@ -212,6 +215,13 @@ public final class ARI1MiniInstrumentServices
   }
 
   @Override
+  public ARI1RNGDeterministicType createDeterministicRNG(
+    final int seed)
+  {
+    return new ARI1RNGDeterministic(seed);
+  }
+
+  @Override
   public int statusCurrentSampleRate()
   {
     return this.sampleRate.get().intValue();
@@ -311,5 +321,21 @@ public final class ARI1MiniInstrumentServices
     throws Exception
   {
     this.closeables.close();
+  }
+
+  @Override
+  public @ARTimeFrames long timeMillisecondsToFrames(
+    final @ARTimeMilliseconds double milliseconds)
+  {
+    final var rate = (double) this.statusCurrentSampleRate();
+    return Math.round((rate * (milliseconds / 1000.0)));
+  }
+
+  @Override
+  public @ARTimeMilliseconds double timeFramesToMilliseconds(
+    final @ARTimeFrames long frames)
+  {
+    final var rate = (double) this.statusCurrentSampleRate();
+    return (double) frames / (rate * 1000.0);
   }
 }

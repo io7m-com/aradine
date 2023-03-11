@@ -26,7 +26,8 @@ public interface ARI1InstrumentServicesType
   ARI1InstrumentServiceEventsType,
   ARI1InstrumentServiceDeclarationsType,
   ARI1InstrumentServiceSamplesType,
-  ARI1InstrumentServiceImplementationObjectsType
+  ARI1InstrumentServiceImplementationObjectsType,
+  ARI1InstrumentServiceTimeType
 {
 
 }

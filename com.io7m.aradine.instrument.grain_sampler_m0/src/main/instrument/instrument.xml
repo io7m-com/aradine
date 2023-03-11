@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Instrument xmlns="urn:com.io7m.aradine:instrument:1"
+            Identifier="com.io7m.aradine.instrument.grain_sampler_m0">
+
+  <Version Major="0"
+           Minor="0"
+           Patch="0"/>
+
+  <Metadata>
+    <Meta Name="dc.title">Grain Sampler M0</Meta>
+  </Metadata>
+
+  <Parameters>
+    <ParameterSampleMap ID="0"
+                        Label="Samples"/>
+
+    <ParameterReal ID="1"
+                   Label="Speed"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="8.0"
+                   ValueDefault="1.0"
+                   UnitOfMeasurement="com.io7m.aradine.scale.linear"/>
+
+    <ParameterReal ID="2"
+                   Label="Grain Position Jitter"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="1000.0"
+                   ValueDefault="0.0"
+                   UnitOfMeasurement="com.io7m.aradine.time.milliseconds"/>
+
+    <ParameterReal ID="3"
+                   Label="Grain Length"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="1000.0"
+                   ValueDefault="1.0"
+                   UnitOfMeasurement="com.io7m.aradine.time.milliseconds"/>
+
+    <ParameterInteger ID="4"
+                      Label="Pitch Bend Range"
+                      ValueMinimumInclusive="1"
+                      ValueMaximumInclusive="120"
+                      ValueDefault="24"
+                      UnitOfMeasurement="com.io7m.aradine.semitones"/>
+  </Parameters>
+
+  <Ports>
+    <PortOutputAudio ID="0"
+                     Label="Output L">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
+    </PortOutputAudio>
+
+    <PortOutputAudio ID="1"
+                     Label="Output R">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
+    </PortOutputAudio>
+
+    <PortInputNote ID="2"
+                   Label="Note Input"/>
+  </Ports>
+
+</Instrument>

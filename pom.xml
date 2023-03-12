@@ -23,6 +23,7 @@
   <modules>
     <module>com.io7m.aradine.annotations</module>
     <module>com.io7m.aradine.documentation</module>
+    <module>com.io7m.aradine.envelope.table</module>
     <module>com.io7m.aradine.filter.biquad1</module>
     <module>com.io7m.aradine.filter.recursive1</module>
     <module>com.io7m.aradine.filter.statevar1</module>

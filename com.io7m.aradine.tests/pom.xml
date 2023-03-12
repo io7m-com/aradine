@@ -77,6 +77,11 @@
       <artifactId>com.io7m.aradine.tests.arbitraries</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.envelope.table</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.io7m.jattribute</groupId>

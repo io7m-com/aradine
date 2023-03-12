@@ -27,6 +27,13 @@ import com.io7m.aradine.annotations.ARTimeMilliseconds;
 public interface ARI1InstrumentServiceTimeType
 {
   /**
+   * @return The number of milliseconds in a single frame at the current sample
+   * rate
+   */
+
+  @ARTimeMilliseconds double timeMillisecondsPerFrame();
+
+  /**
    * Convert the given duration in milliseconds to the nearest equivalent number
    * of frames at the current sample rate.
    *
@@ -47,6 +54,9 @@ public interface ARI1InstrumentServiceTimeType
    * @return The duration of the frames in milliseconds
    */
 
-  @ARTimeMilliseconds double timeFramesToMilliseconds(
-    @ARTimeFrames long frames);
+  default @ARTimeMilliseconds double timeFramesToMilliseconds(
+    final @ARTimeFrames long frames)
+  {
+    return (double) frames * this.timeMillisecondsPerFrame();
+  }
 }

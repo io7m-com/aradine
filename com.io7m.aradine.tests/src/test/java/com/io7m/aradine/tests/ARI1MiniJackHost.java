@@ -170,9 +170,9 @@ public final class ARI1MiniJackHost
           ARI1ParameterRealType.class
         );
 
-    parameterSpeed.valueChange(0, 0.5);
-    parameterGrainJitter.valueChange(0, 1.0);
-    parameterGrainLength.valueChange(0, 20.0);
+    parameterSpeed.valueChange(0, 0.125);
+    parameterGrainJitter.valueChange(0, 1);
+    parameterGrainLength.valueChange(0, 10.0);
 
     final var converters =
       new SXMSampleBufferRateConverters();
@@ -272,11 +272,11 @@ public final class ARI1MiniJackHost
       try {
         Thread.sleep(1000L);
 
-        parameterSpeed.valueChange(0, Math.random());
-        parameterGrainLength.valueChange(0, Math.random() * 40.0);
+        // parameterSpeed.valueChange(0, Math.random());
+        // parameterGrainLength.valueChange(0, Math.random() * 40.0);
 
-        messages.add(new ARI1EventConfigurationParameterChanged(0, parameterSpeed.id()));
-        messages.add(new ARI1EventConfigurationParameterChanged(0, parameterGrainLength.id()));
+        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterSpeed.id()));
+        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterGrainLength.id()));
 
       } catch (final InterruptedException e) {
         Thread.currentThread().interrupt();

@@ -37,9 +37,9 @@ public final class AREnvelopeTableTest
 
   @Property
   public void testEmpty(
-    final @ForAll double time)
+    final @ForAll long time)
   {
-    final var env = AREnvelopeTable.create();
+    final var env = AREnvelopeTable.create(48000L);
     assertEquals(1.0, env.evaluate(time));
   }
 
@@ -50,15 +50,27 @@ public final class AREnvelopeTableTest
   @Test
   public void testLinearSimple()
   {
-    final var env = AREnvelopeTable.create();
+    final var env = AREnvelopeTable.create(48000L);
     env.setFirst(0.0, LINEAR);
     env.setPoint(1000.0, 1.0, LINEAR);
 
-    assertEquals(1000.0, env.end());
+    assertEquals(1000.0, env.endMilliseconds());
 
-    for (double time = 0.0; time < 2000.0; time += 0.1) {
+    for (long time = 0L; time < 48000L * 2L; ++time) {
       final var amp = env.evaluate(time);
-      if (time < 1000.0) {
+      if (time < 48000L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+
+    env.setSampleRate(44100L);
+
+    for (long time = 0L; time < 44100L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 44100L) {
         assertTrue(amp >= 0.0);
         assertTrue(amp <= 1.0);
       } else {
@@ -74,27 +86,46 @@ public final class AREnvelopeTableTest
   @Test
   public void testConstantSimple()
   {
-    final var env = AREnvelopeTable.create();
+    final var env = AREnvelopeTable.create(48000L);
     env.setFirst(0.0, CONSTANT_CURRENT);
     env.setPoint(100.0, 0.1, CONSTANT_CURRENT);
     env.setPoint(200.0, 0.2, CONSTANT_NEXT);
     env.setPoint(300.0, 0.3, CONSTANT_CURRENT);
 
-    assertEquals(300.0, env.end());
+    assertEquals(300.0, env.endMilliseconds());
 
     for (double time = 0.0; time <= 300.0; time += 0.1) {
-      final var amp = env.evaluate(time);
-      if (time >= 0.0 && time < 100.0) {
-        assertEquals(0.0, env.evaluate(time));
+      final var amp = env.evaluateAtMilliseconds(time);
+      if (time <= 99.9) {
+        assertEquals(0.0, amp);
       }
-      if (time >= 100.0 && time < 200.0) {
-        assertEquals(0.1, env.evaluate(time));
+      if (time >= 100.0 && time <= 199.9) {
+        assertEquals(0.1, amp);
       }
       if (time >= 200.0 && time < 300.0) {
-        assertEquals(0.3, env.evaluate(time));
+        assertEquals(0.3, amp);
       }
       if (time == 300.0) {
-        assertEquals(0.3, env.evaluate(time));
+        assertEquals(0.3, amp);
+      }
+    }
+
+    env.setSampleRate(44100L);
+    assertEquals(300.0, env.endMilliseconds());
+
+    for (double time = 0.0; time <= 300.0; time += 0.1) {
+      final var amp = env.evaluateAtMilliseconds(time);
+      if (time <= 99.9) {
+        assertEquals(0.0, amp);
+      }
+      if (time >= 100.0 && time <= 199.9) {
+        assertEquals(0.1, amp);
+      }
+      if (time >= 200.0 && time < 300.0) {
+        assertEquals(0.3, amp);
+      }
+      if (time == 300.0) {
+        assertEquals(0.3, amp);
       }
     }
   }

@@ -50,28 +50,28 @@ public final class AREnvelopeADREvaluatorTest
   {
     final var env =
       new AREnvelopeADR(
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create()
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L)
       );
 
     final var eval =
       new AREnvelopeADREvaluator(env);
 
     assertEquals(STATE_ATTACK, eval.state());
-    assertEquals(1.0, eval.evaluate(0.0));
+    assertEquals(1.0, eval.evaluate(0L));
     assertEquals(STATE_SUSTAIN, eval.state());
-    assertEquals(1.0, eval.evaluate(1.0));
+    assertEquals(1.0, eval.evaluate(1L));
     assertEquals(STATE_SUSTAIN, eval.state());
-    assertEquals(1.0, eval.evaluate(2.0));
+    assertEquals(1.0, eval.evaluate(2L));
     assertEquals(STATE_SUSTAIN, eval.state());
-    assertEquals(1.0, eval.evaluate(3.0));
+    assertEquals(1.0, eval.evaluate(3L));
 
-    eval.beginRelease(4.0, false);
+    eval.beginRelease(4L, false);
     assertEquals(STATE_RELEASE, eval.state());
-    assertEquals(0.0, eval.evaluate(4.0));
-    assertEquals(0.0, eval.evaluate(5.0));
-    assertEquals(0.0, eval.evaluate(6.0));
+    assertEquals(0.0, eval.evaluate(4L));
+    assertEquals(0.0, eval.evaluate(5L));
+    assertEquals(0.0, eval.evaluate(6L));
   }
 
   /**
@@ -86,9 +86,9 @@ public final class AREnvelopeADREvaluatorTest
   {
     final var env =
       new AREnvelopeADR(
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create()
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L)
       );
 
     {
@@ -101,31 +101,29 @@ public final class AREnvelopeADREvaluatorTest
       env.release().setPoint(500.0, 0.0, LINEAR);
     }
 
-    final var data = new TreeMap<Double, Double>();
+    final var data = new TreeMap<Long, Double>();
     final var eval = new AREnvelopeADREvaluator(env);
-    for (var time = 0.0; time <= 4000.0; time += 0.1) {
-      if (time >= 2000.0) {
-        if (eval.state() != STATE_RELEASE) {
-          eval.beginRelease(time, true);
-        }
+    for (var time = 0L; time <= 48000L * 4L; ++time) {
+      if (time == 48000L * 2L) {
+        eval.beginRelease(time, true);
       }
 
       final var amp = eval.evaluate(time);
       data.put(time, amp);
 
-      if (time >= 0.0 && time < 1000.0) {
+      if (time < 48000L) {
         assertEquals(STATE_ATTACK, eval.state());
         assertTrue(amp >= 0.0);
         assertTrue(amp <= 1.0);
       }
 
-      if (time >= 1000.0 && time < 2000.0) {
+      if (time >= 48000L && time < 2L * 48000L) {
         assertEquals(STATE_SUSTAIN, eval.state());
         assertTrue(amp >= 0.8);
         assertTrue(amp <= 1.0);
       }
 
-      if (time >= 2000.0) {
+      if (time >= 48000L * 2L) {
         assertEquals(STATE_RELEASE, eval.state());
         assertTrue(amp >= 0.0);
         assertTrue(amp <= 1.0);
@@ -147,9 +145,9 @@ public final class AREnvelopeADREvaluatorTest
   {
     final var env =
       new AREnvelopeADR(
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create(),
-        AREnvelopeTable.create()
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L),
+        AREnvelopeTable.create(48000L)
       );
 
     {
@@ -162,42 +160,75 @@ public final class AREnvelopeADREvaluatorTest
       env.release().setPoint(500.0, 0.0, LINEAR);
     }
 
-    final var data = new TreeMap<Double, Double>();
-    final var eval = new AREnvelopeADREvaluator(env);
-    for (var time = 0.0; time <= 4000.0; time += 0.1) {
-      if (time >= 2000.0) {
-        if (eval.state() != STATE_RELEASE) {
+    final var data = new TreeMap<Long, Double>();
+
+    {
+      final var eval = new AREnvelopeADREvaluator(env);
+      for (var time = 0L; time <= 48000L * 4L; ++time) {
+        if (time == 48000L * 2L) {
           eval.beginRelease(time, true);
         }
-      }
 
-      final var amp = eval.evaluate(time);
-      data.put(time, amp);
+        final var amp = eval.evaluate(time);
+        data.put(time, amp);
 
-      if (time >= 0.0 && time < 1000.0) {
-        assertEquals(STATE_ATTACK, eval.state());
-        assertTrue(amp >= 0.0);
-        assertTrue(amp <= 1.0);
-      }
+        if (time < 48000L) {
+          assertEquals(STATE_ATTACK, eval.state());
+          assertTrue(amp >= 0.0);
+          assertTrue(amp <= 1.0);
+        }
 
-      if (time >= 1000.0 && time < 2000.0) {
-        assertEquals(STATE_SUSTAIN, eval.state());
-        assertTrue(amp >= 0.8);
-        assertTrue(amp <= 1.0);
-      }
+        if (time >= 48000L && time < 48000L * 2L) {
+          assertEquals(STATE_SUSTAIN, eval.state());
+          assertTrue(amp >= 0.8);
+          assertTrue(amp <= 1.0);
+        }
 
-      if (time >= 2000.0) {
-        assertEquals(STATE_RELEASE, eval.state());
-        assertTrue(amp >= 0.0);
-        assertTrue(amp <= 1.0);
+        if (time >= 48000L * 2L) {
+          assertEquals(STATE_RELEASE, eval.state());
+          assertTrue(amp >= 0.0);
+          assertTrue(amp <= 1.0);
+        }
       }
     }
 
     // this.chart(data, Paths.get("/tmp/chart.png"));
+
+    {
+      env.setSampleRate(44100L);
+
+      final var eval = new AREnvelopeADREvaluator(env);
+      for (var time = 0L; time <= 44100L * 4L; ++time) {
+        if (time == 44100L * 2L) {
+          eval.beginRelease(time, true);
+        }
+
+        final var amp = eval.evaluate(time);
+        data.put(time, amp);
+
+        if (time < 44100L) {
+          assertEquals(STATE_ATTACK, eval.state());
+          assertTrue(amp >= 0.0);
+          assertTrue(amp <= 1.0);
+        }
+
+        if (time >= 44100L && time < 44100L * 2L) {
+          assertEquals(STATE_SUSTAIN, eval.state());
+          assertTrue(amp >= 0.8);
+          assertTrue(amp <= 1.0);
+        }
+
+        if (time >= 44100L * 2L) {
+          assertEquals(STATE_RELEASE, eval.state());
+          assertTrue(amp >= 0.0);
+          assertTrue(amp <= 1.0);
+        }
+      }
+    }
   }
 
   private void chart(
-    final TreeMap<Double, Double> data,
+    final TreeMap<Long, Double> data,
     final Path file)
     throws IOException
   {
@@ -206,13 +237,13 @@ public final class AREnvelopeADREvaluatorTest
 
     final var chart =
       new XYChartBuilder()
-        .xAxisTitle("Time (ms)")
+        .xAxisTitle("Frames")
         .yAxisTitle("Amplitude")
         .width(width)
         .height(height)
         .build();
 
-    final var xData = new ArrayList<Double>();
+    final var xData = new ArrayList<Long>();
     final var yData = new ArrayList<Double>();
 
     for (final var entry : data.entrySet()) {

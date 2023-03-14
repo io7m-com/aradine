@@ -18,6 +18,8 @@
 package com.io7m.aradine.envelope.table;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeFramesPerSecond;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 
 import java.util.TreeMap;
@@ -30,28 +32,68 @@ import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.LINEAR;
 
 public final class AREnvelopeTable
 {
-  private static final Double ZERO =
-    Double.valueOf(0.0);
+  private static final Long ZERO =
+    Long.valueOf(0L);
 
-  private final TreeMap<Double, AREnvelopeNode> points;
+  private TreeMap<Long, AREnvelopeNode> points;
+  private @ARTimeFramesPerSecond long sampleRate;
 
-  private AREnvelopeTable()
+  private AREnvelopeTable(
+    final @ARTimeFramesPerSecond long inSampleRate)
   {
     this.points = new TreeMap<>();
+    this.setSampleRate(inSampleRate);
+  }
+
+  /**
+   * Set the new sample rate.
+   *
+   * @param inSampleRate The new sample rate
+   */
+
+  public void setSampleRate(
+    final long inSampleRate)
+  {
+    this.sampleRate = Math.max(0L, inSampleRate);
+
+    final var newPoints = new TreeMap<Long, AREnvelopeNode>();
+    for (final var entry : this.points.entrySet()) {
+      final var node = entry.getValue();
+      final var newNode =
+        new AREnvelopeNode(
+          node.time(),
+          millisecondsToFrames(this.sampleRate, node.time()),
+          node.amplitude(),
+          node.interpolation()
+        );
+      newPoints.put(Long.valueOf(newNode.timeFrames()), newNode);
+    }
+
+    this.points = newPoints;
+  }
+
+  private static @ARTimeFrames long millisecondsToFrames(
+    final @ARTimeFramesPerSecond double sampleRate,
+    final @ARTimeMilliseconds double milliseconds)
+  {
+    return Math.round((sampleRate * (milliseconds / 1000.0)));
   }
 
   /**
    * Create a new envelope.
    *
+   * @param sampleRate The current sample rate
+   *
    * @return The envelope
    */
 
-  public static AREnvelopeTable create()
+  public static AREnvelopeTable create(
+    final @ARTimeFramesPerSecond long sampleRate)
   {
-    final var table = new AREnvelopeTable();
+    final var table = new AREnvelopeTable(sampleRate);
     table.points.put(
       ZERO,
-      new AREnvelopeNode(0.0, 1.0, LINEAR)
+      new AREnvelopeNode(0.0, 0L, 1.0, LINEAR)
     );
     return table;
   }
@@ -65,12 +107,12 @@ public final class AREnvelopeTable
    */
 
   public double evaluate(
-    final @ARTimeMilliseconds double time)
+    final @ARTimeFrames long time)
   {
     final var timeClamped =
-      Math.max(0.0, time);
+      Math.max(0L, time);
     final var timeBoxed =
-      Double.valueOf(timeClamped);
+      Long.valueOf(timeClamped);
     final var nodePrevious =
       this.points.floorEntry(timeBoxed)
         .getValue();
@@ -84,20 +126,20 @@ public final class AREnvelopeTable
     final var nodeNext =
       entryNext.getValue();
     final var timePrevious =
-      nodePrevious.time();
+      nodePrevious.timeFrames();
     final var timeNext =
-      nodeNext.time();
+      nodeNext.timeFrames();
     final var timeUpper =
       timeNext - timePrevious;
 
-    if (timeUpper == 0.0) {
+    if (timeUpper == 0L) {
       return nodePrevious.amplitude();
     }
 
     final var timeCurrent =
       timeClamped - timePrevious;
     final var timeNormal =
-      timeCurrent / timeUpper;
+      (double) timeCurrent / (double) timeUpper;
 
     return switch (nodePrevious.interpolation()) {
       case LINEAR -> {
@@ -113,14 +155,39 @@ public final class AREnvelopeTable
   }
 
   /**
+   * Evaluate the envelope at the given time.
+   *
+   * @param time The time
+   *
+   * @return An amplitude value
+   */
+
+  public double evaluateAtMilliseconds(
+    final @ARTimeMilliseconds double time)
+  {
+    return this.evaluate(millisecondsToFrames(this.sampleRate, time));
+  }
+
+  /**
    * @return The time of the last envelope node
    */
 
-  public double end()
+  public @ARTimeMilliseconds double endMilliseconds()
   {
     return this.points.lastEntry()
       .getValue()
       .time();
+  }
+
+  /**
+   * @return The time of the last envelope node
+   */
+
+  public @ARTimeFrames long endFrames()
+  {
+    return this.points.lastEntry()
+      .getValue()
+      .timeFrames();
   }
 
   private static double interpolateLinear(
@@ -147,7 +214,7 @@ public final class AREnvelopeTable
 
     this.points.put(
       ZERO,
-      new AREnvelopeNode(0.0, ampClamped, interpolation)
+      new AREnvelopeNode(0.0, 0L, ampClamped, interpolation)
     );
   }
 
@@ -166,12 +233,15 @@ public final class AREnvelopeTable
   {
     final var timeClamped =
       Math.max(0.0, time);
+    final var timeFrame =
+      millisecondsToFrames(this.sampleRate, timeClamped);
+
     final var ampClamped =
       Math.min(1.0, Math.max(0.0, amplitude));
 
     this.points.put(
-      Double.valueOf(timeClamped),
-      new AREnvelopeNode(timeClamped, ampClamped, interpolation)
+      Long.valueOf(timeFrame),
+      new AREnvelopeNode(timeClamped, timeFrame, ampClamped, interpolation)
     );
   }
 }

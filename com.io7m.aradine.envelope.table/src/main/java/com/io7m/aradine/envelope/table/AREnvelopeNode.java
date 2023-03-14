@@ -18,6 +18,7 @@
 package com.io7m.aradine.envelope.table;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
+import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 
 import java.util.Objects;
@@ -25,13 +26,15 @@ import java.util.Objects;
 /**
  * A node within an envelope.
  *
- * @param time          The time
+ * @param time          The time in milliseconds
+ * @param timeFrames    The time in frames at the current sample rate
  * @param amplitude     The amplitude
  * @param interpolation The interpolation
  */
 
 public record AREnvelopeNode(
   @ARTimeMilliseconds double time,
+  @ARTimeFrames long timeFrames,
   @ARNormalizedUnsigned double amplitude,
   AREnvelopeInterpolation interpolation)
 {
@@ -39,6 +42,7 @@ public record AREnvelopeNode(
    * A node within an envelope.
    *
    * @param time          The time
+   * @param timeFrames    The time in frames at the current sample rate
    * @param amplitude     The amplitude
    * @param interpolation The interpolation
    */

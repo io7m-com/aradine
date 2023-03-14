@@ -45,7 +45,7 @@ public final class ARI1ParameterReal
   private int valueLatestTime;
 
   /**
-   * The value that this parameter will have at the end of the processing
+   * The value that this parameter will have at the endMilliseconds of the processing
    * period, assuming that no more events show up at a later time.
    */
 

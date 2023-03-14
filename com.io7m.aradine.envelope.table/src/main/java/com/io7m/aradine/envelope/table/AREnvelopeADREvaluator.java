@@ -18,7 +18,7 @@
 package com.io7m.aradine.envelope.table;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
-import com.io7m.aradine.annotations.ARTimeMilliseconds;
+import com.io7m.aradine.annotations.ARTimeFrames;
 
 import java.util.Objects;
 
@@ -36,7 +36,7 @@ public final class AREnvelopeADREvaluator
   private @ARNormalizedUnsigned double releaseScale;
   private @ARNormalizedUnsigned double ampMostRecent;
   private AREnvelopeADRState state;
-  private @ARTimeMilliseconds double stateStarted;
+  private @ARTimeFrames long stateStarted;
 
   /**
    * Construct an evaluator.
@@ -52,7 +52,7 @@ public final class AREnvelopeADREvaluator
     this.state =
       STATE_ATTACK;
     this.stateStarted =
-      0.0;
+      0L;
     this.ampMostRecent =
       0.0;
     this.releaseScale =
@@ -77,7 +77,7 @@ public final class AREnvelopeADREvaluator
    */
 
   public void beginRelease(
-    final @ARTimeMilliseconds double time,
+    final @ARTimeFrames long time,
     final boolean relative)
   {
     this.state = STATE_RELEASE;
@@ -97,12 +97,12 @@ public final class AREnvelopeADREvaluator
    */
 
   public @ARNormalizedUnsigned double evaluate(
-    final @ARTimeMilliseconds double time)
+    final @ARTimeFrames long time)
   {
     return switch (this.state) {
       case STATE_ATTACK -> {
         final var attack = this.envelope.attack();
-        if (time >= attack.end()) {
+        if (time >= attack.endFrames()) {
           this.state = STATE_SUSTAIN;
           this.stateStarted = time;
           yield this.evaluate(this.timeClamped(time));
@@ -119,8 +119,15 @@ public final class AREnvelopeADREvaluator
           this.envelope.sustain();
         final var timeClamped =
           this.timeClamped(time);
-        final var timeCyclic =
-          timeClamped % sustain.end();
+        final var timeEnd =
+          sustain.endFrames();
+
+        final long timeCyclic;
+        if (timeEnd == 0L) {
+          timeCyclic = 0L;
+        } else {
+          timeCyclic = timeClamped % sustain.endFrames();
+        }
 
         this.ampMostRecent =
           sustain.evaluate(timeCyclic);
@@ -140,9 +147,9 @@ public final class AREnvelopeADREvaluator
     };
   }
 
-  private double timeClamped(
-    final double time)
+  private @ARTimeFrames long timeClamped(
+    final @ARTimeFrames long time)
   {
-    return Math.max(0.0, time - this.stateStarted);
+    return Math.max(0L, time - this.stateStarted);
   }
 }

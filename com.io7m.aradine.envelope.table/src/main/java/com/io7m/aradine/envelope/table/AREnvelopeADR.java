@@ -46,4 +46,18 @@ public record AREnvelopeADR(
     sustain.setFirst(1.0, CONSTANT_CURRENT);
     release.setFirst(0.0, CONSTANT_CURRENT);
   }
+
+  /**
+   * Set the new sample rate.
+   *
+   * @param inSampleRate The new sample rate
+   */
+
+  public void setSampleRate(
+    final long inSampleRate)
+  {
+    this.attack.setSampleRate(inSampleRate);
+    this.sustain.setSampleRate(inSampleRate);
+    this.release.setSampleRate(inSampleRate);
+  }
 }

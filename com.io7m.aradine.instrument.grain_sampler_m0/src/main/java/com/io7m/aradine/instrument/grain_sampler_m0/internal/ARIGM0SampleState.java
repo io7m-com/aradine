@@ -292,8 +292,8 @@ public final class ARIGM0SampleState
      * and so will tend to stack up and increase the gain. When the pitch
      * of grains is increased, the grains will complete faster which can
      * lead to a kind of amplitude modulation effect. By scaling the grain
-     * rate, the rate is kept consistent with the rate that grains are
-     * completing.
+     * rate, the rate of generation is kept consistent with the rate that
+     * grains are completing.
      */
 
     final var rateScale =

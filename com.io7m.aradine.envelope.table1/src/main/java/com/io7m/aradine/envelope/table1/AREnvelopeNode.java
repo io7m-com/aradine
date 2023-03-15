@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.aradine.envelope.table;
+package com.io7m.aradine.envelope.table1;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 import com.io7m.aradine.annotations.ARTimeFrames;

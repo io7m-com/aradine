@@ -16,14 +16,14 @@
 
 package com.io7m.aradine.tests.envelope.table;
 
-import com.io7m.aradine.envelope.table.AREnvelopeTable;
+import com.io7m.aradine.envelope.table1.AREnvelopeTable;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import org.junit.jupiter.api.Test;
 
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.CONSTANT_CURRENT;
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.CONSTANT_NEXT;
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.LINEAR;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_CURRENT;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_NEXT;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LINEAR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.aradine.envelope.table;
+package com.io7m.aradine.envelope.table1;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 import com.io7m.aradine.annotations.ARTimeFrames;
@@ -24,10 +24,10 @@ import com.io7m.aradine.annotations.ARTimeMilliseconds;
 
 import java.util.TreeMap;
 
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.LINEAR;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LINEAR;
 
 /**
- * A table of nodes comprising an envelope.
+ * A table1 of nodes comprising an envelope.
  */
 
 public final class AREnvelopeTable

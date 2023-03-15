@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.aradine.envelope.table;
+package com.io7m.aradine.envelope.table1;
 
 /**
  * The state of an ADR envelope.

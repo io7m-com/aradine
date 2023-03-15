@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.tests.envelope.table;
 
-import com.io7m.aradine.envelope.table.AREnvelopeADR;
-import com.io7m.aradine.envelope.table.AREnvelopeADREvaluator;
-import com.io7m.aradine.envelope.table.AREnvelopeTable;
+import com.io7m.aradine.envelope.table1.AREnvelopeADR;
+import com.io7m.aradine.envelope.table1.AREnvelopeADREvaluator;
+import com.io7m.aradine.envelope.table1.AREnvelopeTable;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.markers.None;
@@ -32,10 +32,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_ATTACK;
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_RELEASE;
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_SUSTAIN;
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.LINEAR;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_ATTACK;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_RELEASE;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_SUSTAIN;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LINEAR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

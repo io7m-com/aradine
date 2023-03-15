@@ -14,31 +14,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-package com.io7m.aradine.envelope.table;
-
 /**
- * Interpolation for a node.
+ * Modular programmable synthesis (Envelope table)
  */
 
-public enum AREnvelopeInterpolation
+module com.io7m.aradine.envelope.table1
 {
-  /**
-   * The value of this node will be linearly interpolated to the value of the
-   * next node.
-   */
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+  requires static com.io7m.aradine.annotations;
 
-  LINEAR,
-
-  /**
-   * The value of this node will be constant until the next node.
-   */
-
-  CONSTANT_CURRENT,
-
-  /**
-   * The value of this node will be equal to the next node.
-   */
-
-  CONSTANT_NEXT
+  exports com.io7m.aradine.envelope.table1;
 }

@@ -15,9 +15,9 @@
  */
 
 
-package com.io7m.aradine.envelope.table;
+package com.io7m.aradine.envelope.table1;
 
-import static com.io7m.aradine.envelope.table.AREnvelopeInterpolation.CONSTANT_CURRENT;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_CURRENT;
 
 /**
  * A three-state envelope definition.

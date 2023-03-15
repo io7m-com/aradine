@@ -15,16 +15,16 @@
  */
 
 
-package com.io7m.aradine.envelope.table;
+package com.io7m.aradine.envelope.table1;
 
 import com.io7m.aradine.annotations.ARNormalizedUnsigned;
 import com.io7m.aradine.annotations.ARTimeFrames;
 
 import java.util.Objects;
 
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_ATTACK;
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_RELEASE;
-import static com.io7m.aradine.envelope.table.AREnvelopeADRState.STATE_SUSTAIN;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_ATTACK;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_RELEASE;
+import static com.io7m.aradine.envelope.table1.AREnvelopeADRState.STATE_SUSTAIN;
 
 /**
  * A stateful ADR envelope evaluator.

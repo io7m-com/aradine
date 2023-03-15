@@ -79,7 +79,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.envelope.table</artifactId>
+      <artifactId>com.io7m.aradine.envelope.table1</artifactId>
       <version>${project.version}</version>
     </dependency>
 

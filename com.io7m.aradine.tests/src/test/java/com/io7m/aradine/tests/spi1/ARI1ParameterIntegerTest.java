@@ -17,9 +17,13 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
+import com.io7m.aradine.instrument.spi1.ARI1ParagraphType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.tests.ARI1ParameterInteger;
+
+import java.util.List;
 
 public final class ARI1ParameterIntegerTest
   extends ARI1ParameterIntegerContract<ARI1ParameterInteger>
@@ -34,6 +38,12 @@ public final class ARI1ParameterIntegerTest
     return new ARI1ParameterInteger(
       new ARI1ParameterDescriptionIntegerType()
       {
+        @Override
+        public ARI1DocumentationType documentation()
+        {
+          return List::of;
+        }
+
         @Override
         public String unitOfMeasurement()
         {

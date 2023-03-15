@@ -14,26 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1LinkType;
+
+import java.net.URI;
+import java.util.Objects;
 
 /**
- * A sample-map-typed parameter.
+ * A link element within documentation.
  *
- * @param id            The parameter ID
- * @param label         The parameter label
- * @param documentation The documentation
+ * @param target The link target
+ * @param text   The text
  */
 
-public record ARI1ParameterSampleMap(
-  ARI1ParameterId id,
-  String label,
-  ARI1DocumentationType documentation)
-  implements ARI1ParameterDescriptionSampleMapType
+public record ARI1Link(
+  URI target,
+  String text)
+  implements ARI1LinkType
 {
+  /**
+   * A link element within documentation.
+   *
+   * @param target The link target
+   * @param text   The text
+   */
 
+  public ARI1Link
+  {
+    Objects.requireNonNull(target, "target");
+    Objects.requireNonNull(text, "text");
+  }
 }

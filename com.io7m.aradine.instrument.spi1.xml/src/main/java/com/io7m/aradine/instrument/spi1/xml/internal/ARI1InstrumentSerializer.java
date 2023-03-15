@@ -18,7 +18,10 @@
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
 import com.io7m.anethum.common.SerializeException;
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
+import com.io7m.aradine.instrument.spi1.ARI1LinkType;
+import com.io7m.aradine.instrument.spi1.ARI1ParagraphType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
@@ -29,11 +32,15 @@ import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1TextType;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentSerializerType;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.Documentation;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Instrument;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.LinkType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Meta;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Metadata;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.Paragraph;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterRealType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterSampleMapType;
@@ -49,6 +56,7 @@ import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -123,6 +131,7 @@ public final class ARI1InstrumentSerializer
   {
     final var m = new PortInputNoteType();
     m.setID(Integer.toUnsignedLong(value.id().value()));
+    m.setDocumentation(processDocumentation(value.documentation()));
     m.setLabel(value.label());
 
     final var s = m.getPortSemantic();
@@ -142,6 +151,7 @@ public final class ARI1InstrumentSerializer
   {
     final var m = new PortInputAudioType();
     m.setID(Integer.toUnsignedLong(value.id().value()));
+    m.setDocumentation(processDocumentation(value.documentation()));
     m.setLabel(value.label());
 
     final var s = m.getPortSemantic();
@@ -161,6 +171,7 @@ public final class ARI1InstrumentSerializer
   {
     final var m = new PortOutputAudioType();
     m.setID(Integer.toUnsignedLong(value.id().value()));
+    m.setDocumentation(processDocumentation(value.documentation()));
     m.setLabel(value.label());
 
     final var s = m.getPortSemantic();
@@ -207,6 +218,7 @@ public final class ARI1InstrumentSerializer
   {
     final var m = new ParameterRealType();
     m.setID(Integer.toUnsignedLong(i.id().value()));
+    m.setDocumentation(processDocumentation(i.documentation()));
     m.setLabel(i.label());
     m.setUnitOfMeasurement(i.unitOfMeasurement());
     m.setValueDefault(i.valueDefault());
@@ -220,6 +232,7 @@ public final class ARI1InstrumentSerializer
   {
     final var m = new ParameterIntegerType();
     m.setID(Integer.toUnsignedLong(i.id().value()));
+    m.setDocumentation(processDocumentation(i.documentation()));
     m.setLabel(i.label());
     m.setUnitOfMeasurement(i.unitOfMeasurement());
     m.setValueDefault(i.valueDefault());
@@ -232,9 +245,43 @@ public final class ARI1InstrumentSerializer
     final ARI1ParameterDescriptionSampleMapType i)
   {
     final var m = new ParameterSampleMapType();
+    m.setDocumentation(processDocumentation(i.documentation()));
     m.setID(Integer.toUnsignedLong(i.id().value()));
     m.setLabel(i.label());
     return m;
+  }
+
+  private static Documentation processDocumentation(
+    final ARI1DocumentationType documentation)
+  {
+    if (documentation.paragraphs().isEmpty()) {
+      return null;
+    }
+    final var result = new Documentation();
+    for (final var paragraph : documentation.paragraphs()) {
+      result.getParagraph().add(processParagraph(paragraph));
+    }
+    return result;
+  }
+
+  private static Paragraph processParagraph(
+    final ARI1ParagraphType paragraph)
+  {
+    final var result = new Paragraph();
+
+    for (final var content : paragraph.content()) {
+      final var resultContent = result.getContent();
+      if (content instanceof ARI1TextType text) {
+        resultContent.add(text.text());
+      }
+      if (content instanceof ARI1LinkType link) {
+        final var r = new LinkType();
+        r.setTarget(link.target().toString());
+        r.setContent(link.text());
+        resultContent.add((Serializable) r);
+      }
+    }
+    return result;
   }
 
   private static Metadata processMetadata(

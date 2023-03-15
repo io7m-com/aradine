@@ -14,14 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.aradine.instrument.spi1;
 
+import java.util.List;
+
 /**
- * A subscription to a property.
+ * Documentation applied to an element in an instrument description.
  */
 
-public interface ARI1SubscriptionType extends ARI1CloseableType
+public interface ARI1DocumentationType
 {
+  /**
+   * @return The documentation paragraphs
+   */
 
+  List<ARI1ParagraphType> paragraphs();
 }

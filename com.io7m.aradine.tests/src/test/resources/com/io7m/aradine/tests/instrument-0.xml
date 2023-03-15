@@ -17,7 +17,14 @@
                       ValueMinimumInclusive="1"
                       ValueMaximumInclusive="120"
                       ValueDefault="24"
-                      UnitOfMeasurement="com.io7m.aradine.semitones"/>
+                      UnitOfMeasurement="com.io7m.aradine.semitones">
+      <Documentation>
+        <Paragraph>
+          A specification of the pitch bend range in semitones. The parameter specifies the range by which notes can
+          be pitched up and down.
+        </Paragraph>
+      </Documentation>
+    </ParameterInteger>
 
     <ParameterReal ID="1"
                    Label="Loop Point"

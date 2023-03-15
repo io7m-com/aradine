@@ -15,25 +15,20 @@
  */
 
 
-package com.io7m.aradine.instrument.spi1.xml.internal;
+package com.io7m.aradine.instrument.spi1;
 
-import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+
+import java.util.List;
 
 /**
- * A sample-map-typed parameter.
- *
- * @param id            The parameter ID
- * @param label         The parameter label
- * @param documentation The documentation
+ * A paragraph within documentation.
  */
 
-public record ARI1ParameterSampleMap(
-  ARI1ParameterId id,
-  String label,
-  ARI1DocumentationType documentation)
-  implements ARI1ParameterDescriptionSampleMapType
+public interface ARI1ParagraphType
 {
+  /**
+   * @return The paragraph content.
+   */
 
+  List<ARI1ParagraphContentType> content();
 }

@@ -17,6 +17,7 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 
@@ -26,23 +27,26 @@ import java.util.Set;
 /**
  * The description of an audio input port.
  *
- * @param id        The port ID
- * @param semantics The port semantics
- * @param label     The port label
+ * @param id            The port ID
+ * @param semantics     The port semantics
+ * @param label         The port label
+ * @param documentation The documentation
  */
 
 public record ARI1PortInputAudio(
   ARI1PortId id,
   Set<String> semantics,
-  String label)
+  String label,
+  ARI1DocumentationType documentation)
   implements ARI1PortDescriptionInputAudioType
 {
   /**
    * The description of an audio input port.
    *
-   * @param id        The port ID
-   * @param semantics The port semantics
-   * @param label     The port label
+   * @param id            The port ID
+   * @param semantics     The port semantics
+   * @param label         The port label
+   * @param documentation The documentation
    */
 
   public ARI1PortInputAudio
@@ -50,5 +54,6 @@ public record ARI1PortInputAudio(
     Objects.requireNonNull(id, "id");
     Objects.requireNonNull(semantics, "semantics");
     Objects.requireNonNull(label, "label");
+    Objects.requireNonNull(documentation, "documentation");
   }
 }

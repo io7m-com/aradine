@@ -40,5 +40,26 @@ public enum AREnvelopeInterpolation
    * The value of this node will be equal to the next node.
    */
 
-  CONSTANT_NEXT
+  CONSTANT_NEXT,
+
+  /**
+   * The value of this node will be exponentially interpolated to the value of the
+   * next node.
+   */
+
+  EXPONENTIAL,
+
+  /**
+   * The value of this node will be logarithmically interpolated to the value of the
+   * next node.
+   */
+
+  LOGARITHMIC,
+
+  /**
+   * The value of this node will be interpolated to the value of the
+   * next node using cosine interpolation.
+   */
+
+  COSINE
 }

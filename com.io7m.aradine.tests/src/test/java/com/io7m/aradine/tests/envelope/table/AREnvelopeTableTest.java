@@ -20,10 +20,25 @@ import com.io7m.aradine.envelope.table1.AREnvelopeTable;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import org.junit.jupiter.api.Test;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.markers.None;
+
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.DoubleBuffer;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_CURRENT;
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_NEXT;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.COSINE;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.EXPONENTIAL;
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LINEAR;
+import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LOGARITHMIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -126,6 +141,114 @@ public final class AREnvelopeTableTest
       }
       if (time == 300.0) {
         assertEquals(0.3, amp);
+      }
+    }
+  }
+
+  /**
+   * An envelope with two exponential points is exponential.
+   */
+
+  @Test
+  public void testExponentialSimple()
+  {
+    final var env = AREnvelopeTable.create(48000L);
+    env.setFirst(0.0, EXPONENTIAL);
+    env.setPoint(1000.0, 1.0, EXPONENTIAL);
+
+    assertEquals(1000.0, env.endMilliseconds());
+
+    for (long time = 0L; time < 48000L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 48000L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+
+    env.setSampleRate(44100L);
+
+    for (long time = 0L; time < 44100L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 44100L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+  }
+
+  /**
+   * An envelope with two logarithmic points is logarithmic.
+   */
+
+  @Test
+  public void testLogarithmicSimple()
+  {
+    final var env = AREnvelopeTable.create(48000L);
+    env.setFirst(0.0, LOGARITHMIC);
+    env.setPoint(1000.0, 1.0, LOGARITHMIC);
+
+    assertEquals(1000.0, env.endMilliseconds());
+
+    for (long time = 0L; time < 48000L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 48000L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+
+    env.setSampleRate(44100L);
+
+    for (long time = 0L; time < 44100L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 44100L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+  }
+
+  /**
+   * An envelope with two cosine points is cosine.
+   */
+
+  @Test
+  public void testCosineSimple()
+  {
+    final var env = AREnvelopeTable.create(48000L);
+    env.setFirst(0.0, COSINE);
+    env.setPoint(1000.0, 1.0, COSINE);
+
+    assertEquals(1000.0, env.endMilliseconds());
+
+    for (long time = 0L; time < 48000L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 48000L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
+      }
+    }
+
+    env.setSampleRate(44100L);
+
+    for (long time = 0L; time < 44100L * 2L; ++time) {
+      final var amp = env.evaluate(time);
+      if (time < 44100L) {
+        assertTrue(amp >= 0.0);
+        assertTrue(amp <= 1.0);
+      } else {
+        assertEquals(1.0, amp);
       }
     }
   }

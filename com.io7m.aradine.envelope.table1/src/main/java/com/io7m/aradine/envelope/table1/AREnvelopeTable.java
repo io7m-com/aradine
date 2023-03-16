@@ -149,8 +149,38 @@ public final class AREnvelopeTable
           timeNormal
         );
       }
-      case CONSTANT_CURRENT -> nodePrevious.amplitude();
-      case CONSTANT_NEXT -> nodeNext.amplitude();
+
+      case CONSTANT_CURRENT -> {
+        yield nodePrevious.amplitude();
+      }
+
+      case CONSTANT_NEXT -> {
+        yield nodeNext.amplitude();
+      }
+
+      case EXPONENTIAL -> {
+        yield interpolateLinear(
+          nodePrevious.amplitude(),
+          nodeNext.amplitude(),
+          timeNormal * timeNormal
+        );
+      }
+
+      case LOGARITHMIC -> {
+        yield interpolateLinear(
+          nodePrevious.amplitude(),
+          nodeNext.amplitude(),
+          StrictMath.sqrt(timeNormal)
+        );
+      }
+
+      case COSINE -> {
+        yield interpolateCosine(
+          nodePrevious.amplitude(),
+          nodeNext.amplitude(),
+          timeNormal
+        );
+      }
     };
   }
 
@@ -196,6 +226,16 @@ public final class AREnvelopeTable
     final double factor)
   {
     return (x0 * (1.0 - factor)) + (x1 * factor);
+  }
+
+  private static double interpolateCosine(
+    final double x0,
+    final double x1,
+    final double factor)
+  {
+    final var ft = factor * Math.PI;
+    final var f = (1.0 - StrictMath.cos(ft)) * 0.5;
+    return (x0 * (1.0 - f)) + (x1 * f);
   }
 
   /**

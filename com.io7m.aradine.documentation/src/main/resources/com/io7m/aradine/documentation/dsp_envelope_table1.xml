@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="com.io7m.aradine.envelope.table1"
+         id="ef185f17-270f-4582-8c19-e0e7feb12ea5">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      The <Term type="module">com.io7m.aradine.envelope.table1</Term> module contains a table-based envelope
+      implementation.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Interpolation">
+    <Subsection title="Overview">
+      <Paragraph>
+        The envelope supports a number of different interpolation functions to produce amplitude values between
+        breakpoints. For a hypothetical breakpoint <Term type="expression">B</Term> at frame
+        <Term type="expression">frame(B)</Term>
+        with amplitude <Term type="expression">amplitude(B)</Term>, and a hypothetical breakpoint
+        <Term type="expression">C</Term>
+        at frame <Term type="expression">frame(C)</Term> with amplitude
+        <Term type="expression">amplitude(C)</Term>, where
+        <Term type="expression">frame(B) &lt; frame(C)</Term>, the interpolation function specified for
+        <Term type="expression">B</Term>
+        is used to produce interpolated amplitude values for all frames greater than
+        <Term type="expression">frame(B)</Term>
+        and less than <Term type="expression">frame(C)</Term>.
+      </Paragraph>
+      <Paragraph>
+        The definitions below are explained in terms of a pair of breakpoints <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> where <Term type="expression">frame(B) = 0</Term>,
+        <Term type="expression">amplitude(B) = 0</Term>, <Term type="expression">frame(C) = 1000</Term>,
+        and <Term type="expression">amplitude(C) = 1</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="CONSTANT_CURRENT"
+                id="7563b504-6ee0-46f2-894e-78c23cc4a6cc">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">CONSTANT_CURRENT</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have an amplitude equal to
+        <Term type="expression">amplitude(B)</Term>.
+      </Paragraph>
+      <FormalItem title="CONSTANT_CURRENT Graph">
+        <Image source="chart_constant_current.png"
+               width="640"
+               height="480">CONSTANT_CURRENT Graph
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CONSTANT_NEXT"
+                id="8f14a7b8-3afe-45ba-bbdd-30d18d2f3d00">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">CONSTANT_NEXT</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have an amplitude equal to
+        <Term type="expression">amplitude(C)</Term>.
+      </Paragraph>
+      <FormalItem title="CONSTANT_NEXT Graph">
+        <Image source="chart_constant_next.png"
+               width="640"
+               height="480">CONSTANT_NEXT Graph
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="COSINE"
+                id="78d750f0-5e5b-4d3f-b79b-2e52c3e371f0">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">COSINE</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have amplitudes produced by a cosine interpolation of
+        <Term type="expression">amplitude(B)</Term>
+        and <Term type="expression">amplitude(C)</Term>.
+      </Paragraph>
+      <FormalItem title="COSINE Graph">
+        <Image source="chart_cosine.png"
+               width="640"
+               height="480">COSINE Graph
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="EXPONENTIAL"
+                id="a2e975c9-b43c-4ac2-9e9f-276cdc45af4a">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">EXPONENTIAL</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have amplitudes produced by an exponential interpolation of
+        <Term type="expression">amplitude(B)</Term>
+        and
+        <Term type="expression">amplitude(C)</Term>.
+      </Paragraph>
+      <FormalItem title="EXPONENTIAL Graph">
+        <Image source="chart_exponential.png"
+               width="640"
+               height="480">EXPONENTIAL Graph
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        This is equivalent to
+        <Link target="e130e12f-c8cd-44c7-a90d-15b5c80e758a">linear interpolation</Link>
+        where the interpolation factor is the square of the normal linear factor.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="LINEAR"
+                id="e130e12f-c8cd-44c7-a90d-15b5c80e758a">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">LINEAR</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have amplitudes produced by a linear interpolation of
+        <Term type="expression">amplitude(B)</Term>
+        and
+        <Term type="expression">amplitude(C)</Term>.
+      </Paragraph>
+      <FormalItem title="LINEAR Graph">
+        <Image source="chart_linear.png"
+               width="640"
+               height="480">LINEAR Graph
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="LOGARITHMIC"
+                id="b1308a11-0c62-4f6f-8176-cfc1b66d9669">
+      <Paragraph>
+        If a breakpoint <Term type="expression">B</Term> uses the interpolation function
+        <Term type="constant">LOGARITHMIC</Term>, then all frames between
+        <Term type="expression">B</Term>
+        and <Term type="expression">C</Term> will have amplitudes produced by a logarithmic interpolation of
+        <Term type="expression">amplitude(B)</Term>
+        and
+        <Term type="expression">amplitude(C)</Term>.
+      </Paragraph>
+      <FormalItem title="LOGARITHMIC Graph">
+        <Image source="chart_logarithmic.png"
+               width="640"
+               height="480">LOGARITHMIC Graph
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        This is equivalent to
+        <Link target="e130e12f-c8cd-44c7-a90d-15b5c80e758a">linear interpolation</Link>
+        where the interpolation factor is the square root of the normal linear factor.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+</Section>

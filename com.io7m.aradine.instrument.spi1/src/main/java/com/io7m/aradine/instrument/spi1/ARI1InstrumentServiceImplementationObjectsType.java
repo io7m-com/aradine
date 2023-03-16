@@ -23,10 +23,12 @@ package com.io7m.aradine.instrument.spi1;
 public interface ARI1InstrumentServiceImplementationObjectsType
 {
   /**
+   * @param <T> The type of events in the buffer
+   *
    * @return A new empty event buffer
    */
 
-  ARI1EventBufferType createEventBuffer();
+  <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer();
 
   /**
    * Create an empty integer map.
@@ -38,4 +40,13 @@ public interface ARI1InstrumentServiceImplementationObjectsType
    */
 
   <T> ARI1IntMapMutableType<T> createIntMap(int size);
+
+
+  /**
+   * @param seed The seed value
+   *
+   * @return A new RNG
+   */
+
+  ARI1RNGDeterministicType createDeterministicRNG(int seed);
 }

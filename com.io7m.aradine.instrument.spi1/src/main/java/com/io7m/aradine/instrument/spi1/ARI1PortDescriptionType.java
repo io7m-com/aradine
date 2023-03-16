@@ -23,6 +23,7 @@ import java.util.Set;
  */
 
 public sealed interface ARI1PortDescriptionType
+  extends ARI1DocumentedType
   permits ARI1PortDescriptionInputType,
   ARI1PortDescriptionOutputType
 {

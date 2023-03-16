@@ -17,9 +17,12 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.tests.ARI1ParameterReal;
+
+import java.util.List;
 
 public final class ARI1ParameterRealTest
   extends ARI1ParameterRealContract<ARI1ParameterReal>
@@ -34,6 +37,12 @@ public final class ARI1ParameterRealTest
     return new ARI1ParameterReal(
       new ARI1ParameterDescriptionRealType()
       {
+        @Override
+        public ARI1DocumentationType documentation()
+        {
+          return List::of;
+        }
+
         @Override
         public String unitOfMeasurement()
         {

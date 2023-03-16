@@ -17,6 +17,8 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
@@ -33,15 +35,15 @@ import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
+import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
+import com.io7m.jattribute.core.AttributeSubscriptionType;
 import com.io7m.jattribute.core.AttributeType;
 import com.io7m.jattribute.core.Attributes;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.jmulticlose.core.ClosingResourceFailedException;
-import com.io7m.jsamplebuffer.api.SampleBufferRateConverterType;
-import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +67,8 @@ public final class ARI1MiniInstrumentServices
   private final Map<ARI1ParameterId, ARI1ParameterType> parameters;
   private final Map<ARI1PortId, ARI1PortType> ports;
   private final ConcurrentHashMap<URI, ARI1SampleMapType> sampleMaps;
+  private final AttributeSubscriptionType sampleRateSubscription;
+  private double millisecondsPerFrame;
 
   private ARI1MiniInstrumentServices(
     final CloseableCollectionType<ClosingResourceFailedException> inCloseables,
@@ -77,7 +81,9 @@ public final class ARI1MiniInstrumentServices
     this.closeables =
       Objects.requireNonNull(inCloseables, "closeables");
     this.instrumentDescription =
-      Objects.requireNonNull(inInstrumentDescription, "inInstrumentDescription");
+      Objects.requireNonNull(
+        inInstrumentDescription,
+        "inInstrumentDescription");
     this.sampleRate =
       Objects.requireNonNull(inSampleRate, "inSampleRate");
     this.bufferSize =
@@ -90,6 +96,16 @@ public final class ARI1MiniInstrumentServices
       Map.copyOf(inParameters);
     this.ports =
       Map.copyOf(inPorts);
+    this.millisecondsPerFrame =
+      1.0 / (inSampleRate.get().doubleValue() * 1000.0);
+
+    this.sampleRateSubscription =
+      this.closeables.add(
+        this.sampleRate.subscribe((oldRate, newRate) -> {
+          this.millisecondsPerFrame =
+            1.0 / (newRate.doubleValue() * 1000.0);
+        })
+      );
   }
 
   public static ARI1MiniInstrumentServices create(
@@ -191,7 +207,11 @@ public final class ARI1MiniInstrumentServices
         continue;
       }
       if (description instanceof ARI1ParameterDescriptionSampleMapType d) {
-        parameters.put(id, new ARI1ParameterSampleMap(d, URI.create("aradine:unspecified")));
+        parameters.put(
+          id,
+          new ARI1ParameterSampleMap(
+            d,
+            URI.create("aradine:unspecified")));
         continue;
       }
     }
@@ -209,6 +229,13 @@ public final class ARI1MiniInstrumentServices
     final int size)
   {
     return new ARI1IntMapMutable<>(size);
+  }
+
+  @Override
+  public ARI1RNGDeterministicType createDeterministicRNG(
+    final int seed)
+  {
+    return new ARI1RNGDeterministic(seed);
   }
 
   @Override
@@ -311,5 +338,19 @@ public final class ARI1MiniInstrumentServices
     throws Exception
   {
     this.closeables.close();
+  }
+
+  @Override
+  public @ARTimeMilliseconds double timeMillisecondsPerFrame()
+  {
+    return this.millisecondsPerFrame;
+  }
+
+  @Override
+  public @ARTimeFrames long timeMillisecondsToFrames(
+    final @ARTimeMilliseconds double milliseconds)
+  {
+    final var rate = (double) this.statusCurrentSampleRate();
+    return Math.round((rate * (milliseconds / 1000.0)));
   }
 }

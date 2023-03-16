@@ -25,6 +25,7 @@
   </Section>
   -->
 
+  <xi:include href="dsp_envelope_table1.xml"/>
   <xi:include href="dsp_filter_biquad1.xml"/>
   <xi:include href="dsp_filter_recursive1.xml"/>
   <xi:include href="dsp_filter_statevar1.xml"/>

@@ -19,7 +19,10 @@ package com.io7m.aradine.instrument.spi1.xml.internal;
 
 import com.io7m.anethum.common.ParseException;
 import com.io7m.anethum.common.ParseStatus;
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
+import com.io7m.aradine.instrument.spi1.ARI1ParagraphContentType;
+import com.io7m.aradine.instrument.spi1.ARI1ParagraphType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
@@ -28,8 +31,11 @@ import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
 import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParserType;
 import com.io7m.aradine.instrument.spi1.xml.ARI1Schema;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.Documentation;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Instrument;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.LinkType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.Metadata;
+import com.io7m.aradine.instrument.spi1.xml.jaxb.Paragraph;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterRealType;
 import com.io7m.aradine.instrument.spi1.xml.jaxb.ParameterSampleMapType;
@@ -77,6 +83,9 @@ import static jakarta.xml.bind.ValidationEvent.WARNING;
 
 public final class ARI1InstrumentParser implements ARI1InstrumentParserType
 {
+  private static final ARI1DocumentationType DOCUMENTATION =
+    new ARI1Documentation(List.of());
+
   private final URI source;
   private final InputStream stream;
   private final Consumer<ParseStatus> statusConsumer;
@@ -201,9 +210,45 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
       new ARI1PortOutputAudio(
         id,
         Set.copyOf(semantics),
-        declaration.getLabel()
+        declaration.getLabel(),
+        processDocumentation(declaration.getDocumentation())
       )
     );
+  }
+
+  private static ARI1DocumentationType processDocumentation(
+    final Documentation documentation)
+  {
+    if (documentation == null) {
+      return DOCUMENTATION;
+    }
+
+    final var paragraphs = documentation.getParagraph();
+    if (paragraphs.isEmpty()) {
+      return DOCUMENTATION;
+    }
+
+    final var results = new ArrayList<ARI1ParagraphType>();
+    for (final var para : paragraphs) {
+      results.add(processParagraph(para));
+    }
+    return new ARI1Documentation(List.copyOf(results));
+  }
+
+  private static ARI1ParagraphType processParagraph(
+    final Paragraph para)
+  {
+    final var results = new ArrayList<ARI1ParagraphContentType>();
+    final var content = para.getContent();
+    for (final var c : content) {
+      if (c instanceof LinkType link) {
+        results.add(new ARI1Link(URI.create(link.getTarget()), link.getContent()));
+      }
+      if (c instanceof String text) {
+        results.add(new ARI1Text(text));
+      }
+    }
+    return new ARI1Paragraph(List.copyOf(results));
   }
 
   private static void processPortInputNote(
@@ -221,7 +266,8 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
       new ARI1PortInputNote(
         id,
         Set.copyOf(semantics),
-        declaration.getLabel()
+        declaration.getLabel(),
+        processDocumentation(declaration.getDocumentation())
       )
     );
   }
@@ -241,7 +287,8 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
       new ARI1PortInputAudio(
         id,
         Set.copyOf(semantics),
-        declaration.getLabel()
+        declaration.getLabel(),
+        processDocumentation(declaration.getDocumentation())
       )
     );
   }
@@ -265,7 +312,8 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
             i.getUnitOfMeasurement(),
             i.getValueDefault(),
             i.getValueMinimumInclusive(),
-            i.getValueMaximumInclusive()
+            i.getValueMaximumInclusive(),
+            processDocumentation(declaration.getDocumentation())
           )
         );
         continue;
@@ -280,7 +328,8 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
             r.getUnitOfMeasurement(),
             r.getValueDefault(),
             r.getValueMinimumInclusive(),
-            r.getValueMaximumInclusive()
+            r.getValueMaximumInclusive(),
+            processDocumentation(declaration.getDocumentation())
           )
         );
         continue;
@@ -289,7 +338,11 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
       if (declaration instanceof ParameterSampleMapType sm) {
         results.put(
           id,
-          new ARI1ParameterSampleMap(id, sm.getLabel())
+          new ARI1ParameterSampleMap(
+            id,
+            sm.getLabel(),
+            processDocumentation(declaration.getDocumentation())
+          )
         );
         continue;
       }

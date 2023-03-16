@@ -13,22 +13,36 @@
 
   <Parameters>
     <ParameterSampleMap ID="0"
-                        Label="Samples"/>
+                        Label="Samples">
+      <Documentation>
+        <Paragraph>The main sample map containing samples mapped to keys.</Paragraph>
+      </Documentation>
+    </ParameterSampleMap>
   </Parameters>
 
   <Ports>
     <PortOutputAudio ID="0"
                      Label="Output L">
+      <Documentation>
+        <Paragraph>The left audio output.</Paragraph>
+      </Documentation>
       <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
     </PortOutputAudio>
 
     <PortOutputAudio ID="1"
                      Label="Output R">
+      <Documentation>
+        <Paragraph>The right audio output.</Paragraph>
+      </Documentation>
       <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
     </PortOutputAudio>
 
     <PortInputNote ID="2"
-                   Label="Note Input"/>
+                   Label="Note Input">
+      <Documentation>
+        <Paragraph>The main input for notes and events.</Paragraph>
+      </Documentation>
+    </PortInputNote>
   </Ports>
 
 </Instrument>

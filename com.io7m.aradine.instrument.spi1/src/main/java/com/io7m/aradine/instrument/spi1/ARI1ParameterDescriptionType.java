@@ -21,6 +21,7 @@ package com.io7m.aradine.instrument.spi1;
  */
 
 public sealed interface ARI1ParameterDescriptionType
+  extends ARI1DocumentedType
   permits ARI1ParameterDescriptionIntegerType,
   ARI1ParameterDescriptionRealType,
   ARI1ParameterDescriptionSampleMapType

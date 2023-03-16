@@ -26,6 +26,72 @@
     </xsd:documentation>
   </xsd:annotation>
 
+  <xsd:complexType name="ParagraphContentType"
+                   mixed="true"
+                   abstract="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of content that can appear in paragraphs.
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:complexType>
+
+  <xsd:complexType name="LinkType"
+                   mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        A link within documentation text.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexContent>
+      <xsd:extension base="i:ParagraphContentType">
+        <xsd:attribute name="Target"
+                       use="required"
+                       type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="Link"
+               type="i:LinkType"/>
+
+  <xsd:group name="ParagraphContentGroup">
+    <xsd:choice>
+      <xsd:element ref="i:Link"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="Paragraph">
+    <xsd:annotation>
+      <xsd:documentation>
+        A paragraph of documentation text.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType mixed="true">
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:group ref="i:ParagraphContentGroup"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Documentation">
+    <xsd:annotation>
+      <xsd:documentation>
+        Documentation that can be applied to various elements.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="i:Paragraph"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:simpleType name="Label">
     <xsd:annotation>
       <xsd:documentation>
@@ -66,6 +132,13 @@
 
   <xsd:complexType name="ParameterType"
                    abstract="true">
+    <xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="i:Documentation"/>
+      </xsd:sequence>
+    </xsd:sequence>
+
     <xsd:attribute name="ID"
                    type="xsd:unsignedInt"
                    use="required">
@@ -232,9 +305,15 @@
 
   <xsd:complexType name="PortType"
                    abstract="true">
-    <xsd:sequence minOccurs="0"
-                  maxOccurs="unbounded">
-      <xsd:element ref="i:PortSemantic"/>
+    <xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="i:Documentation"/>
+      </xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="i:PortSemantic"/>
+      </xsd:sequence>
     </xsd:sequence>
 
     <xsd:attribute name="ID"

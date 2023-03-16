@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Instrument xmlns="urn:com.io7m.aradine:instrument:1"
+            Identifier="com.io7m.aradine.instrument.grain_sampler_m0">
+
+  <Version Major="0"
+           Minor="0"
+           Patch="0"/>
+
+  <Metadata>
+    <Meta Name="dc.title">Grain Sampler M0</Meta>
+  </Metadata>
+
+  <Parameters>
+    <ParameterSampleMap ID="0"
+                        Label="Samples">
+      <Documentation>
+        <Paragraph>
+          The sample map containing samples that are mapped to keys.
+        </Paragraph>
+      </Documentation>
+    </ParameterSampleMap>
+
+    <ParameterReal ID="1"
+                   Label="Speed"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="8.0"
+                   ValueDefault="1.0"
+                   UnitOfMeasurement="com.io7m.aradine.scale.linear">
+      <Documentation>
+        <Paragraph>
+          The playback speed for samples. A value of 1.0 denotes normal playback speed. A value of 0.5 denotes half
+          speed. A value of 2.0 denotes double speed.
+        </Paragraph>
+      </Documentation>
+    </ParameterReal>
+
+    <ParameterReal ID="2"
+                   Label="Grain Position Jitter"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="1000.0"
+                   ValueDefault="0.0"
+                   UnitOfMeasurement="com.io7m.aradine.time.milliseconds">
+      <Documentation>
+        <Paragraph>
+          The maximum amount of jitter applied to the start of the sample position of each grain (excluding the first
+          grain).
+        </Paragraph>
+        <Paragraph>
+          A non-zero value for jitter is recommended to prevent comb filtering artifacts.
+        </Paragraph>
+      </Documentation>
+    </ParameterReal>
+
+    <ParameterReal ID="3"
+                   Label="Grain Length"
+                   ValueMinimumInclusive="0.0"
+                   ValueMaximumInclusive="1000.0"
+                   ValueDefault="1.0"
+                   UnitOfMeasurement="com.io7m.aradine.time.milliseconds">
+      <Documentation>
+        <Paragraph>
+          The length of each generated grain.
+        </Paragraph>
+      </Documentation>
+    </ParameterReal>
+
+    <ParameterInteger ID="4"
+                      Label="Pitch Bend Range"
+                      ValueMinimumInclusive="1"
+                      ValueMaximumInclusive="120"
+                      ValueDefault="24"
+                      UnitOfMeasurement="com.io7m.aradine.semitones">
+      <Documentation>
+        <Paragraph>
+          The number of semitones by which notes may be pitched up or down using pitch bend events.
+        </Paragraph>
+      </Documentation>
+    </ParameterInteger>
+  </Parameters>
+
+  <Ports>
+    <PortOutputAudio ID="0"
+                     Label="Output L">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_left"/>
+    </PortOutputAudio>
+
+    <PortOutputAudio ID="1"
+                     Label="Output R">
+      <PortSemantic Value="com.io7m.aradine.port.output.main_right"/>
+    </PortOutputAudio>
+
+    <PortInputNote ID="2"
+                   Label="Note Input"/>
+  </Ports>
+
+</Instrument>

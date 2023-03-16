@@ -17,19 +17,22 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 
 /**
  * A sample-map-typed parameter.
  *
- * @param id    The parameter ID
- * @param label The parameter label
+ * @param id            The parameter ID
+ * @param label         The parameter label
+ * @param documentation The documentation
  */
 
 public record ARI1ParameterSampleMap(
   ARI1ParameterId id,
-  String label)
+  String label,
+  ARI1DocumentationType documentation)
   implements ARI1ParameterDescriptionSampleMapType
 {
 

@@ -17,6 +17,7 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
+import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 
@@ -29,6 +30,7 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
  * @param valueDefault      The default value
  * @param valueMinimum      The minimum inclusive value
  * @param valueMaximum      The maximum inclusive value
+ * @param documentation     The documentation
  */
 
 public record ARI1ParameterReal(
@@ -37,7 +39,8 @@ public record ARI1ParameterReal(
   String unitOfMeasurement,
   double valueDefault,
   double valueMinimum,
-  double valueMaximum)
+  double valueMaximum,
+  ARI1DocumentationType documentation)
   implements ARI1ParameterDescriptionRealType
 {
 

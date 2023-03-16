@@ -23,10 +23,12 @@
   <modules>
     <module>com.io7m.aradine.annotations</module>
     <module>com.io7m.aradine.documentation</module>
+    <module>com.io7m.aradine.envelope.table1</module>
     <module>com.io7m.aradine.filter.biquad1</module>
     <module>com.io7m.aradine.filter.recursive1</module>
     <module>com.io7m.aradine.filter.statevar1</module>
     <module>com.io7m.aradine.instrument.codegen</module>
+    <module>com.io7m.aradine.instrument.grain_sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_p0</module>
     <module>com.io7m.aradine.instrument.sampler_xp0</module>
@@ -421,6 +423,11 @@
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
         <version>7.5.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jmurmur</groupId>
+        <artifactId>com.io7m.jmurmur.core</artifactId>
+        <version>2.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

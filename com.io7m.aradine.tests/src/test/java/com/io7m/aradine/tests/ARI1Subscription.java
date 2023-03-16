@@ -17,13 +17,13 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1SubscriptionType;
+import com.io7m.aradine.instrument.spi1.ARI1CloseableType;
 import com.io7m.jattribute.core.AttributeSubscriptionType;
 
 import java.util.Objects;
 
 public final class ARI1Subscription
-  implements ARI1SubscriptionType
+  implements ARI1CloseableType
 {
   private final AttributeSubscriptionType subscription;
 

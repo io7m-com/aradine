@@ -22,7 +22,6 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
 
-import java.nio.DoubleBuffer;
 import java.util.List;
 import java.util.Objects;
 

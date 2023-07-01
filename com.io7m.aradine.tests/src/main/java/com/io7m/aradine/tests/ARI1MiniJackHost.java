@@ -18,7 +18,6 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
-import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;

@@ -18,15 +18,10 @@
 package com.io7m.aradine.tests.filter.recursive1;
 
 import com.io7m.aradine.filter.recursive1.ARF1LPFOnePole;
-import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
-import com.io7m.jsamplebuffer.api.SampleBufferType;
-import com.io7m.jsamplebuffer.vanilla.SampleBufferDouble;
-import com.io7m.jsamplebuffer.xmedia.SXMSampleBuffers;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioSystem;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
@@ -34,7 +29,6 @@ import java.nio.DoubleBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 public final class ARF1LPFOnePoleIRDemo
 {

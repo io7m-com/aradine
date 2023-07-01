@@ -19,6 +19,7 @@
 
   <properties>
     <mdep.analyze.skip>true</mdep.analyze.skip>
+    <checkstyle.skip>true</checkstyle.skip>
   </properties>
 
   <dependencies>
@@ -140,14 +141,6 @@
       <artifactId>jqwik-engine</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math4-core</artifactId>
     </dependency>
@@ -167,24 +160,27 @@
       <groupId>org.knowm.xchart</groupId>
       <artifactId>xchart</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-agent</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>
-            ${argLine}
-            --add-opens
-            org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
-            --add-opens
-            org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED
-          </argLine>
-        </configuration>
-      </plugin>
-
       <!-- Determine test coverage -->
       <plugin>
         <groupId>org.jacoco</groupId>

@@ -17,10 +17,7 @@
 
 package com.io7m.aradine.tests.filter.biquad1;
 
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadBPFO2;
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadBPFBWO4;
 import com.io7m.aradine.filter.biquad1.ARBQ1BiquadBRFBWO8;
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadBRFO2;
 import com.io7m.aradine.filter.biquad1.ARBQ1BiquadType;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
 import com.io7m.jsamplebuffer.api.SampleBufferType;

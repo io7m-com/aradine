@@ -18,40 +18,33 @@
 package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
-import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedReal;
-import net.jqwik.api.Arbitraries;
-import net.jqwik.api.Arbitrary;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
+import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedSampleMap;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
-import net.jqwik.api.Provide;
 
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
+public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSampleMapType>
 {
   protected abstract T createParameter(
     ARI1ParameterId id,
-    double valueMinimum,
-    double valueMaximum,
-    double valueDefault
+    URI valueDefault
   );
 
   protected abstract void setValue(
     T parameter,
     int time,
-    double value
+    URI value
   );
 
   protected abstract void clearChanges(
     T parameter
   );
-
 
   /**
    * The value change with the latest time wins.
@@ -60,11 +53,11 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
   @Property
   public void testEventLastWins(
     @ForAll final ARI1ParameterId id,
-    @ForAll final double valueDefault,
-    @ForAll final Map<Integer, ARI1ValueChangedReal> updates)
+    @ForAll final URI valueDefault,
+    @ForAll final Map<Integer, ARI1ValueChangedSampleMap> updates)
   {
     final var param =
-      this.createParameter(id, -Double.MAX_VALUE, Double.MAX_VALUE, valueDefault);
+      this.createParameter(id, valueDefault);
 
     final var sorted = new ArrayList<>(updates.values());
     sorted.sort((o1, o2) -> Integer.compareUnsigned(o1.time(), o2.time()));
@@ -112,13 +105,13 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
   @Property
   public void testEventsSameTime(
     @ForAll final ARI1ParameterId id,
-    @ForAll final double valueDefault,
-    @ForAll final double valueA,
-    @ForAll final double valueB,
-    @ForAll final double valueC)
+    @ForAll final URI valueDefault,
+    @ForAll final URI valueA,
+    @ForAll final URI valueB,
+    @ForAll final URI valueC)
   {
     final var param =
-      this.createParameter(id, -Double.MAX_VALUE, Double.MAX_VALUE, valueDefault);
+      this.createParameter(id, valueDefault);
 
     this.setValue(param, 1_000, valueA);
     this.setValue(param, 1_000, valueB);

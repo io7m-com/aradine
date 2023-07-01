@@ -17,7 +17,6 @@
 package com.io7m.aradine.tests.filter.biquad1;
 
 import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFBWO4;
-import com.io7m.aradine.filter.biquad1.ARBQ1BiquadLPFO2;
 import com.io7m.aradine.tests.ARNoiseSample;
 import com.io7m.aradine.tests.ARNoiseSampleFixture;
 import com.io7m.aradine.tests.ARTestFrequencyAnalysis;

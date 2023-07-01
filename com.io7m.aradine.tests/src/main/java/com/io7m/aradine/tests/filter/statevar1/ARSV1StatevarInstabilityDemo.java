@@ -22,7 +22,6 @@ import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
 import com.io7m.jsamplebuffer.api.SampleBufferType;
 import com.io7m.jsamplebuffer.vanilla.SampleBufferDouble;
 import com.io7m.jsamplebuffer.xmedia.SXMSampleBuffers;
-import org.knowm.xchart.XYChartBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +29,10 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.DoubleBuffer;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
 import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 

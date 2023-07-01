@@ -22,7 +22,6 @@ import org.apache.commons.math4.legacy.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math4.transform.FastFourierTransform;
 import org.apache.commons.numbers.complex.Complex;
 import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.style.XYStyler;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;

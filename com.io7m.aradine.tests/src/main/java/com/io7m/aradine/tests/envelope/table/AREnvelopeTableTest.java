@@ -20,18 +20,6 @@ import com.io7m.aradine.envelope.table1.AREnvelopeTable;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import org.junit.jupiter.api.Test;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.style.markers.None;
-
-import javax.imageio.ImageIO;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.DoubleBuffer;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_CURRENT;
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.CONSTANT_NEXT;

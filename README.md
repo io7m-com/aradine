@@ -2,10 +2,10 @@ aradine
 ===
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.io7m.aradine/com.io7m.aradine.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.aradine%22)
-[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.io7m.aradine/com.io7m.aradine.svg?style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/aradine/)
+[![Maven Central (snapshot)](https://img.shields.io/nexus/s/com.io7m.aradine/com.io7m.aradine?server=https%3A%2F%2Fs01.oss.sonatype.org&style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/aradine/)
 [![Codecov](https://img.shields.io/codecov/c/github/io7m/aradine.svg?style=flat-square)](https://codecov.io/gh/io7m/aradine)
 
-![aradine](./src/site/resources/aradine.jpg?raw=true)
+![com.io7m.aradine](./src/site/resources/aradine.jpg?raw=true)
 
 | JVM | Platform | Status |
 |-----|----------|--------|

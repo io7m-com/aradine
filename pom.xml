@@ -396,6 +396,12 @@
         <groupId>org.knowm.xchart</groupId>
         <artifactId>xchart</artifactId>
         <version>3.8.6</version>
+        <exclusions>
+          <exclusion>
+            <groupId>de.rototor.pdfbox</groupId>
+            <artifactId>graphics2d</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -462,7 +468,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.6.4</version>
+          <version>3.12.0</version>
         </plugin>
 
         <plugin>

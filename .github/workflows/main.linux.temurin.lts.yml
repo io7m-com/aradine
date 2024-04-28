@@ -27,5 +27,5 @@ jobs:
       - name: Coverage
         uses: codecov/codecov-action@v4.3.0
         with:
-          token: ${'{ secrets.CODECOV_TOKEN }'}
+          token: ${{ secrets.CODECOV_TOKEN }}
           file: com.io7m.aradine.tests/target/site/jacoco-aggregate/jacoco.xml

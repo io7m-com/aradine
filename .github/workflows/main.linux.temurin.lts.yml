@@ -26,7 +26,6 @@ jobs:
           path: ./com.io7m.aradine.tests/target/surefire-reports
       - name: Coverage
         uses: codecov/codecov-action@v4.3.0
-        env:
-          CODECOV_TOKEN: ${'{ secrets.CODECOV_TOKEN }'}
         with:
+          token: ${'{ secrets.CODECOV_TOKEN }'}
           file: com.io7m.aradine.tests/target/site/jacoco-aggregate/jacoco.xml

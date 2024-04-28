@@ -67,9 +67,9 @@
   </licenses>
 
   <scm>
-    <url>https://www.github.com/io7m/aradine</url>
-    <connection>scm:git:https://www.github.com/io7m/aradine</connection>
-    <developerConnection>scm:git:https://www.github.com/io7m/aradine</developerConnection>
+    <url>https://www.github.com/io7m-com/aradine</url>
+    <connection>scm:git:https://www.github.com/io7m-com/aradine</connection>
+    <developerConnection>scm:git:https://www.github.com/io7m-com/aradine</developerConnection>
   </scm>
 
   <developers>
@@ -82,7 +82,7 @@
   </developers>
 
   <issueManagement>
-    <url>https://www.github.com/io7m/aradine/issues</url>
+    <url>https://www.github.com/io7m-com/aradine/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
@@ -104,7 +104,7 @@
 
   <ciManagement>
     <system>GitHub Actions</system>
-    <url>https://www.github.com/io7m/aradine/actions</url>
+    <url>https://www.github.com/io7m-com/aradine/actions</url>
   </ciManagement>
 
   <prerequisites>

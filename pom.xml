@@ -55,7 +55,7 @@
 
     <!-- Third-party dependencies. -->
     <io7m.maven-api.version>3.9.6</io7m.maven-api.version>
-    <junit.version>5.10.1</junit.version>
+    <org.junit.version>5.10.1</org.junit.version>
     <org.mockito.version>5.8.0</org.mockito.version>
   </properties>
 
@@ -409,19 +409,11 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-params</artifactId>
-        <version>${junit.version}</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${org.junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>

@@ -168,10 +168,28 @@ public final class ARIXP0SampleState
     return this.positionReal;
   }
 
+  /**
+   * The state.
+   */
+
   private enum State
   {
+    /**
+     * The sample is in the pre-loop state.
+     */
+
     PRE_LOOP,
+
+    /**
+     * The sample is looping forward.
+     */
+
     LOOP_FORWARD,
+
+    /**
+     * The sample is looping backward.
+     */
+
     LOOP_BACKWARD
   }
 }

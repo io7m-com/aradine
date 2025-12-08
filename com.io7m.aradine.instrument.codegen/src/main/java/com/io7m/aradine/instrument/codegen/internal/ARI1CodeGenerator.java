@@ -46,6 +46,8 @@ import com.io7m.jodist.JavaFile;
 import com.io7m.jodist.MethodSpec;
 import com.io7m.jodist.TypeSpec;
 import org.apache.commons.text.CaseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -67,6 +69,9 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 
 public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARI1CodeGenerator.class);
+
   private final ARI1CodeGeneratorParameters parameters;
 
   /**
@@ -249,7 +254,13 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
       javaClasses.add(this.generateParametersClass(instrument));
       javaClasses.add(this.generatePortsClass(instrument));
 
+      for (final var clazz : javaClasses) {
+        LOG.info("Generated class: {}", clazz);
+      }
+
       final var instFile = this.generateInstrumentFile(instrument);
+      LOG.info("Generated instrument file: {}", instFile);
+
       return new ARI1CodeGeneratorResult(Set.copyOf(javaClasses), instFile);
     } catch (final Exception e) {
       throw new ARI1CodeGenerationException(e);

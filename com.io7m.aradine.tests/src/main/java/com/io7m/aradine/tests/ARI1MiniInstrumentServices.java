@@ -128,6 +128,8 @@ public final class ARI1MiniInstrumentServices
     final var parsers = new ARI1InstrumentParsers();
     final ARI1InstrumentDescriptionType instrumentDescription;
     try (var stream = instrumentFactory.openInstrumentDescription()) {
+      Objects.requireNonNull(stream, "stream");
+
       instrumentDescription = parsers.parse(
         URI.create("aradine:instrument"),
         stream

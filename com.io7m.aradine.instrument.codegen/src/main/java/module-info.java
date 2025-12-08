@@ -31,6 +31,7 @@ module com.io7m.aradine.instrument.codegen
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.jodist;
   requires org.apache.commons.text;
+  requires org.slf4j;
 
   exports com.io7m.aradine.instrument.codegen;
 }

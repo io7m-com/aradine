@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>com.io7m.anethum</groupId>
-      <artifactId>com.io7m.anethum.common</artifactId>
+      <artifactId>com.io7m.anethum.api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.io7m.jlexing</groupId>

@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
-import com.io7m.anethum.common.SerializeException;
+import com.io7m.anethum.api.SerializationException;
 import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1LinkType;
@@ -313,7 +313,7 @@ public final class ARI1InstrumentSerializer
   @Override
   public void execute(
     final ARI1InstrumentDescriptionType value)
-    throws SerializeException
+    throws SerializationException
   {
     try {
       final var context =
@@ -325,7 +325,7 @@ public final class ARI1InstrumentSerializer
       marshaller.setProperty("jaxb.formatted.output", TRUE);
       marshaller.marshal(processInstrument(value), this.stream);
     } catch (final JAXBException e) {
-      throw new SerializeException(e.getMessage(), e);
+      throw new SerializationException(e.getMessage(), e);
     }
   }
 

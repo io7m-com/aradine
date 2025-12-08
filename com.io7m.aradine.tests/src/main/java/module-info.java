@@ -35,7 +35,6 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.tests.arbitraries;
 
   requires com.io7m.anethum.api;
-  requires com.io7m.anethum.common;
   requires com.io7m.jattribute.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.jmurmur.core;

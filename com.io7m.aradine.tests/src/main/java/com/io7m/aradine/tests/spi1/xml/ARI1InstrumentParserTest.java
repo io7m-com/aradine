@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests.spi1.xml;
 
-import com.io7m.anethum.common.ParseException;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
@@ -202,7 +202,7 @@ public final class ARI1InstrumentParserTest
           );
 
         final var ex =
-          assertThrows(ParseException.class, () -> {
+          assertThrows(ParsingException.class, () -> {
             this.parsers.parseFile(file);
           });
 

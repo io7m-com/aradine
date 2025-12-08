@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.instrument.spi1.xml;
 
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParseStatus;
 import com.io7m.aradine.instrument.spi1.xml.internal.ARI1InstrumentParser;
 import org.osgi.service.component.annotations.Component;
 

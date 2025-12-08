@@ -26,7 +26,7 @@ module com.io7m.aradine.instrument.codegen
 
   requires java.compiler;
 
-  requires com.io7m.anethum.common;
+  requires com.io7m.anethum.api;
   requires com.io7m.aradine.instrument.spi1.xml;
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.jodist;

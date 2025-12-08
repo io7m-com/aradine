@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.instrument.codegen.internal;
 
-import com.io7m.anethum.common.SerializeException;
+import com.io7m.anethum.api.SerializationException;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGenerationException;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorParameters;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorResult;
@@ -262,7 +262,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
 
   private Path generateInstrumentFile(
     final ARI1InstrumentDescriptionType instrument)
-    throws SerializeException, IOException
+    throws SerializationException, IOException
   {
     final var fixed =
       new ARI1InstrumentDescription(

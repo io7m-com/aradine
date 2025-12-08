@@ -17,8 +17,8 @@
 
 package com.io7m.aradine.instrument.spi1.xml.internal;
 
-import com.io7m.anethum.common.ParseException;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParsingException;
+import com.io7m.anethum.api.ParseStatus;
 import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParagraphContentType;
@@ -71,8 +71,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
-import static com.io7m.anethum.common.ParseSeverity.PARSE_WARNING;
+import static com.io7m.anethum.api.ParseSeverity.PARSE_ERROR;
+import static com.io7m.anethum.api.ParseSeverity.PARSE_WARNING;
 import static jakarta.xml.bind.ValidationEvent.ERROR;
 import static jakarta.xml.bind.ValidationEvent.FATAL_ERROR;
 import static jakarta.xml.bind.ValidationEvent.WARNING;
@@ -121,11 +121,9 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
     final LexicalPosition<URI> lexical,
     final String message)
   {
-    return ParseStatus.builder()
-      .setSeverity(PARSE_ERROR)
-      .setErrorCode(errorCode)
-      .setLexical(lexical)
-      .setMessage(message)
+    return ParseStatus.builder(errorCode, message)
+      .withSeverity(PARSE_ERROR)
+      .withLexical(lexical)
       .build();
   }
 
@@ -387,7 +385,7 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
 
   @Override
   public ARI1InstrumentDescriptionType execute()
-    throws ParseException
+    throws ParsingException
   {
     this.failed = false;
     this.statusValues.clear();
@@ -454,9 +452,9 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
     }
   }
 
-  private ParseException parseException()
+  private ParsingException parseException()
   {
-    return new ParseException(
+    return new ParsingException(
       "Parse failed.",
       List.copyOf(this.statusValues)
     );
@@ -494,11 +492,9 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
     final String message)
   {
     final var status =
-      ParseStatus.builder()
-        .setErrorCode(errorCode)
-        .setLexical(lex)
-        .setSeverity(PARSE_WARNING)
-        .setMessage(message)
+      ParseStatus.builder(errorCode, message)
+        .withLexical(lex)
+        .withSeverity(PARSE_WARNING)
         .build();
 
     this.statusValues.add(status);

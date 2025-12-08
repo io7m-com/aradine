@@ -28,7 +28,6 @@ open module com.io7m.aradine.instrument.spi1.xml
   requires static org.osgi.service.component.annotations;
 
   requires com.io7m.anethum.api;
-  requires com.io7m.anethum.common;
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.jlexing.core;
   requires com.io7m.lanark.core;

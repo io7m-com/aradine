@@ -42,7 +42,7 @@
 
     <!-- Configuration. -->
     <io7m.api.previousVersion>0.0.1-SNAPSHOT</io7m.api.previousVersion>
-    <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
+    <io7m.java.targetJavaVersion>25</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
     <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
@@ -54,9 +54,10 @@
     <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
 
     <!-- Third-party dependencies. -->
-    <io7m.maven-api.version>3.9.6</io7m.maven-api.version>
+    <io7m.maven-api.version>3.9.11</io7m.maven-api.version>
     <org.junit.version>5.10.1</org.junit.version>
     <org.mockito.version>5.8.0</org.mockito.version>
+    <net.bytebuddy.version>1.18.2</net.bytebuddy.version>
   </properties>
 
   <licenses>
@@ -420,23 +421,20 @@
       <!-- Mockito -->
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
+        <artifactId>mockito-bom</artifactId>
         <version>${org.mockito.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-junit-jupiter</artifactId>
-        <version>${org.mockito.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>1.14.11</version>
+        <version>${net.bytebuddy.version}</version>
       </dependency>
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.14.11</version>
+        <version>${net.bytebuddy.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -461,7 +459,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.12.0</version>
+          <version>3.15.2</version>
         </plugin>
 
         <plugin>

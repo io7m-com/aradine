@@ -126,19 +126,17 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   private static Class<?> generatePortFieldType(
     final ARI1PortDescriptionType description)
   {
-    if (description instanceof ARI1PortDescriptionOutputAudioType) {
-      return ARI1PortOutputAudioType.class;
-    }
-    if (description instanceof ARI1PortDescriptionInputAudioType) {
-      return ARI1PortInputAudioType.class;
-    }
-    if (description instanceof ARI1PortDescriptionInputNoteType) {
-      return ARI1PortInputNoteType.class;
-    }
-
-    throw new IllegalStateException(
-      "Unmatched port type: " + description.getClass()
-    );
+    return switch (description) {
+      case ARI1PortDescriptionOutputAudioType _ -> {
+        yield ARI1PortOutputAudioType.class;
+      }
+      case ARI1PortDescriptionInputAudioType _ -> {
+        yield ARI1PortInputAudioType.class;
+      }
+      case ARI1PortDescriptionInputNoteType _ -> {
+        yield ARI1PortInputNoteType.class;
+      }
+    };
   }
 
   private static FieldSpec generatePortField(
@@ -205,19 +203,17 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   private static Class<?> generateParameterFieldType(
     final ARI1ParameterDescriptionType description)
   {
-    if (description instanceof ARI1ParameterDescriptionSampleMapType p) {
-      return ARI1ParameterSampleMapType.class;
-    }
-
-    if (description instanceof ARI1ParameterDescriptionRealType p) {
-      return ARI1ParameterRealType.class;
-    }
-
-    if (description instanceof ARI1ParameterDescriptionIntegerType p) {
-      return ARI1ParameterIntegerType.class;
-    }
-
-    throw new IllegalStateException();
+    return switch (description) {
+      case ARI1ParameterDescriptionSampleMapType _ -> {
+        yield ARI1ParameterSampleMapType.class;
+      }
+      case ARI1ParameterDescriptionRealType _ -> {
+        yield ARI1ParameterRealType.class;
+      }
+      case ARI1ParameterDescriptionIntegerType _ -> {
+        yield ARI1ParameterIntegerType.class;
+      }
+    };
   }
 
   private static FieldSpec generateParameterField(

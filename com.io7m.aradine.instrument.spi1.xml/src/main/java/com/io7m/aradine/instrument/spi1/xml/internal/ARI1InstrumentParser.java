@@ -174,19 +174,24 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
 
     for (final var declaration : declarations) {
       final var id = new ARI1PortId((int) declaration.getID());
-      if (declaration instanceof PortOutputAudioType) {
-        processPortOutputAudio(results, declaration, id);
-        continue;
-      }
-
-      if (declaration instanceof PortInputAudioType) {
-        processPortInputAudio(results, declaration, id);
-        continue;
-      }
-
-      if (declaration instanceof PortInputNoteType) {
-        processPortInputNote(results, declaration, id);
-        continue;
+      switch (declaration) {
+        case PortOutputAudioType _ -> {
+          processPortOutputAudio(results, declaration, id);
+          continue;
+        }
+        case PortInputAudioType _ -> {
+          processPortInputAudio(results, declaration, id);
+          continue;
+        }
+        case PortInputNoteType _ -> {
+          processPortInputNote(results, declaration, id);
+          continue;
+        }
+        default -> {
+          throw new IllegalStateException(
+            "Unexpected value: %s".formatted(declaration)
+          );
+        }
       }
     }
 
@@ -239,11 +244,22 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
     final var results = new ArrayList<ARI1ParagraphContentType>();
     final var content = para.getContent();
     for (final var c : content) {
-      if (c instanceof LinkType link) {
-        results.add(new ARI1Link(URI.create(link.getTarget()), link.getContent()));
-      }
-      if (c instanceof String text) {
-        results.add(new ARI1Text(text));
+      switch (c) {
+        case final String text -> {
+          results.add(new ARI1Text(text));
+        }
+        case final LinkType link -> {
+          results.add(
+            new ARI1Link(
+              URI.create(link.getTarget()),
+              link.getContent())
+          );
+        }
+        default -> {
+          throw new IllegalStateException(
+            "Unexpected value: %s".formatted(c)
+          );
+        }
       }
     }
     return new ARI1Paragraph(List.copyOf(results));
@@ -301,48 +317,53 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
 
     for (final var declaration : declarations) {
       final var id = new ARI1ParameterId((int) declaration.getID());
-      if (declaration instanceof ParameterIntegerType i) {
-        results.put(
-          id,
-          new ARI1ParameterInteger(
+      switch (declaration) {
+        case final ParameterIntegerType i -> {
+          results.put(
             id,
-            i.getLabel(),
-            i.getUnitOfMeasurement(),
-            i.getValueDefault(),
-            i.getValueMinimumInclusive(),
-            i.getValueMaximumInclusive(),
-            processDocumentation(declaration.getDocumentation())
-          )
-        );
-        continue;
-      }
-
-      if (declaration instanceof ParameterRealType r) {
-        results.put(
-          id,
-          new ARI1ParameterReal(
+            new ARI1ParameterInteger(
+              id,
+              i.getLabel(),
+              i.getUnitOfMeasurement(),
+              i.getValueDefault(),
+              i.getValueMinimumInclusive(),
+              i.getValueMaximumInclusive(),
+              processDocumentation(declaration.getDocumentation())
+            )
+          );
+          continue;
+        }
+        case final ParameterRealType r -> {
+          results.put(
             id,
-            r.getLabel(),
-            r.getUnitOfMeasurement(),
-            r.getValueDefault(),
-            r.getValueMinimumInclusive(),
-            r.getValueMaximumInclusive(),
-            processDocumentation(declaration.getDocumentation())
-          )
-        );
-        continue;
-      }
-
-      if (declaration instanceof ParameterSampleMapType sm) {
-        results.put(
-          id,
-          new ARI1ParameterSampleMap(
+            new ARI1ParameterReal(
+              id,
+              r.getLabel(),
+              r.getUnitOfMeasurement(),
+              r.getValueDefault(),
+              r.getValueMinimumInclusive(),
+              r.getValueMaximumInclusive(),
+              processDocumentation(declaration.getDocumentation())
+            )
+          );
+          continue;
+        }
+        case final ParameterSampleMapType sm -> {
+          results.put(
             id,
-            sm.getLabel(),
-            processDocumentation(declaration.getDocumentation())
-          )
-        );
-        continue;
+            new ARI1ParameterSampleMap(
+              id,
+              sm.getLabel(),
+              processDocumentation(declaration.getDocumentation())
+            )
+          );
+          continue;
+        }
+        default -> {
+          throw new IllegalStateException(
+            "Unexpected value: %s".formatted(declaration)
+          );
+        }
       }
     }
 
@@ -417,6 +438,11 @@ public final class ARI1InstrumentParser implements ARI1InstrumentParserType
               "error-xml-validation",
               locatorLexical(locator),
               event.getMessage()
+            );
+          }
+          default -> {
+            throw new IllegalStateException(
+              "Unexpected value: %d".formatted(event.getSeverity())
             );
           }
         }

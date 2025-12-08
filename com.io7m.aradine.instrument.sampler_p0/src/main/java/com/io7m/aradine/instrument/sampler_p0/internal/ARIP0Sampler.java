@@ -113,42 +113,34 @@ public final class ARIP0Sampler
     final ARI1InstrumentServicesType context,
     final ARI1EventNoteType event)
   {
-    if (event instanceof ARI1EventNoteOn eventNoteOn) {
-      this.processEventNoteOn(context, eventNoteOn);
-      return;
+    switch (event) {
+      case final ARI1EventNoteOn eventNoteOn -> {
+        this.processEventNoteOn(context, eventNoteOn);
+        return;
+      }
+      case final ARI1EventNoteOff eventNoteOff -> {
+        this.processEventNoteOff(eventNoteOff);
+        return;
+      }
+      case final ARI1EventNotePitchBend eventPitchBend -> {
+        this.processEventPitchBend(eventPitchBend);
+        return;
+      }
     }
-
-    if (event instanceof ARI1EventNoteOff eventNoteOff) {
-      this.processEventNoteOff(eventNoteOff);
-      return;
-    }
-
-    if (event instanceof ARI1EventNotePitchBend eventPitchBend) {
-      this.processEventPitchBend(eventPitchBend);
-      return;
-    }
-
-    context.eventUnhandled(event);
   }
 
   private void processEventConfigurationForFrame(
     final ARI1InstrumentServicesType context,
     final ARI1EventConfigurationType event)
   {
-    if (event instanceof ARI1EventConfigurationBufferSizeChanged) {
-      return;
+    switch (event) {
+      case ARI1EventConfigurationBufferSizeChanged _,
+           ARI1EventConfigurationSampleRateChanged _ -> {
+      }
+      case final ARI1EventConfigurationParameterChanged eventSet -> {
+        this.processEventParameterChanged(context, eventSet);
+      }
     }
-
-    if (event instanceof ARI1EventConfigurationSampleRateChanged) {
-      return;
-    }
-
-    if (event instanceof ARI1EventConfigurationParameterChanged eventSet) {
-      this.processEventParameterChanged(context, eventSet);
-      return;
-    }
-
-    context.eventUnhandled(event);
   }
 
   private void processEventParameterChanged(

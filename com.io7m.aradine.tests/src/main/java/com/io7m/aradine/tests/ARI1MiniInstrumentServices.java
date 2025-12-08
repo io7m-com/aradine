@@ -101,7 +101,7 @@ public final class ARI1MiniInstrumentServices
 
     this.sampleRateSubscription =
       this.closeables.add(
-        this.sampleRate.subscribe((oldRate, newRate) -> {
+        this.sampleRate.subscribe((_, newRate) -> {
           this.millisecondsPerFrame =
             1.0 / (newRate.doubleValue() * 1000.0);
         })
@@ -160,33 +160,34 @@ public final class ARI1MiniInstrumentServices
       final var description = entry.getValue();
 
       final var currentBufferSize = bufferSizeAttribute.get().intValue();
-      if (description instanceof ARI1PortDescriptionOutputAudioType) {
-        final var port =
-          new ARI1PortOutputAudio(id, currentBufferSize);
-        ports.put(id, port);
-        closeables.add(
-          bufferSizeAttribute.subscribe((oldValue, newValue) -> {
-            port.setBufferSize(newValue.intValue());
-          })
-        );
-        continue;
+      switch (description) {
+        case final ARI1PortDescriptionOutputAudioType _ -> {
+          final var port =
+            new ARI1PortOutputAudio(id, currentBufferSize);
+          ports.put(id, port);
+          closeables.add(
+            bufferSizeAttribute.subscribe((_, newValue) -> {
+              port.setBufferSize(newValue.intValue());
+            })
+          );
+          continue;
+        }
+        case final ARI1PortDescriptionInputAudioType _ -> {
+          final var port = new ARI1PortInputAudio(id, currentBufferSize);
+          ports.put(id, port);
+          closeables.add(
+            bufferSizeAttribute.subscribe((_, newValue) -> {
+              port.setBufferSize(newValue.intValue());
+            })
+          );
+          continue;
+        }
+        case final ARI1PortDescriptionInputNoteType _ -> {
+          ports.put(id, new ARI1PortInputNote(id));
+          continue;
+        }
       }
 
-      if (description instanceof ARI1PortDescriptionInputAudioType) {
-        final var port = new ARI1PortInputAudio(id, currentBufferSize);
-        ports.put(id, port);
-        closeables.add(
-          bufferSizeAttribute.subscribe((oldValue, newValue) -> {
-            port.setBufferSize(newValue.intValue());
-          })
-        );
-        continue;
-      }
-
-      if (description instanceof ARI1PortDescriptionInputNoteType) {
-        ports.put(id, new ARI1PortInputNote(id));
-        continue;
-      }
     }
     return ports;
   }
@@ -198,21 +199,21 @@ public final class ARI1MiniInstrumentServices
     for (final var entry : instrumentDescription.parameters().entrySet()) {
       final var id = entry.getKey();
       final var description = entry.getValue();
-      if (description instanceof ARI1ParameterDescriptionIntegerType d) {
-        parameters.put(id, new ARI1ParameterInteger(d));
-        continue;
-      }
-      if (description instanceof ARI1ParameterDescriptionRealType d) {
-        parameters.put(id, new ARI1ParameterReal(d));
-        continue;
-      }
-      if (description instanceof ARI1ParameterDescriptionSampleMapType d) {
-        parameters.put(
-          id,
-          new ARI1ParameterSampleMap(
-            d,
-            URI.create("aradine:unspecified")));
-        continue;
+      switch (description) {
+        case final ARI1ParameterDescriptionIntegerType d -> {
+          parameters.put(id, new ARI1ParameterInteger(d));
+        }
+        case final ARI1ParameterDescriptionRealType d -> {
+          parameters.put(id, new ARI1ParameterReal(d));
+        }
+        case final ARI1ParameterDescriptionSampleMapType d -> {
+          parameters.put(
+            id,
+            new ARI1ParameterSampleMap(
+              d,
+              URI.create("aradine:unspecified")));
+          continue;
+        }
       }
     }
     return parameters;

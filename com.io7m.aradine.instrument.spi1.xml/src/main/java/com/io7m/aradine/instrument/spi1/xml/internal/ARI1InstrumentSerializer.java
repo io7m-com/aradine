@@ -109,17 +109,19 @@ public final class ARI1InstrumentSerializer
 
     for (final var k : ks) {
       final var value = ports.get(k);
-      if (value instanceof ARI1PortDescriptionOutputAudioType v) {
-        p.add(processPortOutputAudio(v));
-        continue;
-      }
-      if (value instanceof ARI1PortDescriptionInputAudioType v) {
-        p.add(processPortInputAudio(v));
-        continue;
-      }
-      if (value instanceof ARI1PortDescriptionInputNoteType v) {
-        p.add(processPortInputNote(v));
-        continue;
+      switch (value) {
+        case final ARI1PortDescriptionOutputAudioType v -> {
+          p.add(processPortOutputAudio(v));
+          continue;
+        }
+        case final ARI1PortDescriptionInputAudioType v -> {
+          p.add(processPortInputAudio(v));
+          continue;
+        }
+        case final ARI1PortDescriptionInputNoteType v -> {
+          p.add(processPortInputNote(v));
+          continue;
+        }
       }
     }
 
@@ -197,17 +199,16 @@ public final class ARI1InstrumentSerializer
 
     for (final var k : ks) {
       final var value = parameters.get(k);
-      if (value instanceof ARI1ParameterDescriptionSampleMapType i) {
-        p.add(processParameterSampleMap(i));
-        continue;
-      }
-      if (value instanceof ARI1ParameterDescriptionIntegerType i) {
-        p.add(processParameterInteger(i));
-        continue;
-      }
-      if (value instanceof ARI1ParameterDescriptionRealType i) {
-        p.add(processParameterReal(i));
-        continue;
+      switch (value) {
+        case final ARI1ParameterDescriptionSampleMapType i -> {
+          p.add(processParameterSampleMap(i));
+        }
+        case final ARI1ParameterDescriptionIntegerType i -> {
+          p.add(processParameterInteger(i));
+        }
+        case final ARI1ParameterDescriptionRealType i -> {
+          p.add(processParameterReal(i));
+        }
       }
     }
     return r;
@@ -271,14 +272,16 @@ public final class ARI1InstrumentSerializer
 
     for (final var content : paragraph.content()) {
       final var resultContent = result.getContent();
-      if (content instanceof ARI1TextType text) {
-        resultContent.add(text.text());
-      }
-      if (content instanceof ARI1LinkType link) {
-        final var r = new LinkType();
-        r.setTarget(link.target().toString());
-        r.setContent(link.text());
-        resultContent.add((Serializable) r);
+      switch (content) {
+        case final ARI1TextType text -> {
+          resultContent.add(text.text());
+        }
+        case final ARI1LinkType link -> {
+          final var r = new LinkType();
+          r.setTarget(link.target().toString());
+          r.setContent(link.text());
+          resultContent.add((Serializable) r);
+        }
       }
     }
     return result;

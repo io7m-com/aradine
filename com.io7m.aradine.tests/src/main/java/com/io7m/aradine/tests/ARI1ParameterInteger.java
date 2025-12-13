@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
 import it.unimi.dsi.fastutil.ints.Int2LongRBTreeMap;
@@ -28,7 +28,7 @@ public final class ARI1ParameterInteger
   implements ARI1ParameterIntegerType
 {
   private final Int2LongRBTreeMap valueByTime;
-  private final ARI1ParameterDescriptionIntegerType description;
+  private final ARI1ParameterDescriptionInteger description;
 
   /**
    * The value of this parameter at the start of the processing period. This is
@@ -52,7 +52,7 @@ public final class ARI1ParameterInteger
   private long valueAtPeriodEnd;
 
   public ARI1ParameterInteger(
-    final ARI1ParameterDescriptionIntegerType inDescription)
+    final ARI1ParameterDescriptionInteger inDescription)
   {
     this.description =
       Objects.requireNonNull(inDescription, "description");

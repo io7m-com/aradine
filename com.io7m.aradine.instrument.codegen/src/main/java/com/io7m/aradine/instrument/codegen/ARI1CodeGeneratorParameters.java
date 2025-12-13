@@ -16,9 +16,10 @@
 
 package com.io7m.aradine.instrument.codegen;
 
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
-import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParserFactoryType;
-import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentSerializerFactoryType;
+import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParserFactoryType;
+import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentSerializerFactoryType;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -26,10 +27,8 @@ import java.util.Objects;
 /**
  * Parameters for code generation.
  *
- * @param symbolicName            The symbolic name of the bundle holding the
- *                                instrument
- * @param version                 The version of the bundle holding the
- *                                instrument
+ * @param identifier              The instrument identifier
+ * @param version                 The version of the instrument
  * @param packageName             The output package name
  * @param sourceFile              The input source file
  * @param outputSourceDirectory   The output source directory
@@ -39,7 +38,7 @@ import java.util.Objects;
  */
 
 public record ARI1CodeGeneratorParameters(
-  String symbolicName,
+  ARI1DottedName identifier,
   ARI1Version version,
   String packageName,
   Path sourceFile,
@@ -51,10 +50,8 @@ public record ARI1CodeGeneratorParameters(
   /**
    * Parameters for code generation.
    *
-   * @param symbolicName            The symbolic name of the bundle holding the
-   *                                instrument
-   * @param version                 The version of the bundle holding the
-   *                                instrument
+   * @param identifier              The instrument identifier
+   * @param version                 The version of the instrument
    * @param packageName             The output package name
    * @param sourceFile              The input source file
    * @param outputSourceDirectory   The output source directory
@@ -65,7 +62,7 @@ public record ARI1CodeGeneratorParameters(
 
   public ARI1CodeGeneratorParameters
   {
-    Objects.requireNonNull(symbolicName, "symbolicName");
+    Objects.requireNonNull(identifier, "identifier");
     Objects.requireNonNull(version, "version");
     Objects.requireNonNull(packageName, "packageName");
     Objects.requireNonNull(sourceFile, "sourceFile");

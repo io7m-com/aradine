@@ -17,6 +17,8 @@
 
 package com.io7m.aradine.instrument.spi1;
 
+import java.util.Optional;
+
 /**
  * The type of objects that can have documentation.
  */
@@ -27,5 +29,5 @@ public interface ARI1DocumentedType
    * @return The documentation
    */
 
-  ARI1DocumentationType documentation();
+  Optional<ARI1Documentation> documentation();
 }

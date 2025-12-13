@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.aradine</groupId>
   <artifactId>com.io7m.aradine</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.aradine</name>
@@ -20,6 +20,7 @@
 
   <modules>
     <module>com.io7m.aradine.annotations</module>
+    <module>com.io7m.aradine.aurantium</module>
     <module>com.io7m.aradine.documentation</module>
     <module>com.io7m.aradine.envelope.table1</module>
     <module>com.io7m.aradine.filter.biquad1</module>
@@ -30,7 +31,8 @@
     <module>com.io7m.aradine.instrument.sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_p0</module>
     <module>com.io7m.aradine.instrument.sampler_xp0</module>
-    <module>com.io7m.aradine.instrument.spi1.xml</module>
+    <module>com.io7m.aradine.instrument.spi1.json_data</module>
+    <module>com.io7m.aradine.instrument.spi1.json_schemagen</module>
     <module>com.io7m.aradine.instrument.spi1</module>
     <module>com.io7m.aradine.maven_plugin</module>
     <module>com.io7m.aradine.tests.arbitraries</module>
@@ -309,6 +311,32 @@
         <groupId>com.io7m.jmurmur</groupId>
         <artifactId>com.io7m.jmurmur.core</artifactId>
         <version>2.0.0</version>
+      </dependency>
+
+      <!-- JSON -->
+      <dependency>
+        <groupId>tools.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>3.0.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.dixmont</groupId>
+        <artifactId>com.io7m.dixmont.core</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.sumjack</groupId>
+        <artifactId>com.io7m.sumjack.bom</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.networknt</groupId>
+        <artifactId>json-schema-validator</artifactId>
+        <version>1.5.9</version>
       </dependency>
 
       <!-- CLI. -->

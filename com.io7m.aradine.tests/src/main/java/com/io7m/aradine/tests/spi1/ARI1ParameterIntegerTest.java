@@ -17,12 +17,12 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.tests.ARI1ParameterInteger;
 
-import java.util.List;
+import java.util.Optional;
 
 public final class ARI1ParameterIntegerTest
   extends ARI1ParameterIntegerContract<ARI1ParameterInteger>
@@ -35,50 +35,15 @@ public final class ARI1ParameterIntegerTest
     final long valueDefault)
   {
     return new ARI1ParameterInteger(
-      new ARI1ParameterDescriptionIntegerType()
-      {
-        @Override
-        public ARI1DocumentationType documentation()
-        {
-          return List::of;
-        }
-
-        @Override
-        public String unitOfMeasurement()
-        {
-          return "x";
-        }
-
-        @Override
-        public long valueMinimum()
-        {
-          return valueMinimum;
-        }
-
-        @Override
-        public long valueMaximum()
-        {
-          return valueMaximum;
-        }
-
-        @Override
-        public long valueDefault()
-        {
-          return valueDefault;
-        }
-
-        @Override
-        public ARI1ParameterId id()
-        {
-          return id;
-        }
-
-        @Override
-        public String label()
-        {
-          return "Label";
-        }
-      }
+      new ARI1ParameterDescriptionInteger(
+        id,
+        "Label",
+        Optional.empty(),
+        new ARI1DottedName("x"),
+        valueMinimum,
+        valueMaximum,
+        valueDefault
+      )
     );
   }
 

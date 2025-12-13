@@ -19,10 +19,11 @@ package com.io7m.aradine.maven_plugin;
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorParameters;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGenerators;
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
-import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
-import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentSerializers;
+import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
+import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentSerializers;
 import com.io7m.verona.core.VersionParser;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -69,7 +70,7 @@ public final class CodeGenerationMojo extends AbstractMojo
 
   @Parameter(
     name = "sourceFile",
-    defaultValue = "${project.basedir}/src/main/instrument/instrument.xml",
+    defaultValue = "${project.basedir}/src/main/instrument/instrument.json",
     required = false)
   private String sourceFile;
 
@@ -121,7 +122,7 @@ public final class CodeGenerationMojo extends AbstractMojo
 
       final var parameters =
         new ARI1CodeGeneratorParameters(
-          this.project.getArtifactId(),
+          new ARI1DottedName(this.project.getArtifactId()),
           new ARI1Version(
             version.major(),
             version.minor(),

@@ -30,8 +30,8 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.instrument.sampler_m0;
   requires com.io7m.aradine.instrument.sampler_p0;
   requires com.io7m.aradine.instrument.sampler_xp0;
+  requires com.io7m.aradine.instrument.spi1.json_data;
   requires com.io7m.aradine.instrument.spi1;
-  requires com.io7m.aradine.instrument.spi1.xml;
   requires com.io7m.aradine.tests.arbitraries;
 
   requires com.io7m.anethum.api;

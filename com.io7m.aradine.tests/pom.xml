@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.aradine</groupId>
     <artifactId>com.io7m.aradine</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
   <artifactId>com.io7m.aradine.tests</artifactId>
 
@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.instrument.spi1.xml</artifactId>
+      <artifactId>com.io7m.aradine.instrument.spi1.json_data</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
@@ -29,7 +29,7 @@ public final class ARI1ParameterSampleMap
   implements ARI1ParameterSampleMapType
 {
   private final Int2ObjectRBTreeMap<URI> valueByTime;
-  private final ARI1ParameterDescriptionSampleMapType description;
+  private final ARI1ParameterDescriptionSampleMap description;
 
   /**
    * The value of this parameter at the start of the processing period. This is
@@ -53,7 +53,7 @@ public final class ARI1ParameterSampleMap
   private URI valueAtPeriodEnd;
 
   public ARI1ParameterSampleMap(
-    final ARI1ParameterDescriptionSampleMapType inDescription,
+    final ARI1ParameterDescriptionSampleMap inDescription,
     final URI valueDefault)
   {
     this.description =

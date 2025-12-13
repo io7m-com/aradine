@@ -1,0 +1,96 @@
+{
+  "%Schema": "urn:com.io7m.aradine.instrument:1.0",
+  "ID": "com.io7m.aradine.instrument.sampler_xp0",
+  "Version": "1.0.0",
+  "Metadata": {
+    "dc.title": "Sampler XP-0",
+    "dc.description": "An improved sampler with pitch bend and looping."
+  },
+  "Parameters": [
+    {
+      "@Type": "ParameterSampleMap",
+      "ID": 0,
+      "Label": "Samples",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main sample map containing samples mapped to keys."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterReal",
+      "ID": 1,
+      "Label": "Loop Point",
+      "RealValueMinimumInclusive": 0.0,
+      "RealValueMaximumInclusive": 1.0,
+      "RealValueDefault": 0.8,
+      "UnitOfMeasurement": "com.io7m.aradine.position_normal",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The normalized loop point within the sample."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterInteger",
+      "ID": 2,
+      "Label": "Pitch Bend Range",
+      "IntegerValueMinimumInclusive": 1,
+      "IntegerValueMaximumInclusive": 120,
+      "IntegerValueDefault": 24,
+      "UnitOfMeasurement": "com.io7m.aradine.semitones",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The number of semitones by which notes may be pitched up or down using pitch bend events."
+        ]
+      }
+    }
+  ],
+  "Ports": [
+    {
+      "@Type": "OutputAudio",
+      "ID": 0,
+      "Label": "Output L",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_left"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The left audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "OutputAudio",
+      "ID": 1,
+      "Label": "Output R",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The right audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "InputNote",
+      "ID": 2,
+      "Label": "Note Input",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main input for notes and events."
+        ]
+      }
+    }
+  ]
+}

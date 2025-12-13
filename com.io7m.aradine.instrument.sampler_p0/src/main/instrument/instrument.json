@@ -1,0 +1,66 @@
+{
+  "%Schema": "urn:com.io7m.aradine.instrument:1.0",
+  "ID": "com.io7m.aradine.instrument.sampler_p0",
+  "Version": "1.0.0",
+  "Metadata": {
+    "dc.title": "Sampler P0",
+    "dc.description": "The simplest polyphonic sampler."
+  },
+  "Parameters": [
+    {
+      "@Type": "ParameterSampleMap",
+      "ID": 0,
+      "Label": "Samples",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main sample map containing samples mapped to keys."
+        ]
+      }
+    }
+  ],
+  "Ports": [
+    {
+      "@Type": "OutputAudio",
+      "ID": 0,
+      "Label": "Output L",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_left"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The left audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "OutputAudio",
+      "ID": 1,
+      "Label": "Output R",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The right audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "InputNote",
+      "ID": 2,
+      "Label": "Note Input",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main input for notes and events."
+        ]
+      }
+    }
+  ]
+}

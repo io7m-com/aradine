@@ -1,0 +1,131 @@
+{
+  "%Schema": "urn:com.io7m.aradine.instrument:1.0",
+  "ID": "com.io7m.aradine.instrument.grain_sampler_m0",
+  "Version": "1.0.0",
+  "Metadata": {
+    "dc.title": "Grain Sampler M0",
+    "dc.description": "The simplest monophonic grain sampler."
+  },
+  "Parameters": [
+    {
+      "@Type": "ParameterSampleMap",
+      "ID": 0,
+      "Label": "Samples",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main sample map containing samples mapped to keys."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterReal",
+      "ID": 1,
+      "Label": "Speed",
+      "RealValueMinimumInclusive": 0.0,
+      "RealValueMaximumInclusive": 8.0,
+      "RealValueDefault": 1.0,
+      "UnitOfMeasurement": "com.io7m.aradine.scale.linear",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The playback speed for samples.",
+          "A value of 1.0 denotes normal playback speed.",
+          "A value of 0.5 denotes half speed.",
+          "A value of 2.0 denotes double speed."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterReal",
+      "ID": 2,
+      "Label": "Grain Position Jitter",
+      "RealValueMinimumInclusive": 0.0,
+      "RealValueMaximumInclusive": 1000.0,
+      "RealValueDefault": 0.0,
+      "UnitOfMeasurement": "com.io7m.aradine.time.milliseconds",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The maximum amount of jitter applied to the start of the sample ",
+          "position of each grain (excluding the first grain).",
+          "A non-zero value for jitter is recommended to prevent comb filtering artifacts."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterReal",
+      "ID": 3,
+      "Label": "Grain Length",
+      "RealValueMinimumInclusive": 0.0,
+      "RealValueMaximumInclusive": 1000.0,
+      "RealValueDefault": 1.0,
+      "UnitOfMeasurement": "com.io7m.aradine.time.milliseconds",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The length of each generated grain."
+        ]
+      }
+    },
+    {
+      "@Type": "ParameterInteger",
+      "ID": 4,
+      "Label": "Pitch Bend Range",
+      "IntegerValueMinimumInclusive": 1,
+      "IntegerValueMaximumInclusive": 120,
+      "IntegerValueDefault": 24,
+      "UnitOfMeasurement": "com.io7m.aradine.semitones",
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The number of semitones by which notes may be pitched up or down using pitch bend events."
+        ]
+      }
+    }
+  ],
+  "Ports": [
+    {
+      "@Type": "OutputAudio",
+      "ID": 0,
+      "Label": "Output L",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_left"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The left audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "OutputAudio",
+      "ID": 1,
+      "Label": "Output R",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The right audio output."
+        ]
+      }
+    },
+    {
+      "@Type": "InputNote",
+      "ID": 2,
+      "Label": "Note Input",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_right"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The main input for notes and events."
+        ]
+      }
+    }
+  ]
+}

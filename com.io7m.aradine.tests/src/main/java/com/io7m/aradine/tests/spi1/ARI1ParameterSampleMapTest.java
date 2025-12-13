@@ -17,13 +17,12 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.instrument.spi1.ARI1DocumentationType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.tests.ARI1ParameterSampleMap;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Optional;
 
 public final class ARI1ParameterSampleMapTest
   extends ARI1ParameterSampleMapContract<ARI1ParameterSampleMap>
@@ -34,26 +33,11 @@ public final class ARI1ParameterSampleMapTest
     final URI valueDefault)
   {
     return new ARI1ParameterSampleMap(
-      new ARI1ParameterDescriptionSampleMapType()
-      {
-        @Override
-        public ARI1DocumentationType documentation()
-        {
-          return List::of;
-        }
-
-        @Override
-        public ARI1ParameterId id()
-        {
-          return id;
-        }
-
-        @Override
-        public String label()
-        {
-          return "Label";
-        }
-      },
+      new ARI1ParameterDescriptionSampleMap(
+        id,
+        "Label",
+        Optional.empty()
+      ),
       valueDefault
     );
   }

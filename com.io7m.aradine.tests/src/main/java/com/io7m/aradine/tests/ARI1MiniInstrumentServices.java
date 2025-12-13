@@ -21,23 +21,23 @@ import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
-import com.io7m.aradine.instrument.spi1.xml.ARI1InstrumentParsers;
+import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
 import com.io7m.jattribute.core.AttributeSubscriptionType;
 import com.io7m.jattribute.core.AttributeType;
 import com.io7m.jattribute.core.Attributes;
@@ -59,7 +59,7 @@ public final class ARI1MiniInstrumentServices
   private static final Logger LOG =
     LoggerFactory.getLogger(ARI1MiniInstrumentServices.class);
 
-  private final ARI1InstrumentDescriptionType instrumentDescription;
+  private final ARI1InstrumentDescription instrumentDescription;
   private final AttributeType<Integer> sampleRate;
   private final AttributeType<Integer> bufferSize;
   private final ARI1SampleMapEmpty emptyMap;
@@ -72,7 +72,7 @@ public final class ARI1MiniInstrumentServices
 
   private ARI1MiniInstrumentServices(
     final CloseableCollectionType<ClosingResourceFailedException> inCloseables,
-    final ARI1InstrumentDescriptionType inInstrumentDescription,
+    final ARI1InstrumentDescription inInstrumentDescription,
     final AttributeType<Integer> inSampleRate,
     final AttributeType<Integer> inBufferSize,
     final Map<ARI1ParameterId, ARI1ParameterType> inParameters,
@@ -126,7 +126,7 @@ public final class ARI1MiniInstrumentServices
       CloseableCollection.create();
 
     final var parsers = new ARI1InstrumentParsers();
-    final ARI1InstrumentDescriptionType instrumentDescription;
+    final ARI1InstrumentDescription instrumentDescription;
     try (var stream = instrumentFactory.openInstrumentDescription()) {
       Objects.requireNonNull(stream, "stream");
 
@@ -154,7 +154,7 @@ public final class ARI1MiniInstrumentServices
   private static HashMap<ARI1PortId, ARI1PortType> instantiatePorts(
     final AttributeType<Integer> bufferSizeAttribute,
     final CloseableCollectionType<ClosingResourceFailedException> closeables,
-    final ARI1InstrumentDescriptionType instrumentDescription)
+    final ARI1InstrumentDescription instrumentDescription)
   {
     final var ports = new HashMap<ARI1PortId, ARI1PortType>();
     for (final var entry : instrumentDescription.ports().entrySet()) {
@@ -163,7 +163,7 @@ public final class ARI1MiniInstrumentServices
 
       final var currentBufferSize = bufferSizeAttribute.get().intValue();
       switch (description) {
-        case final ARI1PortDescriptionOutputAudioType _ -> {
+        case final ARI1PortDescriptionOutputAudio _ -> {
           final var port =
             new ARI1PortOutputAudio(id, currentBufferSize);
           ports.put(id, port);
@@ -174,7 +174,7 @@ public final class ARI1MiniInstrumentServices
           );
           continue;
         }
-        case final ARI1PortDescriptionInputAudioType _ -> {
+        case final ARI1PortDescriptionInputAudio _ -> {
           final var port = new ARI1PortInputAudio(id, currentBufferSize);
           ports.put(id, port);
           closeables.add(
@@ -184,7 +184,7 @@ public final class ARI1MiniInstrumentServices
           );
           continue;
         }
-        case final ARI1PortDescriptionInputNoteType _ -> {
+        case final ARI1PortDescriptionInputNote _ -> {
           ports.put(id, new ARI1PortInputNote(id));
           continue;
         }
@@ -195,20 +195,20 @@ public final class ARI1MiniInstrumentServices
   }
 
   private static HashMap<ARI1ParameterId, ARI1ParameterType> instantiateParameters(
-    final ARI1InstrumentDescriptionType instrumentDescription)
+    final ARI1InstrumentDescription instrumentDescription)
   {
     final var parameters = new HashMap<ARI1ParameterId, ARI1ParameterType>();
     for (final var entry : instrumentDescription.parameters().entrySet()) {
       final var id = entry.getKey();
       final var description = entry.getValue();
       switch (description) {
-        case final ARI1ParameterDescriptionIntegerType d -> {
+        case final ARI1ParameterDescriptionInteger d -> {
           parameters.put(id, new ARI1ParameterInteger(d));
         }
-        case final ARI1ParameterDescriptionRealType d -> {
+        case final ARI1ParameterDescriptionReal d -> {
           parameters.put(id, new ARI1ParameterReal(d));
         }
-        case final ARI1ParameterDescriptionSampleMapType d -> {
+        case final ARI1ParameterDescriptionSampleMap d -> {
           parameters.put(
             id,
             new ARI1ParameterSampleMap(

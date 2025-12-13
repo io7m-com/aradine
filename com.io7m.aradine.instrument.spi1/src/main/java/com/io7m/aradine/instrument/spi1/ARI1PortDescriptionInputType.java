@@ -22,7 +22,8 @@ package com.io7m.aradine.instrument.spi1;
 
 public sealed interface ARI1PortDescriptionInputType
   extends ARI1PortDescriptionType
-  permits ARI1PortDescriptionInputAudioType, ARI1PortDescriptionInputNoteType
+  permits ARI1PortDescriptionInputAudio,
+  ARI1PortDescriptionInputNote
 {
 
 }

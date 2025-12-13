@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import it.unimi.dsi.fastutil.ints.Int2DoubleRBTreeMap;
@@ -28,7 +28,7 @@ public final class ARI1ParameterReal
   implements ARI1ParameterRealType
 {
   private final Int2DoubleRBTreeMap valueByTime;
-  private final ARI1ParameterDescriptionRealType description;
+  private final ARI1ParameterDescriptionReal description;
 
   /**
    * The value of this parameter at the start of the processing period. This is
@@ -52,7 +52,7 @@ public final class ARI1ParameterReal
   private double valueAtPeriodEnd;
 
   public ARI1ParameterReal(
-    final ARI1ParameterDescriptionRealType inDescription)
+    final ARI1ParameterDescriptionReal inDescription)
   {
     this.description =
       Objects.requireNonNull(inDescription, "description");

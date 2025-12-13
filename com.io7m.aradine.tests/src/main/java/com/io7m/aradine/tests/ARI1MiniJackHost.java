@@ -29,6 +29,7 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
@@ -150,10 +151,10 @@ public final class ARI1MiniJackHost
 
     final var parameterSpeed =
       (ARI1ParameterReal)
-      services.declaredParameter(
-        new ARI1ParameterId(1),
-        ARI1ParameterRealType.class
-      );
+        services.declaredParameter(
+          new ARI1ParameterId(1),
+          ARI1ParameterRealType.class
+        );
 
     final var parameterGrainJitter =
       (ARI1ParameterReal)
@@ -200,7 +201,7 @@ public final class ARI1MiniJackHost
     client.setProcessCallback((c, nframes) -> {
       while (!messages.isEmpty()) {
         final var message = messages.poll();
-        if (message instanceof ARI1EventConfigurationParameterChanged e) {
+        if (message instanceof final ARI1EventConfigurationParameterChanged e) {
           if (Objects.equals(e.parameter(), parameterSampleMap.id())) {
             parameterSampleMap.valueChange(0, URI.create("file:///anything"));
           }
@@ -210,19 +211,26 @@ public final class ARI1MiniJackHost
 
       try {
         /* XXX: Obviously need some superclass here that can't be observed by instruments. */
-
-        for (final var parameter : services.declaredParameters().values()) {
-          if (parameter instanceof ARI1ParameterInteger p) {
-            p.valueChangesClear();
-            continue;
-          }
-          if (parameter instanceof ARI1ParameterReal r) {
-            r.valueChangesClear();
-            continue;
-          }
-          if (parameter instanceof ARI1ParameterSampleMap s) {
-            s.valueChangesClear();
-            continue;
+        for (final ARI1ParameterType parameter : services.declaredParameters().values()) {
+          switch (parameter) {
+            case final ARI1ParameterInteger p -> {
+              p.valueChangesClear();
+              continue;
+            }
+            case final ARI1ParameterReal r -> {
+              r.valueChangesClear();
+              continue;
+            }
+            case final ARI1ParameterSampleMap s -> {
+              s.valueChangesClear();
+              continue;
+            }
+            case null -> {
+              continue;
+            }
+            case ARI1ParameterType _ -> {
+              continue;
+            }
           }
         }
 

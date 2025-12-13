@@ -1,0 +1,338 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$id" : "urn:com.io7m.aradine.instrument:1.0",
+  "title" : "Aradine Instrument 1.0",
+  "oneOf" : [ {
+    "$ref" : "#/$defs/ARI1JInstrumentDescription"
+  } ],
+  "$defs" : {
+    "ARI1Documentation" : {
+      "type" : "object",
+      "properties" : {
+        "Format" : {
+          "$ref" : "#/$defs/ARI1DottedName"
+        },
+        "Lines" : {
+          "$ref" : "#/$defs/List<String>"
+        }
+      },
+      "required" : [ "Format", "Lines" ]
+    },
+    "ARI1DottedName" : {
+      "type" : "string",
+      "description" : "A Lanark dotted name.",
+      "pattern" : "([a-z][a-z0-9_-]{0,63})(\\.[a-z][a-z0-9_-]{0,62}){0,15}"
+    },
+    "ARI1JInstrumentDescription" : {
+      "type" : "object",
+      "properties" : {
+        "%Schema" : {
+          "description" : "The schema identifier.",
+          "$ref" : "#/$defs/String"
+        },
+        "ID" : {
+          "description" : "The instrument ID.",
+          "$ref" : "#/$defs/ARI1DottedName"
+        },
+        "Metadata" : {
+          "description" : "The instrument metadata.",
+          "$ref" : "#/$defs/Map<String,String>"
+        },
+        "Parameters" : {
+          "description" : "The instrument parameters.",
+          "$ref" : "#/$defs/List<ARI1JParameterDescriptionType>"
+        },
+        "Ports" : {
+          "description" : "The instrument ports.",
+          "$ref" : "#/$defs/List<ARI1JPortDescriptionType>"
+        },
+        "Version" : {
+          "description" : "The instrument version.",
+          "$ref" : "#/$defs/ARI1Version"
+        }
+      },
+      "required" : [ "%Schema", "ID", "Version" ],
+      "additionalProperties" : false
+    },
+    "ARI1JParameterDescriptionInteger" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1ParameterId"
+        },
+        "IntegerValueDefault" : {
+          "$ref" : "#/$defs/long"
+        },
+        "IntegerValueMaximumInclusive" : {
+          "$ref" : "#/$defs/long"
+        },
+        "IntegerValueMinimumInclusive" : {
+          "$ref" : "#/$defs/long"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "UnitOfMeasurement" : {
+          "$ref" : "#/$defs/ARI1DottedName"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "ParameterInteger"
+        }
+      },
+      "required" : [ "@Type", "ID", "IntegerValueDefault", "IntegerValueMaximumInclusive", "IntegerValueMinimumInclusive", "Label", "UnitOfMeasurement" ],
+      "additionalProperties" : false
+    },
+    "ARI1JParameterDescriptionReal" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1ParameterId"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "RealValueDefault" : {
+          "$ref" : "#/$defs/double"
+        },
+        "RealValueMaximumInclusive" : {
+          "$ref" : "#/$defs/double"
+        },
+        "RealValueMinimumInclusive" : {
+          "$ref" : "#/$defs/double"
+        },
+        "UnitOfMeasurement" : {
+          "$ref" : "#/$defs/ARI1DottedName"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "ParameterReal"
+        }
+      },
+      "required" : [ "@Type", "ID", "Label", "RealValueDefault", "RealValueMaximumInclusive", "RealValueMinimumInclusive", "UnitOfMeasurement" ],
+      "additionalProperties" : false
+    },
+    "ARI1JParameterDescriptionSampleMap" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1ParameterId"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "ParameterSampleMap"
+        }
+      },
+      "required" : [ "@Type", "ID", "Label" ],
+      "additionalProperties" : false
+    },
+    "ARI1JParameterDescriptionType" : {
+      "oneOf" : [ {
+        "$ref" : "#/$defs/ARI1JParameterDescriptionInteger"
+      }, {
+        "$ref" : "#/$defs/ARI1JParameterDescriptionReal"
+      }, {
+        "$ref" : "#/$defs/ARI1JParameterDescriptionSampleMap"
+      } ]
+    },
+    "ARI1JPortDescriptionInputAudio" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1PortId"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "Semantics" : {
+          "$ref" : "#/$defs/Set<String>"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "InputAudio"
+        }
+      },
+      "required" : [ "@Type", "ID", "Label" ],
+      "additionalProperties" : false
+    },
+    "ARI1JPortDescriptionInputNote" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1PortId"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "Semantics" : {
+          "$ref" : "#/$defs/Set<String>"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "InputNote"
+        }
+      },
+      "required" : [ "@Type", "ID", "Label" ],
+      "additionalProperties" : false
+    },
+    "ARI1JPortDescriptionInputType" : {
+      "oneOf" : [ {
+        "$ref" : "#/$defs/ARI1JPortDescriptionInputAudio"
+      }, {
+        "$ref" : "#/$defs/ARI1JPortDescriptionInputNote"
+      } ]
+    },
+    "ARI1JPortDescriptionOutputAudio" : {
+      "type" : "object",
+      "properties" : {
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1Documentation>"
+        },
+        "ID" : {
+          "$ref" : "#/$defs/ARI1PortId"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "Semantics" : {
+          "$ref" : "#/$defs/Set<String>"
+        },
+        "@Type" : {
+          "type" : "string",
+          "pattern" : "OutputAudio"
+        }
+      },
+      "required" : [ "@Type", "ID", "Label" ],
+      "additionalProperties" : false
+    },
+    "ARI1JPortDescriptionOutputType" : {
+      "oneOf" : [ {
+        "$ref" : "#/$defs/ARI1JPortDescriptionOutputAudio"
+      } ]
+    },
+    "ARI1JPortDescriptionType" : {
+      "oneOf" : [ {
+        "$ref" : "#/$defs/ARI1JPortDescriptionOutputType"
+      }, {
+        "$ref" : "#/$defs/ARI1JPortDescriptionInputType"
+      } ]
+    },
+    "ARI1ParameterId" : {
+      "type" : "integer",
+      "description" : "A parameter ID.",
+      "minimum" : 0,
+      "maximum" : 4294967295
+    },
+    "ARI1PortId" : {
+      "type" : "integer",
+      "description" : "A port ID.",
+      "minimum" : 0,
+      "maximum" : 4294967295
+    },
+    "ARI1Version" : {
+      "type" : "string",
+      "description" : "A version string."
+    },
+    "List<ARI1JParameterDescriptionType>" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/$defs/ARI1JParameterDescriptionType"
+      }
+    },
+    "List<ARI1JPortDescriptionType>" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/$defs/ARI1JPortDescriptionType"
+      }
+    },
+    "List<String>" : {
+      "type" : "array",
+      "description" : "An array of strings.",
+      "items" : {
+        "$ref" : "#/$defs/String"
+      }
+    },
+    "Map<String,String>" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "$ref" : "#/$defs/String"
+      }
+    },
+    "Optional<ARI1Documentation>" : {
+      "$ref" : "#/$defs/ARI1Documentation"
+    },
+    "Set<String>" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/$defs/String"
+      }
+    },
+    "String" : {
+      "type" : "string"
+    },
+    "boolean" : {
+      "type" : "boolean",
+      "description" : "A boolean value."
+    },
+    "byte" : {
+      "type" : "integer",
+      "description" : "A primitive byte.",
+      "minimum" : -128,
+      "maximum" : 127
+    },
+    "char" : {
+      "type" : "integer",
+      "description" : "A primitive char.",
+      "minimum" : 0,
+      "maximum" : 65535
+    },
+    "double" : {
+      "type" : "number",
+      "minimum" : -1.7976931348623157E308,
+      "maximum" : 1.7976931348623157E308,
+      "description" : "An IEEE764 64-bit floating point value."
+    },
+    "float" : {
+      "type" : "number",
+      "minimum" : -3.4028235E38,
+      "maximum" : 3.4028235E38,
+      "description" : "An IEEE764 32-bit floating point value."
+    },
+    "int" : {
+      "type" : "integer",
+      "description" : "A primitive int.",
+      "minimum" : -2147483648,
+      "maximum" : 2147483647
+    },
+    "long" : {
+      "type" : "integer",
+      "description" : "A primitive long.",
+      "minimum" : -9223372036854775808,
+      "maximum" : 9223372036854775807
+    },
+    "short" : {
+      "type" : "integer",
+      "description" : "A primitive short.",
+      "minimum" : -32768,
+      "maximum" : 32767
+    }
+  }
+}

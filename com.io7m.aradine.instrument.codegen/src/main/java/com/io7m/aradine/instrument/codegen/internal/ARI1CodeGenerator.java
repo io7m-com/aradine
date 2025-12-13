@@ -22,19 +22,19 @@ import com.io7m.aradine.instrument.codegen.ARI1CodeGenerationException;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorParameters;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorResult;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescriptionType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionIntegerType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionRealType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudioType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortInputAudioType;
@@ -132,13 +132,13 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
     final ARI1PortDescriptionType description)
   {
     return switch (description) {
-      case ARI1PortDescriptionOutputAudioType _ -> {
+      case ARI1PortDescriptionOutputAudio _ -> {
         yield ARI1PortOutputAudioType.class;
       }
-      case ARI1PortDescriptionInputAudioType _ -> {
+      case ARI1PortDescriptionInputAudio _ -> {
         yield ARI1PortInputAudioType.class;
       }
-      case ARI1PortDescriptionInputNoteType _ -> {
+      case ARI1PortDescriptionInputNote _ -> {
         yield ARI1PortInputNoteType.class;
       }
     };
@@ -209,13 +209,13 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
     final ARI1ParameterDescriptionType description)
   {
     return switch (description) {
-      case ARI1ParameterDescriptionSampleMapType _ -> {
+      case ARI1ParameterDescriptionSampleMap _ -> {
         yield ARI1ParameterSampleMapType.class;
       }
-      case ARI1ParameterDescriptionRealType _ -> {
+      case ARI1ParameterDescriptionReal _ -> {
         yield ARI1ParameterRealType.class;
       }
-      case ARI1ParameterDescriptionIntegerType _ -> {
+      case ARI1ParameterDescriptionInteger _ -> {
         yield ARI1ParameterIntegerType.class;
       }
     };
@@ -268,12 +268,12 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private Path generateInstrumentFile(
-    final ARI1InstrumentDescriptionType instrument)
+    final ARI1InstrumentDescription instrument)
     throws SerializationException, IOException
   {
     final var fixed =
       new ARI1InstrumentDescription(
-        this.parameters.symbolicName(),
+        this.parameters.identifier(),
         this.parameters.version(),
         instrument.metadata(),
         instrument.parameters(),
@@ -291,7 +291,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
     }
 
     Files.createDirectories(output);
-    output = output.resolve("instrument.xml");
+    output = output.resolve("instrument.json");
 
     this.parameters.serializers()
       .serializeFile(output, fixed);
@@ -300,7 +300,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private Path generatePortsClass(
-    final ARI1InstrumentDescriptionType instrument)
+    final ARI1InstrumentDescription instrument)
     throws IOException
   {
     final var className =
@@ -342,7 +342,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private Path generateParametersClass(
-    final ARI1InstrumentDescriptionType instrument)
+    final ARI1InstrumentDescription instrument)
     throws IOException
   {
     final var className =

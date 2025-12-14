@@ -21,6 +21,8 @@
 open module com.io7m.aradine.tests
 {
   requires com.io7m.aradine.annotations;
+  requires com.io7m.aradine.catalog.api;
+  requires com.io7m.aradine.catalog;
   requires com.io7m.aradine.envelope.table1;
   requires com.io7m.aradine.filter.biquad1;
   requires com.io7m.aradine.filter.recursive1;
@@ -63,4 +65,6 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
+  requires com.io7m.mime2045.core;
+  requires org.apache.commons.io;
 }

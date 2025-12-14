@@ -20,7 +20,9 @@
 
 @Export
 @Version("1.0.0")
+@Header(name = "Aradine-Instrument", value = "/com/io7m/aradine/instrument/sampler_p0/internal/instrument.json")
 package com.io7m.aradine.instrument.sampler_p0;
 
 import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.bundle.Header;
 import org.osgi.annotation.versioning.Version;

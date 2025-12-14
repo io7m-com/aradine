@@ -20,7 +20,6 @@
 
   <modules>
     <module>com.io7m.aradine.annotations</module>
-    <module>com.io7m.aradine.aurantium</module>
     <module>com.io7m.aradine.documentation</module>
     <module>com.io7m.aradine.envelope.table1</module>
     <module>com.io7m.aradine.filter.biquad1</module>

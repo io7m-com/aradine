@@ -22,7 +22,6 @@ module com.io7m.aradine.instrument.codegen
 {
   requires static org.osgi.annotation.versioning;
   requires static org.osgi.annotation.bundle;
-  requires static org.osgi.service.component.annotations;
 
   requires java.compiler;
 

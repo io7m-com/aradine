@@ -22,7 +22,6 @@ import com.io7m.aradine.instrument.sampler_p0.internal.Ports;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
-import org.osgi.service.component.annotations.Component;
 
 import java.io.InputStream;
 
@@ -30,7 +29,6 @@ import java.io.InputStream;
  * A factory of polyphonic samplers.
  */
 
-@Component
 public final class ARIP0SamplerFactory
   implements ARI1InstrumentFactoryType
 {

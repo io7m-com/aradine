@@ -26,7 +26,6 @@ module com.io7m.aradine.instrument.grain_sampler_m0
   requires static com.io7m.aradine.annotations;
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
-  requires static org.osgi.service.component.annotations;
 
   requires com.io7m.aradine.instrument.spi1;
 

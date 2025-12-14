@@ -18,13 +18,11 @@
 package com.io7m.aradine.instrument.codegen;
 
 import com.io7m.aradine.instrument.codegen.internal.ARI1CodeGenerator;
-import org.osgi.service.component.annotations.Component;
 
 /**
  * The default factory of code generators.
  */
 
-@Component
 public final class ARI1CodeGenerators
   implements ARI1CodeGeneratorFactoryType
 {

@@ -21,8 +21,6 @@
 open module com.io7m.aradine.tests
 {
   requires com.io7m.aradine.annotations;
-  requires com.io7m.aradine.catalog.api;
-  requires com.io7m.aradine.catalog;
   requires com.io7m.aradine.envelope.table1;
   requires com.io7m.aradine.filter.biquad1;
   requires com.io7m.aradine.filter.recursive1;
@@ -34,6 +32,8 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.instrument.sampler_xp0;
   requires com.io7m.aradine.instrument.spi1.json_data;
   requires com.io7m.aradine.instrument.spi1;
+  requires com.io7m.aradine.inventory.api;
+  requires com.io7m.aradine.inventory;
   requires com.io7m.aradine.tests.arbitraries;
 
   requires com.io7m.anethum.api;
@@ -43,12 +43,14 @@ open module com.io7m.aradine.tests
   requires com.io7m.jsamplebuffer.api;
   requires com.io7m.jsamplebuffer.vanilla;
   requires com.io7m.jsamplebuffer.xmedia;
+  requires com.io7m.mime2045.core;
   requires it.unimi.dsi.fastutil.core;
   requires java.desktop;
   requires jnajack;
   requires net.bytebuddy.agent;
   requires net.bytebuddy;
   requires net.jqwik.api;
+  requires org.apache.commons.io;
   requires org.apache.commons.math4.core;
   requires org.apache.commons.math4.legacy.core;
   requires org.apache.commons.math4.legacy;
@@ -65,6 +67,4 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
-  requires com.io7m.mime2045.core;
-  requires org.apache.commons.io;
 }

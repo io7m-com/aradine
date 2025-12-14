@@ -85,12 +85,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.catalog</artifactId>
+      <artifactId>com.io7m.aradine.inventory</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.catalog.api</artifactId>
+      <artifactId>com.io7m.aradine.inventory.api</artifactId>
       <version>${project.version}</version>
     </dependency>
 

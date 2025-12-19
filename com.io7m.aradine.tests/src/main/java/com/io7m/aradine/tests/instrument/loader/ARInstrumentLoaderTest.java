@@ -65,7 +65,11 @@ public final class ARInstrumentLoaderTest
   public void tearDown()
     throws Exception
   {
-    FileUtils.deleteDirectory(this.directory.toFile());
+    try {
+      FileUtils.deleteDirectory(this.directory.toFile());
+    } catch (final IOException e) {
+      // Don't care
+    }
   }
 
   @Test

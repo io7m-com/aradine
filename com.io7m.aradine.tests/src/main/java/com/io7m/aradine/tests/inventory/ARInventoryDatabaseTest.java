@@ -101,7 +101,11 @@ public final class ARInventoryDatabaseTest
   public void tearDown()
     throws IOException
   {
-    FileUtils.deleteDirectory(this.directory.toFile());
+    try {
+      FileUtils.deleteDirectory(this.directory.toFile());
+    } catch (final IOException e) {
+      // Don't care
+    }
     this.databaseExecutor.close();
   }
 

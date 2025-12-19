@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.tests.inventory;
 
-import com.io7m.aradine.inventory.api.ARInventoryHash;
-import com.io7m.aradine.inventory.api.ARInventoryHashAlgorithm;
+import com.io7m.aradine.instrument.api.ARHash;
+import com.io7m.aradine.instrument.api.ARHashAlgorithm;
 import com.io7m.aradine.inventory.internal.ARInventoryBlobDirectory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,8 +53,8 @@ public final class ARInventoryBlobDirectoryTest
     Files.writeString(sourceFile, "HELLO");
 
     final var helloHash =
-      new ARInventoryHash(
-        ARInventoryHashAlgorithm.SHA_256,
+      new ARHash(
+        ARHashAlgorithm.SHA_256,
         "3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5"
       );
 

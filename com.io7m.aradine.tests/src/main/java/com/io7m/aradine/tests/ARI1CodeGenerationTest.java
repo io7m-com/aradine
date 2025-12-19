@@ -88,12 +88,15 @@ public final class ARI1CodeGenerationTest
 
     final var newVersion =
       new ARI1Version(1, 2, 3, empty());
+    final var groupName =
+      new ARI1DottedName( "com.io7m.aradine");
     final var newName =
       new ARI1DottedName( "com.io7m.aradine.instrument.sampler_xp0");
 
     final var generator =
       this.codeGenerators.createCodeGenerator(
         new ARI1CodeGeneratorParameters(
+          groupName,
           newName,
           newVersion,
           "com.io7m.aradine.tests.generated",

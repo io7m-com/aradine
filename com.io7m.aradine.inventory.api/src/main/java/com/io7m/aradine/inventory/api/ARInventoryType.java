@@ -16,9 +16,13 @@
 
 package com.io7m.aradine.inventory.api;
 
+import com.io7m.aradine.database.api.ARDBType;
+import com.io7m.aradine.instrument.api.ARBlob;
+import com.io7m.aradine.instrument.api.ARInstrumentID;
 import com.io7m.mime2045.core.MimeType;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -30,10 +34,17 @@ public interface ARInventoryType
   extends AutoCloseable
 {
   /**
+   * The instrument jar MIME type.
+   */
+
+  MimeType INSTRUMENT_JAR_MIME_TYPE =
+    MimeType.of("application", "jar-archive");
+
+  /**
    * @return The database
    */
 
-  ARInventoryDatabaseType database();
+  ARDBType database();
 
   /**
    * Copy the given blob into the inventory.
@@ -43,14 +54,38 @@ public interface ARInventoryType
    * @param progressConsumer A consumer of progress
    *
    * @return The operation in progress
+   */
+
+  CompletableFuture<ARBlob> blobInstall(
+    Path file,
+    MimeType type,
+    Consumer<ARInventoryProgress> progressConsumer);
+
+  /**
+   * Install the given instrument into the inventory.
+   *
+   * @param file             The source file
+   * @param progressConsumer A consumer of progress
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<ARInstrumentID> instrumentInstall(
+    Path file,
+    Consumer<ARInventoryProgress> progressConsumer);
+
+  /**
+   * Get the file for the installed instrument.
+   *
+   * @param instrument The instrument
+   *
+   * @return The file, if the instrument exists
    *
    * @throws ARInventoryException On errors
    */
 
-  CompletableFuture<ARInventoryBlob> blobInstall(
-    Path file,
-    MimeType type,
-    Consumer<ARInventoryProgress> progressConsumer)
+  Optional<Path> instrumentFile(
+    ARInstrumentID instrument)
     throws ARInventoryException;
 
   @Override

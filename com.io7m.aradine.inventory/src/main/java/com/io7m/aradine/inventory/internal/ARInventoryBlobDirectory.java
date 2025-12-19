@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.instrument.api.ARHash;
 import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryHash;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.streamtime.core.STTimedInputStream;
 import com.io7m.streamtime.core.STTransferStatistics;
@@ -114,12 +114,12 @@ public final class ARInventoryBlobDirectory
    * @return The written file path
    *
    * @throws IOException           On errors
-   * @throws ARInventoryException    On errors
+   * @throws ARInventoryException  On errors
    * @throws CancellationException On errors
    */
 
   public Path copyIn(
-    final ARInventoryHash hash,
+    final ARHash hash,
     final Path file,
     final Consumer<Double> progress,
     final BooleanSupplier cancelled)
@@ -134,7 +134,7 @@ public final class ARInventoryBlobDirectory
   }
 
   private Path copyInLocked(
-    final ARInventoryHash hash,
+    final ARHash hash,
     final Path file,
     final Consumer<Double> progress,
     final BooleanSupplier cancelled)

@@ -16,14 +16,14 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
-import com.io7m.aradine.inventory.api.ARInventoryQueryType;
+import com.io7m.aradine.database.api.ARDBQueryType;
 
 /**
  * The schema version query.
  */
 
 public interface ARQuerySchemaVersionType
-  extends ARInventoryQueryType<ARInventoryUnit, Integer>
+  extends ARDBQueryType<ARInventoryUnit, Integer>
 {
 
 }

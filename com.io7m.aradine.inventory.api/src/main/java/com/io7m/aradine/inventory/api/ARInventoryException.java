@@ -23,10 +23,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * The base type of exceptions.
+ * An inventory exception.
  */
 
-public class ARInventoryException extends Exception
+public final class ARInventoryException extends Exception
   implements SStructuredErrorExceptionType<String>
 {
   private final String errorCode;
@@ -88,25 +88,25 @@ public class ARInventoryException extends Exception
   }
 
   @Override
-  public final String errorCode()
+  public String errorCode()
   {
     return this.errorCode;
   }
 
   @Override
-  public final Map<String, String> attributes()
+  public Map<String, String> attributes()
   {
     return this.attributes;
   }
 
   @Override
-  public final Optional<String> remediatingAction()
+  public Optional<String> remediatingAction()
   {
     return this.remediatingAction;
   }
 
   @Override
-  public final Optional<Throwable> exception()
+  public Optional<Throwable> exception()
   {
     return Optional.of(this);
   }

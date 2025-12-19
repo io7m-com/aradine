@@ -118,9 +118,9 @@ public final class ARI1MiniInstrumentServices
       Attributes.create(ex -> LOG.error("exception: ", ex));
 
     final var sampleRateAttribute =
-      attributes.create(Integer.valueOf(sampleRate));
+      attributes.withValue(Integer.valueOf(sampleRate));
     final var bufferSizeAttribute =
-      attributes.create(Integer.valueOf(bufferSize));
+      attributes.withValue(Integer.valueOf(bufferSize));
 
     final var closeables =
       CloseableCollection.create();

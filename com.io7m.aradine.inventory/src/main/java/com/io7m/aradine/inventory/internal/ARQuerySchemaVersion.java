@@ -16,14 +16,17 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryTransactionType;
+import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.database.api.ARDBQueryProviderType;
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQuerySchemaVersionType;
 
 import java.sql.SQLException;
 
-enum ARQuerySchemaVersion implements ARQuerySchemaVersionType
+enum ARQuerySchemaVersion
+  implements ARQuerySchemaVersionType, ARDBQueryProviderType
 {
   INSTANCE;
 
@@ -35,12 +38,12 @@ enum ARQuerySchemaVersion implements ARQuerySchemaVersionType
 
   @Override
   public Integer execute(
-    final ARInventoryTransactionType transaction,
+    final ARDBTransactionType transaction,
     final ARInventoryUnit parameters)
-    throws ARInventoryException
+    throws ARDBException
   {
-    final var tr = (ARInventoryDB.ARInventoryDBTransaction) transaction;
-    final var connection = tr.connection().connection();
+    final var connection =
+      transaction.connection().connection();
 
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       try (var rs = st.executeQuery()) {
@@ -50,7 +53,19 @@ enum ARQuerySchemaVersion implements ARQuerySchemaVersionType
       }
       throw new IllegalStateException("No schema version.");
     } catch (final SQLException e) {
-      throw ARInventoryExceptions.wrap(e);
+      throw ARInventoryExceptions.wrapDB(e);
     }
+  }
+
+  @Override
+  public Class<?> queryInterface()
+  {
+    return ARQuerySchemaVersionType.class;
+  }
+
+  @Override
+  public ARDBQueryType<?, ?> queryInstance()
+  {
+    return this;
   }
 }

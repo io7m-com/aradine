@@ -20,22 +20,32 @@
 
   <modules>
     <module>com.io7m.aradine.annotations</module>
-    <module>com.io7m.aradine.inventory.api</module>
-    <module>com.io7m.aradine.inventory</module>
+    <module>com.io7m.aradine.database.api</module>
+    <module>com.io7m.aradine.database.sqlite3</module>
     <module>com.io7m.aradine.documentation</module>
     <module>com.io7m.aradine.envelope.table1</module>
     <module>com.io7m.aradine.filter.biquad1</module>
     <module>com.io7m.aradine.filter.recursive1</module>
     <module>com.io7m.aradine.filter.statevar1</module>
+    <module>com.io7m.aradine.instrument.api</module>
+    <module>com.io7m.aradine.instrument.bad_extradep</module>
+    <module>com.io7m.aradine.instrument.bad_noprovides</module>
+    <module>com.io7m.aradine.instrument.bad_provides</module>
+    <module>com.io7m.aradine.instrument.bad_uses</module>
     <module>com.io7m.aradine.instrument.codegen</module>
     <module>com.io7m.aradine.instrument.grain_sampler_m0</module>
+    <module>com.io7m.aradine.instrument.loader.api</module>
+    <module>com.io7m.aradine.instrument.loader</module>
     <module>com.io7m.aradine.instrument.sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_p0</module>
     <module>com.io7m.aradine.instrument.sampler_xp0</module>
     <module>com.io7m.aradine.instrument.spi1.json_data</module>
     <module>com.io7m.aradine.instrument.spi1.json_schemagen</module>
     <module>com.io7m.aradine.instrument.spi1</module>
+    <module>com.io7m.aradine.inventory.api</module>
+    <module>com.io7m.aradine.inventory</module>
     <module>com.io7m.aradine.maven_plugin</module>
+    <module>com.io7m.aradine.server</module>
     <module>com.io7m.aradine.tests.arbitraries</module>
     <module>com.io7m.aradine.tests</module>
   </modules>
@@ -234,7 +244,7 @@
       <dependency>
         <groupId>com.io7m.jattribute</groupId>
         <artifactId>com.io7m.jattribute.core</artifactId>
-        <version>0.0.1</version>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>it.unimi.dsi</groupId>

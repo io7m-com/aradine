@@ -21,12 +21,17 @@
 open module com.io7m.aradine.tests
 {
   requires com.io7m.aradine.annotations;
+  requires com.io7m.aradine.database.api;
+  requires com.io7m.aradine.database.sqlite3;
   requires com.io7m.aradine.envelope.table1;
   requires com.io7m.aradine.filter.biquad1;
   requires com.io7m.aradine.filter.recursive1;
   requires com.io7m.aradine.filter.statevar1;
+  requires com.io7m.aradine.instrument.api;
   requires com.io7m.aradine.instrument.codegen;
   requires com.io7m.aradine.instrument.grain_sampler_m0;
+  requires com.io7m.aradine.instrument.loader.api;
+  requires com.io7m.aradine.instrument.loader;
   requires com.io7m.aradine.instrument.sampler_m0;
   requires com.io7m.aradine.instrument.sampler_p0;
   requires com.io7m.aradine.instrument.sampler_xp0;
@@ -34,6 +39,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.aradine.inventory.api;
   requires com.io7m.aradine.inventory;
+  requires com.io7m.aradine.server;
   requires com.io7m.aradine.tests.arbitraries;
 
   requires com.io7m.anethum.api;
@@ -43,7 +49,9 @@ open module com.io7m.aradine.tests
   requires com.io7m.jsamplebuffer.api;
   requires com.io7m.jsamplebuffer.vanilla;
   requires com.io7m.jsamplebuffer.xmedia;
+  requires com.io7m.lanark.core;
   requires com.io7m.mime2045.core;
+  requires com.io7m.verona.core;
   requires it.unimi.dsi.fastutil.core;
   requires java.desktop;
   requires jnajack;
@@ -67,4 +75,5 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
+  requires com.io7m.junreachable.core;
 }

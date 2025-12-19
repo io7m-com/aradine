@@ -16,6 +16,9 @@
 
 package com.io7m.aradine.instrument.spi1.json_data;
 
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.mime2045.core.MimeType;
+
 import java.net.URI;
 import java.net.URL;
 
@@ -28,9 +31,33 @@ public final class ARI1Schemas
   private static final URI SCHEMA_1 =
     URI.create("urn:com.io7m.aradine.instrument:1.0");
 
+  private static final ARI1DottedName FORMAT_NAME =
+    new ARI1DottedName("com.io7m.aradine.instrument.json");
+
+  private static final MimeType INSTRUMENT_MIME_TYPE =
+    MimeType.of("application", "vnd.com.io7m.aradine.instrument+json");
+
   private ARI1Schemas()
   {
 
+  }
+
+  /**
+   * @return The MIME type for instruments
+   */
+
+  public static MimeType instrumentMimeType()
+  {
+    return INSTRUMENT_MIME_TYPE;
+  }
+
+  /**
+   * @return The format name for JSON data
+   */
+
+  public static ARI1DottedName formatName()
+  {
+    return FORMAT_NAME;
   }
 
   /**

@@ -59,6 +59,7 @@ public final class ARI1JInstrumentDescriptions
   {
     return new ARI1JInstrumentDescription(
       ARI1Schemas.schema1().toString(),
+      description.group(),
       description.identifier(),
       description.version(),
       description.metadata(),
@@ -162,6 +163,7 @@ public final class ARI1JInstrumentDescriptions
     final ARI1JInstrumentDescription description)
   {
     return new ARI1InstrumentDescription(
+      description.group(),
       description.identifier(),
       description.version(),
       description.metadata(),

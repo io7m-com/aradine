@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.inventory.api.ARInventoryException;
 
 import java.sql.SQLException;
@@ -45,6 +46,30 @@ final class ARInventoryExceptions
     final Exception e)
   {
     return new ARInventoryException(
+      e.getMessage(),
+      e,
+      "error-exception",
+      Map.of(),
+      Optional.empty()
+    );
+  }
+
+  public static ARDBException wrapDB(
+    final SQLException e)
+  {
+    return new ARDBException(
+      e.getMessage(),
+      e,
+      "error-sql",
+      Map.of(),
+      Optional.empty()
+    );
+  }
+
+  public static ARDBException wrapDB(
+    final Exception e)
+  {
+    return new ARDBException(
       e.getMessage(),
       e,
       "error-exception",

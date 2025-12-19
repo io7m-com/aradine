@@ -32,6 +32,7 @@ import java.util.function.Function;
  * Create an instrument description.
  *
  * @param schema     The schema identifier
+ * @param group      The instrument group
  * @param identifier The unique identifier of the instrument
  * @param version    The version of the instrument
  * @param metadata   The metadata strings declared in the instrument description
@@ -43,6 +44,9 @@ public record ARI1JInstrumentDescription(
   @JsonPropertyDescription("The schema identifier.")
   @JsonProperty(value = "%Schema", required = true)
   String schema,
+  @JsonPropertyDescription("The instrument group.")
+  @JsonProperty(value = "Group", required = true)
+  ARI1DottedName group,
   @JsonPropertyDescription("The instrument ID.")
   @JsonProperty(value = "ID", required = true)
   ARI1DottedName identifier,
@@ -64,6 +68,7 @@ public record ARI1JInstrumentDescription(
    * Create an instrument description.
    *
    * @param schema     The schema identifier
+   * @param group      The instrument group
    * @param identifier The unique identifier of the instrument
    * @param version    The version of the instrument
    * @param metadata   The metadata strings declared in the instrument description
@@ -74,6 +79,7 @@ public record ARI1JInstrumentDescription(
   public ARI1JInstrumentDescription
   {
     Objects.requireNonNull(schema, "schema");
+    Objects.requireNonNull(group, "group");
     Objects.requireNonNull(identifier, "identifier");
     Objects.requireNonNull(version, "version");
     Objects.requireNonNull(metadata, "metadata");

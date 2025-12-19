@@ -122,6 +122,7 @@ public final class CodeGenerationMojo extends AbstractMojo
 
       final var parameters =
         new ARI1CodeGeneratorParameters(
+          new ARI1DottedName(this.project.getGroupId()),
           new ARI1DottedName(this.project.getArtifactId()),
           new ARI1Version(
             version.major(),

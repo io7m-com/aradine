@@ -45,7 +45,7 @@ public final class ARIP0SamplerFactory
   public InputStream openInstrumentDescription()
   {
     return ARIP0SamplerFactory.class.getResourceAsStream(
-      "/com/io7m/aradine/instrument/sampler_p0/internal/instrument.xml"
+      "/com/io7m/aradine/instrument/sampler_p0/internal/instrument.json"
     );
   }
 

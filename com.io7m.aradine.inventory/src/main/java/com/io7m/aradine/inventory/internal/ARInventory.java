@@ -16,16 +16,20 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.inventory.api.ARInventoryBlob;
+import com.io7m.aradine.database.api.ARDBType;
+import com.io7m.aradine.instrument.api.ARBlob;
+import com.io7m.aradine.instrument.api.ARHash;
+import com.io7m.aradine.instrument.api.ARHashAlgorithm;
+import com.io7m.aradine.instrument.api.ARInstrumentData;
+import com.io7m.aradine.instrument.api.ARInstrumentException;
+import com.io7m.aradine.instrument.api.ARInstrumentID;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
-import com.io7m.aradine.inventory.api.ARInventoryDatabaseType;
 import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryHash;
-import com.io7m.aradine.inventory.api.ARInventoryHashAlgorithm;
 import com.io7m.aradine.inventory.api.ARInventoryProgress;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
-import com.io7m.jmulticlose.core.CloseableCollectionType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
+import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.mime2045.core.MimeType;
 import com.io7m.streamtime.core.STTimedInputStream;
 import com.io7m.streamtime.core.STTransferStatistics;
@@ -37,11 +41,11 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -50,30 +54,21 @@ import java.util.function.Consumer;
 
 public final class ARInventory implements ARInventoryType
 {
-  private static final ARInventoryDBFactory DATABASES =
-    new ARInventoryDBFactory();
-
-  private final ARInventoryDB database;
+  private final ARDBType database;
   private final ARInventoryConfiguration configuration;
   private final ExecutorService databaseExecutor;
   private final ARInventoryBlobDirectory blobDirectory;
-  private final CloseableCollectionType<ARInventoryException> resources;
 
   private ARInventory(
     final ARInventoryConfiguration inConfiguration,
-    final CloseableCollectionType<ARInventoryException> inResources,
-    final ARInventoryDB inDatabase,
-    final ExecutorService inDatabaseExecutor,
     final ARInventoryBlobDirectory inBlobDirectory)
   {
     this.configuration =
       Objects.requireNonNull(inConfiguration, "configuration");
-    this.resources =
-      Objects.requireNonNull(inResources, "resources");
     this.database =
-      Objects.requireNonNull(inDatabase, "database");
+      inConfiguration.database();
     this.databaseExecutor =
-      Objects.requireNonNull(inDatabaseExecutor, "databaseExecutor");
+      inConfiguration.databaseExecutor();
     this.blobDirectory =
       Objects.requireNonNull(inBlobDirectory, "blobDirectory");
   }
@@ -84,54 +79,40 @@ public final class ARInventory implements ARInventoryType
    * @param configuration The inventory configuration
    *
    * @return A inventory
-   *
-   * @throws ARInventoryException On errors
    */
 
   public static ARInventoryType open(
     final ARInventoryConfiguration configuration)
-    throws ARInventoryException
   {
-    final var closeables =
-      ARCloseables.create();
+    return new ARInventory(
+      configuration,
+      new ARInventoryBlobDirectory(configuration.dataDirectory())
+    );
+  }
 
-    try {
-      final var databaseExecutor =
-        Executors.newSingleThreadExecutor(r -> {
-          final var thread = new Thread(r);
-          thread.setName(
-            "com.io7m.aradine.inventory.database-%d"
-              .formatted(Long.valueOf(thread.threadId()))
-          );
-          return thread;
-        });
-
-      closeables.add(databaseExecutor);
-
-      final var database =
-        closeables.add(DATABASES.open(configuration.databaseFile()));
-
-      return new ARInventory(
-        configuration,
-        closeables,
-        database,
-        databaseExecutor,
-        new ARInventoryBlobDirectory(configuration.dataDirectory())
-      );
-    } catch (final Throwable e) {
-      closeables.close();
-      throw e;
-    }
+  private static <T> CompletableFuture<T> executeFuture(
+    final ARFutureOpType<T> op)
+  {
+    final var future = new CompletableFuture<T>();
+    Thread.ofVirtual()
+      .start(() -> {
+        try {
+          future.complete(op.execute(future));
+        } catch (final Throwable e) {
+          future.completeExceptionally(e);
+        }
+      });
+    return future;
   }
 
   @Override
-  public ARInventoryDatabaseType database()
+  public ARDBType database()
   {
     return this.database;
   }
 
   @Override
-  public CompletableFuture<ARInventoryBlob> blobInstall(
+  public CompletableFuture<ARBlob> blobInstall(
     final Path file,
     final MimeType type,
     final Consumer<ARInventoryProgress> progressConsumer)
@@ -145,10 +126,33 @@ public final class ARInventory implements ARInventoryType
   }
 
   @Override
-  public void close()
-    throws ARInventoryException
+  public CompletableFuture<ARInstrumentID> instrumentInstall(
+    final Path file,
+    final Consumer<ARInventoryProgress> progressConsumer)
   {
-    this.resources.close();
+    Objects.requireNonNull(file, "file");
+    Objects.requireNonNull(progressConsumer, "progressConsumer");
+
+    return new ARInventoryInstrumentInstallOp(
+      this,
+      file,
+      INSTRUMENT_JAR_MIME_TYPE,
+      progressConsumer
+    ).execute()
+      .thenApply(ARInstrumentData::identifier);
+  }
+
+  @Override
+  public Optional<Path> instrumentFile(
+    final ARInstrumentID instrument)
+  {
+    throw new UnimplementedCodeException();
+  }
+
+  @Override
+  public void close()
+  {
+
   }
 
   interface ARInventoryOpType<T>
@@ -156,8 +160,159 @@ public final class ARInventory implements ARInventoryType
     CompletableFuture<T> execute();
   }
 
+  interface ARFutureOpType<T>
+  {
+    T execute(CompletableFuture<T> op)
+      throws Exception;
+  }
+
+  private static final class ARInventoryInstrumentInstallOp
+    implements ARInventoryOpType<ARInstrumentData>
+  {
+    private final ARInventory inventory;
+    private final Path file;
+    private final MimeType type;
+    private final Consumer<ARInventoryProgress> progressConsumer;
+    private final int taskCount;
+    private volatile int taskIndex;
+    private volatile long fileSize;
+    private volatile String task = "";
+
+    private ARInventoryInstrumentInstallOp(
+      final ARInventory inInventory,
+      final Path inFile,
+      final MimeType inType,
+      final Consumer<ARInventoryProgress> inProgressConsumer)
+    {
+      this.inventory = inInventory;
+      this.file = inFile;
+      this.type = inType;
+      this.progressConsumer = inProgressConsumer;
+      this.taskCount = 3;
+    }
+
+    private static void checkCancelled(
+      final CompletableFuture<?> future)
+    {
+      if (future.isCancelled()) {
+        throw new CancellationException();
+      }
+    }
+
+    @Override
+    public CompletableFuture<ARInstrumentData> execute()
+    {
+      return this.parseFile()
+        .thenCompose(this::copyFile)
+        .thenComposeAsync(this::saveBlob, this.inventory.databaseExecutor);
+    }
+
+    private CompletableFuture<ARInstrumentData> saveBlob(
+      final ARInstrumentData instrument)
+    {
+      return executeFuture(op -> this.saveBlobOp(instrument, op));
+    }
+
+    private ARInstrumentData saveBlobOp(
+      final ARInstrumentData instrument,
+      final CompletableFuture<ARInstrumentData> future)
+      throws Exception
+    {
+      this.task = "Saving instrument to database.";
+      this.taskIndex = 2;
+      this.publishProgressNow(OptionalDouble.empty());
+
+      checkCancelled(future);
+      try (var transaction = this.inventory.database.openTransaction()) {
+        final var blob = instrument.blob();
+        transaction.execute(ARQueryBlobPutType.class, blob);
+        transaction.execute(ARQueryInstrumentPutType.class, instrument);
+        transaction.commit();
+        return instrument;
+      } finally {
+        this.publishProgressNow(OptionalDouble.of(1.0));
+      }
+    }
+
+    private CompletableFuture<ARInstrumentData> copyFile(
+      final ARInstrumentData instrument)
+    {
+      return executeFuture(op -> this.copyFileOp(instrument, op));
+    }
+
+    private ARInstrumentData copyFileOp(
+      final ARInstrumentData instrument,
+      final CompletableFuture<ARInstrumentData> future)
+      throws Exception
+    {
+      this.task = "Copying file to blob directory.";
+      this.taskIndex = 1;
+      this.publishProgressNow(OptionalDouble.empty());
+
+      checkCancelled(future);
+      this.inventory.blobDirectory.copyIn(
+        instrument.blob().hash(),
+        this.file,
+        progress -> this.progressNow(OptionalDouble.of(progress)),
+        future::isCancelled
+      );
+
+      this.publishProgressNow(OptionalDouble.of(1.0));
+      return instrument;
+    }
+
+    private CompletableFuture<ARInstrumentData> parseFile()
+    {
+      return executeFuture(this::parseFileOp);
+    }
+
+    private ARInstrumentData parseFileOp(
+      final CompletableFuture<ARInstrumentData> future)
+      throws Exception
+    {
+      this.task = "Parsing instrument file.";
+      this.taskIndex = 0;
+      this.publishProgressNow(OptionalDouble.empty());
+      this.fileSize = Files.size(this.file);
+
+      checkCancelled(future);
+
+      final var readers = this.inventory.configuration.readers();
+      try (var reader = readers.create(this.file)) {
+        final var instrument = reader.execute();
+        this.publishProgressNow(OptionalDouble.of(1.0));
+        return instrument;
+      } catch (final ARInstrumentException e) {
+        throw new ARInventoryException(
+          e.getMessage(),
+          e,
+          e.errorCode(),
+          e.attributes(),
+          e.remediatingAction()
+        );
+      }
+    }
+
+    private ARInventoryProgress progressNow(
+      final OptionalDouble progress)
+    {
+      return new ARInventoryProgress(
+        this.task,
+        this.taskCount,
+        this.taskIndex + 1,
+        progress.orElse(0.0)
+      );
+    }
+
+    private void publishProgressNow(
+      final OptionalDouble progress)
+    {
+      this.progressConsumer.accept(this.progressNow(progress));
+    }
+  }
+
   private static final class ARInventoryBlobInstallOp
-    implements ARInventoryOpType<ARInventoryBlob>
+    implements ARInventoryOpType<ARBlob>
   {
     private final ARInventory inventory;
     private final Path file;
@@ -181,23 +336,31 @@ public final class ARInventory implements ARInventoryType
       this.taskCount = 3;
     }
 
+    private static void checkCancelled(
+      final CompletableFuture<?> future)
+    {
+      if (future.isCancelled()) {
+        throw new CancellationException();
+      }
+    }
+
     @Override
-    public CompletableFuture<ARInventoryBlob> execute()
+    public CompletableFuture<ARBlob> execute()
     {
       return this.hashFile()
         .thenCompose(this::copyFile)
         .thenComposeAsync(this::saveBlob, this.inventory.databaseExecutor);
     }
 
-    private CompletableFuture<ARInventoryBlob> saveBlob(
-      final ARInventoryHash hash)
+    private CompletableFuture<ARBlob> saveBlob(
+      final ARHash hash)
     {
       return executeFuture(op -> this.saveBlobOp(hash, op));
     }
 
-    private ARInventoryBlob saveBlobOp(
-      final ARInventoryHash hash,
-      final CompletableFuture<ARInventoryBlob> future)
+    private ARBlob saveBlobOp(
+      final ARHash hash,
+      final CompletableFuture<ARBlob> future)
       throws Exception
     {
       this.task = "Saving blob to database.";
@@ -205,7 +368,7 @@ public final class ARInventory implements ARInventoryType
       this.publishProgressNow(OptionalDouble.empty());
 
       try (var transaction = this.inventory.database.openTransaction()) {
-        final var blob = new ARInventoryBlob(this.fileSize, hash, this.type);
+        final var blob = new ARBlob(this.fileSize, hash, this.type);
         transaction.execute(ARQueryBlobPutType.class, blob);
         transaction.commit();
         return blob;
@@ -214,15 +377,15 @@ public final class ARInventory implements ARInventoryType
       }
     }
 
-    private CompletableFuture<ARInventoryHash> copyFile(
-      final ARInventoryHash hash)
+    private CompletableFuture<ARHash> copyFile(
+      final ARHash hash)
     {
       return executeFuture(op -> this.copyFileOp(hash, op));
     }
 
-    private ARInventoryHash copyFileOp(
-      final ARInventoryHash hash,
-      final CompletableFuture<ARInventoryHash> future)
+    private ARHash copyFileOp(
+      final ARHash hash,
+      final CompletableFuture<ARHash> future)
       throws Exception
     {
       this.task = "Copying file to blob directory.";
@@ -240,13 +403,13 @@ public final class ARInventory implements ARInventoryType
       return hash;
     }
 
-    private CompletableFuture<ARInventoryHash> hashFile()
+    private CompletableFuture<ARHash> hashFile()
     {
       return executeFuture(this::hashFileOp);
     }
 
-    private ARInventoryHash hashFileOp(
-      final CompletableFuture<ARInventoryHash> future)
+    private ARHash hashFileOp(
+      final CompletableFuture<ARHash> future)
       throws Exception
     {
       this.task = "Computing hash of file.";
@@ -281,18 +444,10 @@ public final class ARInventory implements ARInventoryType
       }
 
       this.publishProgressNow(OptionalDouble.of(1.0));
-      return new ARInventoryHash(
-        ARInventoryHashAlgorithm.SHA_256,
+      return new ARHash(
+        ARHashAlgorithm.SHA_256,
         HexFormat.of().formatHex(digest.digest())
       );
-    }
-
-    private static void checkCancelled(
-      final CompletableFuture<?> future)
-    {
-      if (future.isCancelled()) {
-        throw new CancellationException();
-      }
     }
 
     private ARInventoryProgress progressNow(
@@ -311,26 +466,5 @@ public final class ARInventory implements ARInventoryType
     {
       this.progressConsumer.accept(this.progressNow(progress));
     }
-  }
-
-  interface ARFutureOpType<T>
-  {
-    T execute(CompletableFuture<T> op)
-      throws Exception;
-  }
-
-  private static <T> CompletableFuture<T> executeFuture(
-    final ARFutureOpType<T> op)
-  {
-    final var future = new CompletableFuture<T>();
-    Thread.ofVirtual()
-      .start(() -> {
-        try {
-          future.complete(op.execute(future));
-        } catch (final Throwable e) {
-          future.completeExceptionally(e);
-        }
-      });
-    return future;
   }
 }

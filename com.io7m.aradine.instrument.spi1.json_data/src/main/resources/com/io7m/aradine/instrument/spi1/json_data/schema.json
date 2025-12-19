@@ -30,6 +30,10 @@
           "description" : "The schema identifier.",
           "$ref" : "#/$defs/String"
         },
+        "Group" : {
+          "description" : "The instrument group.",
+          "$ref" : "#/$defs/ARI1DottedName"
+        },
         "ID" : {
           "description" : "The instrument ID.",
           "$ref" : "#/$defs/ARI1DottedName"
@@ -51,7 +55,7 @@
           "$ref" : "#/$defs/ARI1Version"
         }
       },
-      "required" : [ "%Schema", "ID", "Version" ],
+      "required" : [ "%Schema", "Group", "ID", "Version" ],
       "additionalProperties" : false
     },
     "ARI1JParameterDescriptionInteger" : {

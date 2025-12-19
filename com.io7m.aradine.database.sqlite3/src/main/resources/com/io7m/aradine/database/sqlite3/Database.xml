@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Schemas xmlns="urn:com.io7m.trasco.database.statements:1:0">
+
+  <Schema versionCurrent="0">
+    <Comment>
+      The schema_version table stores the current version of the database
+      schema. Implementations are expected to query this table on connecting to
+      the database in order to ensure that the calling code is compatible with
+      the tables in the database.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE schema_version (
+  version_lock            INTEGER NOT NULL DEFAULT 1,
+  version_application_id  TEXT    NOT NULL,
+  version_number          INTEGER NOT NULL,
+
+  CONSTRAINT schema_version_primary
+    PRIMARY KEY (version_lock),
+
+  CONSTRAINT schema_version_check_lock_locked
+    CHECK (version_lock = 1)
+) STRICT
+]]></Statement>
+  </Schema>
+
+  <Schema versionCurrent="1">
+    <Comment>
+      The inventory_blobs table stores references to typed blobs of data.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE inventory_blobs (
+  blob_id               INTEGER NOT NULL PRIMARY KEY,
+  blob_size             INTEGER NOT NULL,
+  blob_hash_algorithm   TEXT    NOT NULL,
+  blob_hash_value       TEXT    NOT NULL,
+  blob_type             TEXT    NOT NULL,
+
+  CONSTRAINT blob_hash_unique
+    UNIQUE (blob_hash_algorithm, blob_hash_value)
+)
+]]></Statement>
+
+    <Comment>
+      The inventory_instruments table stores references to instruments.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE inventory_instruments (
+  instrument_id                 INTEGER  NOT NULL PRIMARY KEY,
+  instrument_group              TEXT     NOT NULL,
+  instrument_name               TEXT     NOT NULL,
+  instrument_version_major      INTEGER  NOT NULL,
+  instrument_version_minor      INTEGER  NOT NULL,
+  instrument_version_patch      INTEGER  NOT NULL,
+  instrument_version_qualifier  TEXT     NOT NULL,
+  instrument_meta_format        TEXT     NOT NULL,
+  instrument_meta               BLOB     NOT NULL,
+  instrument_title              TEXT     NOT NULL,
+  instrument_description        TEXT     NOT NULL,
+  instrument_blob               INTEGER  NOT NULL,
+
+  CONSTRAINT instrument_blob_exists
+    FOREIGN KEY (instrument_blob)
+      REFERENCES inventory_blobs (blob_id),
+
+  CONSTRAINT instrument_unique
+    UNIQUE (
+      instrument_group,
+      instrument_name,
+      instrument_version_major,
+      instrument_version_minor,
+      instrument_version_patch,
+      instrument_version_qualifier
+    )
+)
+]]></Statement>
+
+    <Comment>
+      The sample_maps table stores references to sample maps.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE inventory_sample_maps (
+  sample_map_id                 INTEGER  NOT NULL PRIMARY KEY,
+  sample_map_group              TEXT     NOT NULL,
+  sample_map_name               TEXT     NOT NULL,
+  sample_map_version_major      INTEGER  NOT NULL,
+  sample_map_version_minor      INTEGER  NOT NULL,
+  sample_map_version_patch      INTEGER  NOT NULL,
+  sample_map_version_qualifier  TEXT     NOT NULL,
+  sample_map_meta_format        TEXT     NOT NULL,
+  sample_map_meta               BLOB     NOT NULL,
+  sample_map_title              TEXT     NOT NULL,
+  sample_map_description        TEXT     NOT NULL,
+  sample_map_blob               INTEGER  NOT NULL,
+
+  CONSTRAINT inventory_sample_map_blob_exists
+    FOREIGN KEY (sample_map_blob)
+      REFERENCES inventory_blobs (blob_id),
+
+  CONSTRAINT sample_map_unique
+    UNIQUE (
+      sample_map_group,
+      sample_map_name,
+      sample_map_version_major,
+      sample_map_version_minor,
+      sample_map_version_patch,
+      sample_map_version_qualifier
+    )
+)
+]]></Statement>
+  </Schema>
+
+</Schemas>

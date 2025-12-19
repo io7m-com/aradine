@@ -22,6 +22,7 @@ import java.util.Objects;
 /**
  * Create an instrument description.
  *
+ * @param group      The group of the instrument
  * @param identifier The unique identifier of the instrument
  * @param version    The version of the instrument
  * @param metadata   The metadata strings declared in the instrument description
@@ -30,6 +31,7 @@ import java.util.Objects;
  */
 
 public record ARI1InstrumentDescription(
+  ARI1DottedName group,
   ARI1DottedName identifier,
   ARI1Version version,
   Map<String, String> metadata,
@@ -39,6 +41,7 @@ public record ARI1InstrumentDescription(
   /**
    * Create an instrument description.
    *
+   * @param group      The group of the instrument
    * @param identifier The unique identifier of the instrument
    * @param version    The version of the instrument
    * @param metadata   The metadata strings declared in the instrument description
@@ -48,6 +51,7 @@ public record ARI1InstrumentDescription(
 
   public ARI1InstrumentDescription
   {
+    Objects.requireNonNull(group, "group");
     Objects.requireNonNull(identifier, "identifier");
     Objects.requireNonNull(version, "version");
     Objects.requireNonNull(metadata, "metadata");

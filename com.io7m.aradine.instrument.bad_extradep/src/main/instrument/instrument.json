@@ -1,0 +1,29 @@
+{
+  "%Schema": "urn:com.io7m.aradine.instrument:1.0",
+  "Group": "com.io7m.aradine",
+  "ID": "com.io7m.aradine.instrument.bad_extradep",
+  "Version": "1.0.0",
+  "Metadata": {
+    "dc.title": "Bad (Extra dep)",
+    "dc.description": "An instrument with a dependency on a disallowed module."
+  },
+  "Parameters": [
+
+  ],
+  "Ports": [
+    {
+      "@Type": "OutputAudio",
+      "ID": 0,
+      "Label": "Output L",
+      "Semantics": [
+        "com.io7m.aradine.port.output.main_left"
+      ],
+      "Documentation": {
+        "Format": "com.io7m.aradine.plain_text",
+        "Lines": [
+          "The left audio output."
+        ]
+      }
+    }
+  ]
+}

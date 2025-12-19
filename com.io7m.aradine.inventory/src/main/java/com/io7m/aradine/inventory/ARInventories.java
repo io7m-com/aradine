@@ -16,10 +16,14 @@
 
 package com.io7m.aradine.inventory;
 
+import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.internal.ARInventory;
+import com.io7m.aradine.inventory.internal.ARQueries;
+
+import java.util.List;
 
 /**
  * Inventory implementation.
@@ -30,6 +34,15 @@ public final class ARInventories
   private ARInventories()
   {
 
+  }
+
+  /**
+   * @return The available database queries
+   */
+
+  public static List<ARDBQueryProviderType> queries()
+  {
+    return ARQueries.queries();
   }
 
   /**

@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
-import com.io7m.aradine.inventory.api.ARInventoryBlob;
-import com.io7m.aradine.inventory.api.ARInventoryHash;
-import com.io7m.aradine.inventory.api.ARInventoryQueryType;
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.instrument.api.ARBlob;
+import com.io7m.aradine.instrument.api.ARHash;
 
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 
 public interface ARQueryBlobGetType
-  extends ARInventoryQueryType<ARInventoryHash, Optional<ARInventoryBlob>>
+  extends ARDBQueryType<ARHash, Optional<ARBlob>>
 {
 
 }

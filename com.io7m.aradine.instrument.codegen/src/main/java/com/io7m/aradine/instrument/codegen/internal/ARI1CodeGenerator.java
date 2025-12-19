@@ -273,6 +273,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   {
     final var fixed =
       new ARI1InstrumentDescription(
+        this.parameters.group(),
         this.parameters.identifier(),
         this.parameters.version(),
         instrument.metadata(),

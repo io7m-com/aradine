@@ -16,11 +16,13 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.inventory.api.ARInventoryBlob;
-import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryHash;
-import com.io7m.aradine.inventory.api.ARInventoryHashAlgorithm;
-import com.io7m.aradine.inventory.api.ARInventoryTransactionType;
+import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.database.api.ARDBQueryProviderType;
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.database.api.ARDBTransactionType;
+import com.io7m.aradine.instrument.api.ARBlob;
+import com.io7m.aradine.instrument.api.ARHash;
+import com.io7m.aradine.instrument.api.ARHashAlgorithm;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.mime2045.parser.MimeParsers;
 import com.io7m.mime2045.parser.api.MimeParseException;
@@ -28,7 +30,8 @@ import com.io7m.mime2045.parser.api.MimeParseException;
 import java.sql.SQLException;
 import java.util.Optional;
 
-enum ARQueryBlobGet implements ARQueryBlobGetType
+enum ARQueryBlobGet
+  implements ARQueryBlobGetType, ARDBQueryProviderType
 {
   INSTANCE;
 
@@ -37,24 +40,24 @@ enum ARQueryBlobGet implements ARQueryBlobGetType
 
   private static final String QUERY_TEXT = """
     SELECT
-      blobs.blob_size,
-      blobs.blob_hash_algorithm,
-      blobs.blob_hash_value,
-      blobs.blob_type
-    FROM blobs
-      WHERE blobs.blob_hash_algorithm = $1
-        AND blobs.blob_hash_value = $2
+      inventory_blobs.blob_size,
+      inventory_blobs.blob_hash_algorithm,
+      inventory_blobs.blob_hash_value,
+      inventory_blobs.blob_type
+    FROM inventory_blobs
+      WHERE inventory_blobs.blob_hash_algorithm = $1
+        AND inventory_blobs.blob_hash_value = $2
       LIMIT 1
     """;
 
   @Override
-  public Optional<ARInventoryBlob> execute(
-    final ARInventoryTransactionType transaction,
-    final ARInventoryHash parameters)
-    throws ARInventoryException
+  public Optional<ARBlob> execute(
+    final ARDBTransactionType transaction,
+    final ARHash parameters)
+    throws ARDBException
   {
-    final var tr = (ARInventoryDB.ARInventoryDBTransaction) transaction;
-    final var connection = tr.connection().connection();
+    final var connection =
+      transaction.connection().connection();
 
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       st.setString(1, parameters.algorithm().name());
@@ -62,10 +65,10 @@ enum ARQueryBlobGet implements ARQueryBlobGetType
       try (var rs = st.executeQuery()) {
         if (rs.next()) {
           return Optional.of(
-            new ARInventoryBlob(
+            new ARBlob(
               rs.getLong(1),
-              new ARInventoryHash(
-                ARInventoryHashAlgorithm.valueOf(rs.getString(2)),
+              new ARHash(
+                ARHashAlgorithm.valueOf(rs.getString(2)),
                 rs.getString(3)
               ),
               MIME_PARSERS.parse(rs.getString(4))
@@ -75,7 +78,19 @@ enum ARQueryBlobGet implements ARQueryBlobGetType
       }
       return Optional.empty();
     } catch (final SQLException | MimeParseException e) {
-      throw ARInventoryExceptions.wrap(e);
+      throw ARInventoryExceptions.wrapDB(e);
     }
+  }
+
+  @Override
+  public Class<?> queryInterface()
+  {
+    return ARQueryBlobGetType.class;
+  }
+
+  @Override
+  public ARDBQueryType<?, ?> queryInstance()
+  {
+    return this;
   }
 }

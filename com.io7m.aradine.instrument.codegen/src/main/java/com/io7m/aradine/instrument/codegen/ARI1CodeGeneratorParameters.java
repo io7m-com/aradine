@@ -27,6 +27,7 @@ import java.util.Objects;
 /**
  * Parameters for code generation.
  *
+ * @param group                   The instrument group
  * @param identifier              The instrument identifier
  * @param version                 The version of the instrument
  * @param packageName             The output package name
@@ -38,6 +39,7 @@ import java.util.Objects;
  */
 
 public record ARI1CodeGeneratorParameters(
+  ARI1DottedName group,
   ARI1DottedName identifier,
   ARI1Version version,
   String packageName,
@@ -50,6 +52,7 @@ public record ARI1CodeGeneratorParameters(
   /**
    * Parameters for code generation.
    *
+   * @param group                   The instrument group
    * @param identifier              The instrument identifier
    * @param version                 The version of the instrument
    * @param packageName             The output package name
@@ -62,6 +65,7 @@ public record ARI1CodeGeneratorParameters(
 
   public ARI1CodeGeneratorParameters
   {
+    Objects.requireNonNull(group, "group");
     Objects.requireNonNull(identifier, "identifier");
     Objects.requireNonNull(version, "version");
     Objects.requireNonNull(packageName, "packageName");

@@ -16,20 +16,23 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.inventory.api.ARInventoryBlob;
-import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryTransactionType;
+import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.database.api.ARDBQueryProviderType;
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.database.api.ARDBTransactionType;
+import com.io7m.aradine.instrument.api.ARBlob;
 import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
 
 import java.sql.SQLException;
 
-enum ARQueryBlobPut implements ARQueryBlobPutType
+enum ARQueryBlobPut
+  implements ARQueryBlobPutType, ARDBQueryProviderType
 {
   INSTANCE;
 
   private static final String QUERY_TEXT = """
-    INSERT INTO blobs (
+    INSERT INTO inventory_blobs (
       blob_size,
       blob_hash_algorithm,
       blob_hash_value,
@@ -46,12 +49,12 @@ enum ARQueryBlobPut implements ARQueryBlobPutType
 
   @Override
   public ARInventoryUnit execute(
-    final ARInventoryTransactionType transaction,
-    final ARInventoryBlob blob)
-    throws ARInventoryException
+    final ARDBTransactionType transaction,
+    final ARBlob blob)
+    throws ARDBException
   {
-    final var tr = (ARInventoryDB.ARInventoryDBTransaction) transaction;
-    final var connection = tr.connection().connection();
+    final var connection =
+      transaction.connection().connection();
 
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       st.setLong(1, blob.size());
@@ -61,7 +64,19 @@ enum ARQueryBlobPut implements ARQueryBlobPutType
       st.execute();
       return ARInventoryUnit.UNIT;
     } catch (final SQLException e) {
-      throw ARInventoryExceptions.wrap(e);
+      throw ARInventoryExceptions.wrapDB(e);
     }
+  }
+
+  @Override
+  public Class<?> queryInterface()
+  {
+    return ARQueryBlobPutType.class;
+  }
+
+  @Override
+  public ARDBQueryType<?, ?> queryInstance()
+  {
+    return this;
   }
 }

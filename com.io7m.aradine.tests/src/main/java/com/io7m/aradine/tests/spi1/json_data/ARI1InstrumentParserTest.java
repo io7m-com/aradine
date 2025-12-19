@@ -18,7 +18,6 @@
 package com.io7m.aradine.tests.spi1.json_data;
 
 import com.io7m.anethum.api.ParsingException;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;

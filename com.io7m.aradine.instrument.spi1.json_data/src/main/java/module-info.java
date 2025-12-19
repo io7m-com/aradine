@@ -27,8 +27,9 @@ module com.io7m.aradine.instrument.spi1.json_data
   requires com.io7m.anethum.api;
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.dixmont.core;
-  requires tools.jackson.databind;
+  requires com.io7m.mime2045.core;
   requires tools.jackson.core;
+  requires tools.jackson.databind;
 
   exports com.io7m.aradine.instrument.spi1.json_data;
 

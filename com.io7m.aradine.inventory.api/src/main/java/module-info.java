@@ -15,7 +15,7 @@
  */
 
 /**
- * Modular programmable synthesis (Catalog API)
+ * Modular programmable synthesis (Inventory API)
  */
 
 module com.io7m.aradine.inventory.api
@@ -25,9 +25,16 @@ module com.io7m.aradine.inventory.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.aradine.database.api;
+  requires com.io7m.aradine.instrument.loader.api;
+
+  requires com.io7m.jmulticlose.core;
+  requires com.io7m.lanark.core;
   requires com.io7m.mime2045.core;
   requires com.io7m.seltzer.api;
+  requires com.io7m.verona.core;
   requires java.sql;
+  requires com.io7m.aradine.instrument.api;
 
   exports com.io7m.aradine.inventory.api;
   exports com.io7m.aradine.inventory.api.queries;

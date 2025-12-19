@@ -127,17 +127,16 @@ public final class ARInventoryTest
 
   @AfterEach
   public void tearDown()
-    throws IOException
   {
     try {
-      FileUtils.deleteDirectory(this.directory.toFile());
-    } catch (final IOException e) {
+      FileUtils.deleteDirectory(this.dataDirectory.toFile());
+    } catch (final Throwable e) {
       // Don't care
     }
 
     try {
-      FileUtils.deleteDirectory(this.dataDirectory.toFile());
-    } catch (final IOException e) {
+      FileUtils.deleteDirectory(this.directory.toFile());
+    } catch (final Throwable e) {
       // Don't care
     }
 

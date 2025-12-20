@@ -174,8 +174,8 @@
     </Subsection>
     <Subsection title="Buffer Underrun" id="72f0502f-c887-4d03-ae6b-b49b97834204">
       <Paragraph>
-        Much of digital signal processing is concerned with
-        <Term type="term">buffer underrun</Term>. This occurs when
+        Much of the practical aspect of digital signal processing is concerned
+        with avoiding <Term type="term">buffer underrun</Term>. This occurs when
         the operations required to produce a buffer of samples take
         longer to execute than the <Term type="term">buffer duration</Term>.
         Essentially, the system has asked for a buffer of samples, but it has

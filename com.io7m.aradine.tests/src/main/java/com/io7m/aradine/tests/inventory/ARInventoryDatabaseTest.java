@@ -41,10 +41,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -65,16 +65,15 @@ public final class ARInventoryDatabaseTest
   private ExecutorService databaseExecutor;
 
   @BeforeEach
-  public void setup(
-    final @TempDir Path directory)
+  public void setup()
     throws Exception
   {
     this.directory =
-      directory;
+      Files.createTempDirectory("aradine");
     this.databaseFile =
-      directory.resolve("database.db");
+      this.directory.resolve("database.db");
     this.dataDirectory =
-      directory.resolve("data");
+      this.directory.resolve("data");
     this.database =
       new ARDBFactory()
         .open(
@@ -99,7 +98,6 @@ public final class ARInventoryDatabaseTest
 
   @AfterEach
   public void tearDown()
-    throws IOException
   {
     try {
       FileUtils.deleteDirectory(this.directory.toFile());

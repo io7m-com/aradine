@@ -34,7 +34,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,19 +86,17 @@ public final class ARInventoryTest
   }
 
   @BeforeEach
-  public void setup(
-    final @TempDir Path directory,
-    final @TempDir Path dataDirectory)
+  public void setup()
     throws Exception
   {
     this.directory =
-      directory;
+      Files.createTempDirectory("aradine");
     this.dataDirectory =
-      dataDirectory;
+      Files.createTempDirectory("aradine");
     this.databaseFile =
-      directory.resolve("database.db");
+      this.directory.resolve("database.db");
     this.dataDirectory =
-      directory.resolve("data");
+      this.directory.resolve("data");
     this.database =
       new ARDBFactory()
         .open(

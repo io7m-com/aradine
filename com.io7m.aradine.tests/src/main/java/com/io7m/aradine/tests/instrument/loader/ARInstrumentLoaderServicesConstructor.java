@@ -32,7 +32,6 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputType;
 import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
 import com.io7m.aradine.instrument.spi1.ARI1PortId;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;

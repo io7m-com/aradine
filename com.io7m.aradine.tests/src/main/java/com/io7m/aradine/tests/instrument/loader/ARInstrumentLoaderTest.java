@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,15 +48,15 @@ public final class ARInstrumentLoaderTest
   private ARInstrumentLoaderServicesConstructor serviceConstructor;
 
   @BeforeEach
-  public void setup(
-    final @TempDir Path directory)
+  public void setup()
     throws Exception
   {
+    this.directory =
+      Files.createTempDirectory("aradine");
     this.serviceConstructor =
       new ARInstrumentLoaderServicesConstructor();
 
     this.loaders = new ARInstrumentLoaders();
-    this.directory = directory;
     Files.createDirectories(this.directory);
   }
 

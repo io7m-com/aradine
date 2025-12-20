@@ -19,13 +19,15 @@ package com.io7m.aradine.tests.inventory;
 import com.io7m.aradine.instrument.api.ARHash;
 import com.io7m.aradine.instrument.api.ARHashAlgorithm;
 import com.io7m.aradine.inventory.internal.ARInventoryBlobDirectory;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -35,21 +37,42 @@ public final class ARInventoryBlobDirectoryTest
     LoggerFactory.getLogger(ARInventoryBlobDirectoryTest.class);
 
   private ARInventoryBlobDirectory blobDirectory;
+  private Path directory;
+  private Path sourceDirectory;
 
   @BeforeEach
-  public void setup(
-    final @TempDir Path directory)
+  public void setup()
+    throws IOException
   {
+    this.directory =
+      Files.createTempDirectory("aradine");
+    this.sourceDirectory =
+      Files.createTempDirectory("aradine");
     this.blobDirectory =
-      new ARInventoryBlobDirectory(directory);
+      new ARInventoryBlobDirectory(this.directory);
+  }
+
+  @AfterEach
+  public void tearDown()
+  {
+    try {
+      FileUtils.deleteDirectory(this.directory.toFile());
+    } catch (final Throwable e) {
+      // Don't care
+    }
+
+    try {
+      FileUtils.deleteDirectory(this.sourceDirectory.toFile());
+    } catch (final Throwable e) {
+      // Don't care
+    }
   }
 
   @Test
-  public void testWriteSimple(
-    final @TempDir Path sourceDirectory)
+  public void testWriteSimple()
     throws Exception
   {
-    final var sourceFile = sourceDirectory.resolve("hello.txt");
+    final var sourceFile = this.sourceDirectory.resolve("hello.txt");
     Files.writeString(sourceFile, "HELLO");
 
     final var helloHash =

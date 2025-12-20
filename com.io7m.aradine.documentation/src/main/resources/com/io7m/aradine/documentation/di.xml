@@ -52,7 +52,7 @@
         both <Term type="term">time</Term> and
         <Term type="term">amplitude</Term> are treated as discrete values.
         Time is discretized by dividing it into a fixed
-        <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sampling rate</Link>
+        <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>
         (typically specified in <Term type="term">samples per second</Term>).
         Amplitude values are discretized by expressing them as either
         machine integer values of a chosen size, or floating-point values
@@ -94,11 +94,13 @@
       <Paragraph>
         The <Term type="term">sample period</Term> of a discrete signal is
         the length of time represented by one sample in the signal. This is
-        defined by the
+        a function of the
         <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>
-        of the signal. In a signal with sampling rate
-        <Term type="expression">r</Term>, the sample period of the signal
-        is <Term type="expression">1 / r</Term>.
+        of the signal. In a signal with sample rate
+        <Term type="expression">r</Term>, the sample period
+        <Term type="expression">p</Term>
+        of the signal
+        is <Term type="expression">p = 1 / r</Term>.
       </Paragraph>
       <Paragraph>
         For example, in a signal that has a
@@ -113,8 +115,10 @@
         audio signals are not typically produced one-sample-at-a-time.
         There are many different limitations at all parts of the hardware
         and software stack that ultimately mean that it is more efficient
-        to produce a <Term type="term">buffer</Term> of samples less
-        frequently, than a single sample more frequently. At a configurable
+        to produce a <Term type="term">buffer</Term> of samples
+        <Term type="emphasis">less</Term>
+        frequently, than a single sample <Term type="emphasis">more</Term>
+        frequently. At a configurable
         (but constant) rate, the audio hardware and software will request
         a buffer of samples from applications. The
         <Term type="term">buffer size</Term> specifies the number of
@@ -129,16 +133,16 @@
         of the samples.
       </Paragraph>
       <Paragraph>
-        Buffering introduces <Term type="term">latency</Term> into the
+        Buffering increases <Term type="term">latency</Term> in the
         system. If an audio system is configured such that the
         <Term type="term">buffer duration</Term> equals
         <Term type="constant">10 milliseconds</Term>, then each time the
         system requests a buffer of samples, the system is essentially
         saying "Produce the most recent
-        <Term type="constant">10 milliseconds</Term> of audio for
+        10 milliseconds of audio for
         playback right now". This means that a listener is necessarily
         going to hear the audio
-        <Term type="constant">10 milliseconds</Term> later than the
+        10 milliseconds later than the
         events that actually produced it. There is, therefore, a tension
         between specifying a <Term type="term">larger</Term> buffer size in
         order to reduce the hardware and software overhead of producing the
@@ -149,7 +153,7 @@
         For example, in a system with sample duration
         <Term type="expression">P</Term> and a buffer
         duration <Term type="expression">B</Term>, at
-        <Term type="expression">Time = 1</Term>, the listener is going
+        <Term type="expression">Time = 8</Term>, the listener is going
         to hear the contents of
         the sample buffer <Term type="expression">SB0</Term>, even though
         the first sample in that buffer occurred at
@@ -161,12 +165,9 @@
         </Image>
       </FormalItem>
       <Paragraph>
-        At the time of writing, most consumer hardware operates at a
-        <Term type="constant">48000 hz</Term> sample rate, whilst
-        professional grade systems work at
-        <Term type="constant">96000 hz</Term> or above. Typical buffer
-        sizes are in the
-        <Term type="constant">128-512</Term> range. This implies a typical
+        At the time of writing, on most consumer and professional
+        hardware, typical buffer sizes are in the
+        <Term type="constant">64-512</Term> range. This implies a typical
         latency of around <Term type="constant">2</Term> milliseconds, which
         is mostly below the threshold of human perception.
       </Paragraph>
@@ -182,6 +183,18 @@
         the buffer. Therefore, the buffer of samples is not ready in time
         and the audio system has nothing to play! This manifests as audible
         glitches in the audio output.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Instrument Model">
+    <Subsection title="Overview">
+      <Paragraph>
+        The <Term type="package">aradine</Term> package collects DSP
+        code into <Term type="term">instruments</Term>, and
+        <Term type="term">instruments</Term> can be connected together
+        arbitrarily to form an
+        <Term type="term">ensemble</Term>.
       </Paragraph>
     </Subsection>
   </Subsection>

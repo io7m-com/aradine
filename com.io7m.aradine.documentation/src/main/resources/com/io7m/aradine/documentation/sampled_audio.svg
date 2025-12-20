@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="sampled_audio.svg"
+   inkscape:export-filename="sampled_audio.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -25,15 +28,16 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="1.2901587"
-     inkscape:cx="329.02928"
-     inkscape:cy="198.4252"
+     inkscape:zoom="1.8245599"
+     inkscape:cx="221.69729"
+     inkscape:cy="235.67327"
      inkscape:window-width="1896"
      inkscape:window-height="1009"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="layer1"
+     inkscape:export-bgcolor="#ffffffff">
     <inkscape:grid
        id="grid1"
        units="px"
@@ -120,8 +124,8 @@
          x="80.076767"
          y="97.325317">Time</tspan></text>
     <path
-       style="fill:#000000;stroke:#000000;stroke-width:0.264583;stroke-dasharray:0.26458299,0.52916598;stroke-dashoffset:0"
-       d="M 21.166666,20.917968 V 84.666663"
+       style="fill:#000000;stroke:#000000;stroke-width:0.264583;stroke-dasharray:0.264583, 0.529166;stroke-dashoffset:0"
+       d="M 21.034374,20.917968 V 84.666663"
        id="path2" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:0.264583;stroke-dasharray:0.264583, 0.529166;stroke-dashoffset:0"
@@ -251,36 +255,36 @@
     <text
        xml:space="preserve"
        style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-dasharray:none;stroke-dashoffset:0"
-       x="54.130028"
+       x="53.997738"
        y="90.74707"
        id="text21"><tspan
          sodipodi:role="line"
          id="tspan21"
          style="fill:#000000;stroke:none;stroke-width:0.264583"
-         x="54.130028"
-         y="90.74707">1</tspan></text>
+         x="53.997738"
+         y="90.74707">8</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-dasharray:none;stroke-dashoffset:0"
-       x="87.597748"
-       y="90.74707"
+       x="86.613831"
+       y="90.745003"
        id="text22"><tspan
          sodipodi:role="line"
          id="tspan22"
          style="fill:#000000;stroke:none;stroke-width:0.264583"
-         x="87.597748"
-         y="90.74707">2</tspan></text>
+         x="86.613831"
+         y="90.745003">16</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-dasharray:none;stroke-dashoffset:0"
-       x="121.89023"
-       y="90.74707"
+       x="120.51047"
+       y="90.765671"
        id="text23"><tspan
          sodipodi:role="line"
          id="tspan23"
          style="fill:#000000;stroke:none;stroke-width:0.264583"
-         x="121.89023"
-         y="90.74707">3</tspan></text>
+         x="120.51047"
+         y="90.765671">24</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-dasharray:none;stroke-dashoffset:0"

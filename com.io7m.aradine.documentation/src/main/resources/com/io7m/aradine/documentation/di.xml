@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         title="Design And Implementation"
+         id="7d03d742-9d75-4c69-b225-803d98735cc5">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      This section of the documentation describes the design and implementation
+      of the <Term type="package">aradine</Term> package.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Audio Model"
+              id="88bd6518-4ea9-461d-af88-229297ec652e">
+    <Subsection title="Overview">
+      <Paragraph>
+        The <Term type="package">aradine</Term> package works in terms of a
+        standard <Term type="term">discretized sampled audio</Term> model.
+        Informally, the system generates a <Term type="term">buffer</Term> of
+        audio <Link target="d3aa3565-be3e-40cc-9831-b02b39179cd7">samples</Link>
+        at a fixed <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">rate</Link>
+        determined by the underlying audio hardware.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Continuous Signals" id="b907d714-e5a9-44b0-b71f-3603ce4a6b9b">
+      <Paragraph>
+        A <Term type="term">continuous signal</Term> in the
+        <Term type="term">time domain</Term> can be considered as a function
+        from <Term type="term">time</Term> to
+        <Term type="term">amplitude</Term>. At any given time
+        <Term type="expression">t</Term>, we can evaluate a continuous
+        time domain signal
+        <Term type="expression">A(t)</Term> to obtain the
+        <Term type="term">amplitude</Term> of the signal
+        <Term type="expression">A</Term> at time
+        <Term type="expression">t</Term>.
+      </Paragraph>
+      <FormalItem title="Continuous Signal Example">
+        <Image source="continuous.png" width="640" height="480">
+          A continuous signal.
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="Discrete Signals"
+                id="74037c75-4cc1-42e7-82ad-3832ecbe5093">
+      <Paragraph>
+        A <Term type="term">discrete signal</Term> can be considered as
+        a <Term type="term">discretized</Term> form of a
+        <Link target="b907d714-e5a9-44b0-b71f-3603ce4a6b9b">continuous</Link>
+        signal. In digital audio systems, in modern computing environments,
+        both <Term type="term">time</Term> and
+        <Term type="term">amplitude</Term> are treated as discrete values.
+        Time is discretized by dividing it into a fixed
+        <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sampling rate</Link>
+        (typically specified in <Term type="term">samples per second</Term>).
+        Amplitude values are discretized by expressing them as either
+        machine integer values of a chosen size, or floating-point values
+        of a chosen size. The <Term type="package">aradine</Term> package
+        expresses amplitude values as 64-bit IEEE754 floating point values.
+      </Paragraph>
+      <Paragraph>
+        As an example, a continuous signal <Term type="expression">A</Term>
+        could be discretized as the discrete signal
+        <Term type="expression">Q</Term> as follows:
+      </Paragraph>
+      <FormalItem title="Discrete Signal Example">
+        <Image source="pcm.png" width="640" height="480">
+          A discreate signal.
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="Sample" id="d3aa3565-be3e-40cc-9831-b02b39179cd7">
+      <Paragraph>
+        A <Term type="term">sample</Term> is a single amplitude value in a
+        <Link target="74037c75-4cc1-42e7-82ad-3832ecbe5093">discrete
+          signal</Link>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Sample Rate" id="48cd9d12-46d1-43d4-8833-e0e2e07068d5">
+      <Paragraph>
+        The <Term type="term">sample rate</Term> of a discrete signal is
+        the number of
+        <Link target="d3aa3565-be3e-40cc-9831-b02b39179cd7">samples</Link>
+        that comprise one second of the signal. The unit of measurement is
+        <Term type="term">hertz (hz)</Term>.
+      </Paragraph>
+      <Paragraph>
+        At the time of writing, most consumer audio hardware works in terms
+        of a <Term type="constant">48000 hz</Term> sample rate.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Sample Period" id="57ea8c41-af4a-41d0-a801-3c06c3b60664">
+      <Paragraph>
+        The <Term type="term">sample period</Term> of a discrete signal is
+        the length of time represented by one sample in the signal. This is
+        defined by the
+        <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>
+        of the signal. In a signal with sampling rate
+        <Term type="expression">r</Term>, the sample period of the signal
+        is <Term type="expression">1 / r</Term>.
+      </Paragraph>
+      <Paragraph>
+        For example, in a signal that has a
+        <Term type="constant">48000 hz</Term> sample rate, the sample period
+        is <Term type="expression">1 / 48000 ≈ 0.00002083 seconds ≈ 20.83
+        microseconds</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Buffer" id="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">
+      <Paragraph>
+        The physical realities of digital audio hardware and software mean that
+        audio signals are not typically produced one-sample-at-a-time.
+        There are many different limitations at all parts of the hardware
+        and software stack that ultimately mean that it is more efficient
+        to produce a <Term type="term">buffer</Term> of samples less
+        frequently, than a single sample more frequently. At a configurable
+        (but constant) rate, the audio hardware and software will request
+        a buffer of samples from applications. The
+        <Term type="term">buffer size</Term> specifies the number of
+        samples that must be produced in a single request, and is typically
+        configurable (although most hardware will have a minimum
+        buffer size that it can handle).
+      </Paragraph>
+      <Paragraph>
+        The <Term type="term">buffer duration</Term> of a buffer is simply
+        the number of samples in the buffer multiplied by the
+        <Link target="57ea8c41-af4a-41d0-a801-3c06c3b60664">sample period</Link>
+        of the samples.
+      </Paragraph>
+      <Paragraph>
+        Buffering introduces <Term type="term">latency</Term> into the
+        system. If an audio system is configured such that the
+        <Term type="term">buffer duration</Term> equals
+        <Term type="constant">10 milliseconds</Term>, then each time the
+        system requests a buffer of samples, the system is essentially
+        saying "Produce the most recent
+        <Term type="constant">10 milliseconds</Term> of audio for
+        playback right now". This means that a listener is necessarily
+        going to hear the audio
+        <Term type="constant">10 milliseconds</Term> later than the
+        events that actually produced it. There is, therefore, a tension
+        between specifying a <Term type="term">larger</Term> buffer size in
+        order to reduce the hardware and software overhead of producing the
+        audio, and specifying a <Term type="term">smaller</Term> buffer size
+        in order to reduce the effective latency of the system.
+      </Paragraph>
+      <Paragraph>
+        For example, in a system with sample duration
+        <Term type="expression">P</Term> and a buffer
+        duration <Term type="expression">B</Term>, at
+        <Term type="expression">Time = 1</Term>, the listener is going
+        to hear the contents of
+        the sample buffer <Term type="expression">SB0</Term>, even though
+        the first sample in that buffer occurred at
+        <Term type="expression">Time = 0</Term>:
+      </Paragraph>
+      <FormalItem title="Buffered Audio">
+        <Image source="sampled_audio.png" width="640" height="400">
+          Buffered audio.
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        At the time of writing, most consumer hardware operates at a
+        <Term type="constant">48000 hz</Term> sample rate, whilst
+        professional grade systems work at
+        <Term type="constant">96000 hz</Term> or above. Typical buffer
+        sizes are in the
+        <Term type="constant">128-512</Term> range. This implies a typical
+        latency of around <Term type="constant">2</Term> milliseconds, which
+        is mostly below the threshold of human perception.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Buffer Underrun" id="72f0502f-c887-4d03-ae6b-b49b97834204">
+      <Paragraph>
+        Much of digital signal processing is concerned with
+        <Term type="term">buffer underrun</Term>. This occurs when
+        the operations required to produce a buffer of samples take
+        longer to execute than the <Term type="term">buffer duration</Term>.
+        Essentially, the system has asked for a buffer of samples, but it has
+        taken the application code longer than this duration to actually produce
+        the buffer. Therefore, the buffer of samples is not ready in time
+        and the audio system has nothing to play! This manifests as audible
+        glitches in the audio output.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+</Section>

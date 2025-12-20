@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="640"
+   height="480"
+   viewBox="0 0 169.33333 127"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="continuous.svg"
+   inkscape:export-filename="continous.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="309.35922"
+     inkscape:cy="215.66757"
+     inkscape:window-width="1896"
+     inkscape:window-height="1009"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg5"
+     inkscape:export-bgcolor="#ffffffff">
+    <inkscape:grid
+       type="xygrid"
+       id="grid9"
+       originx="0"
+       originy="0"
+       spacingx="2.1166666"
+       spacingy="2.1166666"
+       empspacing="4"
+       units="px" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="back"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffffff;stroke:none;stroke-width:0.264583;stroke-dasharray:0.264583, 0.529167"
+       id="rect462"
+       width="169.33333"
+       height="127"
+       x="0"
+       y="0" />
+  </g>
+  <g
+     inkscape:label="graph"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.263942"
+       d="M 21.298636,10.583333 V 105.70136 H 148.16666"
+       id="path173"
+       sodipodi:nodetypes="ccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#000000;stroke:none;stroke-width:0.264583"
+       x="4.0364833"
+       y="64.309624"
+       id="text433"><tspan
+         sodipodi:role="line"
+         id="tspan431"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Terminus (TTF)';-inkscape-font-specification:'Terminus (TTF)';fill:#000000;stroke:none;stroke-width:0.264583"
+         x="4.0364833"
+         y="64.309624">Amplitude</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#000000;stroke:none;stroke-width:0.264583"
+       x="81.491669"
+       y="112.11771"
+       id="text489"><tspan
+         sodipodi:role="line"
+         id="tspan487"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Terminus (TTF)';-inkscape-font-specification:'Terminus (TTF)';fill:#000000;stroke:none;stroke-width:0.264583"
+         x="81.491669"
+         y="112.11771">Time</tspan></text>
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583"
+       d="M 21.166666,10.583333 H 148.16666 v 95.249997"
+       id="path543" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:0.264583, 0.529166;stroke-dashoffset:0"
+       d="M 21.166666,63.896874 H 148.16666"
+       id="path1316" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="analog"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583"
+       d="m 21.166666,57.149999 c 21.225241,-48.2081746 42.391346,-47.7469268 63.499997,0 19.896577,45.021501 40.744707,56.312821 63.499997,0"
+       id="path541"
+       sodipodi:nodetypes="ccc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="eval" />
+  <path
+     style="fill:none;stroke:#ff0000;stroke-width:0.264583;stroke-dasharray:0.264583, 0.264583"
+     d="M 55.312375,21.377085 V 63.896874"
+     id="path1" />
+  <text
+     xml:space="preserve"
+     style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ff0000;stroke:none;stroke-width:0.264583;stroke-dasharray:0.264583, 0.264583"
+     x="54.36842"
+     y="18.521778"
+     id="text1"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Terminus (TTF)';-inkscape-font-specification:'Terminus (TTF)';fill:#ff0000;stroke:none;stroke-width:0.264583"
+       x="54.36842"
+       y="18.521778">A(0.3) = 0.8</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:4.23333px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ff0000;stroke:none;stroke-width:0.264583;stroke-dasharray:0.264583, 0.264583"
+     x="104.10191"
+     y="102.66747"
+     id="text2"><tspan
+       sodipodi:role="line"
+       id="tspan2"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Terminus (TTF)';-inkscape-font-specification:'Terminus (TTF)';fill:#ff0000;stroke:none;stroke-width:0.264583"
+       x="104.10191"
+       y="102.66747">A(0.7) = -0.6</tspan></text>
+  <path
+     style="fill:#ff0000;stroke:#ff0000;stroke-width:0.264583;stroke-dasharray:0.264583, 0.264583"
+     d="M 118.12344,63.764583 V 95.399689"
+     id="path2" />
+</svg>

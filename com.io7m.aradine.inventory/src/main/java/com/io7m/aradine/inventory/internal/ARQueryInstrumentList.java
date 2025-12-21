@@ -16,12 +16,12 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
-import com.io7m.aradine.instrument.api.ARInstrumentID;
-import com.io7m.aradine.instrument.api.ARInstrumentDataSummary;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;

@@ -18,7 +18,7 @@ package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
-import com.io7m.aradine.instrument.api.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;

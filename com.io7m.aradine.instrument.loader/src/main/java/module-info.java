@@ -23,17 +23,18 @@ module com.io7m.aradine.instrument.loader
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
-  requires com.io7m.aradine.instrument.api;
+  requires com.io7m.aradine.api;
   requires com.io7m.aradine.instrument.loader.api;
+  requires com.io7m.aradine.instrument.spi1.json_data;
   requires com.io7m.aradine.instrument.spi1;
+
+  requires com.io7m.anethum.api;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.lanark.core;
   requires com.io7m.verona.core;
   requires org.apache.commons.io;
   requires tools.jackson.core;
   requires tools.jackson.databind;
-  requires com.io7m.aradine.instrument.spi1.json_data;
-  requires com.io7m.anethum.api;
 
   uses com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 

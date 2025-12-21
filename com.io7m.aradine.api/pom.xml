@@ -11,11 +11,11 @@
     <artifactId>com.io7m.aradine</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
-  <artifactId>com.io7m.aradine.instrument.api</artifactId>
+  <artifactId>com.io7m.aradine.api</artifactId>
 
   <packaging>jar</packaging>
-  <name>com.io7m.aradine.instrument.api</name>
-  <description>Modular programmable synthesis (Instrument API)</description>
+  <name>com.io7m.aradine.api</name>
+  <description>Modular programmable synthesis (Core API)</description>
   <url>https://www.io7m.com/software/aradine</url>
 
   <dependencies>

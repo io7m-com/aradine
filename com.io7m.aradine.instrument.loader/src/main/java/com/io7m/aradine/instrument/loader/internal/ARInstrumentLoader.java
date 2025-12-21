@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
-import com.io7m.aradine.instrument.api.ARInstrumentException;
-import com.io7m.aradine.instrument.api.ARInstrumentType;
+import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;

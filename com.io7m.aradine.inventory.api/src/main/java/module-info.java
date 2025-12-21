@@ -25,6 +25,7 @@ module com.io7m.aradine.inventory.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.aradine.api;
   requires com.io7m.aradine.database.api;
   requires com.io7m.aradine.instrument.loader.api;
 
@@ -34,7 +35,6 @@ module com.io7m.aradine.inventory.api
   requires com.io7m.seltzer.api;
   requires com.io7m.verona.core;
   requires java.sql;
-  requires com.io7m.aradine.instrument.api;
 
   exports com.io7m.aradine.inventory.api;
   exports com.io7m.aradine.inventory.api.queries;

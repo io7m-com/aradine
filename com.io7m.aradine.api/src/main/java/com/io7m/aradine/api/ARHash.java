@@ -14,13 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.api;
+
+import java.util.Objects;
+
 /**
- * Modular programmable synthesis (Instrument API)
+ * A hash value.
+ *
+ * @param algorithm The hash algorithm
+ * @param value     The hash value
  */
 
-@Export
-@Version("1.0.0")
-package com.io7m.aradine.instrument.api;
+public record ARHash(
+  ARHashAlgorithm algorithm,
+  String value)
+{
+  /**
+   * A hash value.
+   *
+   * @param algorithm The hash algorithm
+   * @param value     The hash value
+   */
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+  public ARHash
+  {
+    Objects.requireNonNull(algorithm, "hashAlgorithm");
+    Objects.requireNonNull(value, "hashValue");
+  }
+}

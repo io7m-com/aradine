@@ -14,20 +14,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.api;
+
 /**
- * Modular programmable synthesis (Instrument API)
+ * The hash algorithm.
  */
 
-module com.io7m.aradine.instrument.api
+public enum ARHashAlgorithm
 {
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  /**
+   * SHA-256
+   */
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.mime2045.core;
-  requires com.io7m.seltzer.api;
-  requires com.io7m.verona.core;
-
-  exports com.io7m.aradine.instrument.api;
+  SHA_256
 }

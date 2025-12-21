@@ -14,17 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
-
 /**
- * The hash algorithm.
+ * Modular programmable synthesis (Core API [Instruments])
  */
 
-public enum ARHashAlgorithm
-{
-  /**
-   * SHA-256
-   */
+@Export
+@Version("1.0.0")
+package com.io7m.aradine.api.instrument;
 
-  SHA_256
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

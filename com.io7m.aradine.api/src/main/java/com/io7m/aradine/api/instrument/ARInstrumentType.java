@@ -14,45 +14,18 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.instrument;
 
-import java.util.Arrays;
-import java.util.Objects;
+import com.io7m.jmulticlose.core.CloseableType;
 
 /**
- * A byte array with structural equality.
- *
- * @param data The data
+ * A loaded instrument instance.
  */
 
-public record ARBytes(
-  byte[] data)
+public interface ARInstrumentType
+  extends CloseableType
 {
-  /**
-   * A byte array with structural equality.
-   *
-   * @param data The data
-   */
-  public ARBytes
-  {
-    Objects.requireNonNull(data, "Data");
-  }
-
   @Override
-  public int hashCode()
-  {
-    return Arrays.hashCode(this.data);
-  }
-
-  @Override
-  public boolean equals(final Object obj)
-  {
-    if (this == obj) {
-      return true;
-    }
-    if (obj instanceof final ARBytes otherBytes) {
-      return Arrays.equals(this.data, otherBytes.data);
-    }
-    return false;
-  }
+  void close()
+    throws ARInstrumentException;
 }

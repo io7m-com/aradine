@@ -14,25 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.sample_map;
 
-import com.io7m.seltzer.api.SStructuredErrorExceptionType;
+import com.io7m.aradine.api.ARException;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
- * An instrument exception.
+ * A sample map exception.
  */
 
-public final class ARInstrumentException extends Exception
-  implements SStructuredErrorExceptionType<String>
+public final class ARSampleMapException extends ARException
 {
-  private final String errorCode;
-  private final Map<String, String> attributes;
-  private final Optional<String> remediatingAction;
-
   /**
    * Construct an exception.
    *
@@ -42,20 +36,13 @@ public final class ARInstrumentException extends Exception
    * @param inRemediatingAction The remediating action, if any
    */
 
-  public ARInstrumentException(
+  public ARSampleMapException(
     final String message,
     final String inErrorCode,
     final Map<String, String> inAttributes,
     final Optional<String> inRemediatingAction)
   {
-    super(Objects.requireNonNull(message, "message"));
-
-    this.errorCode =
-      Objects.requireNonNull(inErrorCode, "errorCode");
-    this.attributes =
-      Objects.requireNonNull(inAttributes, "attributes");
-    this.remediatingAction =
-      Objects.requireNonNull(inRemediatingAction, "remediatingAction");
+    super(message, inErrorCode, inAttributes, inRemediatingAction);
   }
 
   /**
@@ -68,47 +55,14 @@ public final class ARInstrumentException extends Exception
    * @param inRemediatingAction The remediating action, if any
    */
 
-  public ARInstrumentException(
+  public ARSampleMapException(
     final String message,
     final Throwable cause,
     final String inErrorCode,
     final Map<String, String> inAttributes,
     final Optional<String> inRemediatingAction)
   {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-    this.errorCode =
-      Objects.requireNonNull(inErrorCode, "errorCode");
-    this.attributes =
-      Objects.requireNonNull(inAttributes, "attributes");
-    this.remediatingAction =
-      Objects.requireNonNull(inRemediatingAction, "remediatingAction");
-  }
-
-  @Override
-  public String errorCode()
-  {
-    return this.errorCode;
-  }
-
-  @Override
-  public Map<String, String> attributes()
-  {
-    return this.attributes;
-  }
-
-  @Override
-  public Optional<String> remediatingAction()
-  {
-    return this.remediatingAction;
-  }
-
-  @Override
-  public Optional<Throwable> exception()
-  {
-    return Optional.of(this);
+    super(message, cause, inErrorCode, inAttributes, inRemediatingAction);
   }
 }
 

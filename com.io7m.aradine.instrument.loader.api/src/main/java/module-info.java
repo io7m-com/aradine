@@ -22,7 +22,9 @@ module com.io7m.aradine.instrument.loader.api
 {
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
-  requires com.io7m.aradine.instrument.api;
+
+  requires com.io7m.aradine.api;
+
   requires com.io7m.jmulticlose.core;
   requires com.io7m.aradine.instrument.spi1;
 

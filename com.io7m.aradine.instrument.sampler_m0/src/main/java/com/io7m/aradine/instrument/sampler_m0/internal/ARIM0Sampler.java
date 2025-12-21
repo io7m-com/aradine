@@ -18,12 +18,12 @@ package com.io7m.aradine.instrument.sampler_m0.internal;
 
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
+import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
-import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;

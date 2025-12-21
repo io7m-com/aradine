@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.api;
 
-import com.io7m.aradine.instrument.api.ARInstrumentData;
+import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 
 /**

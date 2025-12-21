@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
+import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.database.api.ARDBQueryType;
-import com.io7m.aradine.instrument.api.ARBlob;
-import com.io7m.aradine.instrument.api.ARHash;
 
 import java.util.Optional;
 

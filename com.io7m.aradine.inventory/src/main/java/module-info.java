@@ -23,8 +23,8 @@ module com.io7m.aradine.inventory
   requires static org.osgi.annotation.versioning;
   requires static org.osgi.annotation.bundle;
 
+  requires com.io7m.aradine.api;
   requires com.io7m.aradine.database.api;
-  requires com.io7m.aradine.instrument.api;
   requires com.io7m.aradine.instrument.loader.api;
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.aradine.inventory.api;

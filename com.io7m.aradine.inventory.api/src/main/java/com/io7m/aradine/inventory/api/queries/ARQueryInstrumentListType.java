@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
+import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBQueryType;
-import com.io7m.aradine.instrument.api.ARInstrumentDataSummary;
-import com.io7m.aradine.instrument.api.ARInstrumentID;
 
 import java.util.List;
 import java.util.Optional;

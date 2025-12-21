@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory.api;
 
+import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBType;
-import com.io7m.aradine.instrument.api.ARBlob;
-import com.io7m.aradine.instrument.api.ARInstrumentID;
 import com.io7m.mime2045.core.MimeType;
 
 import java.nio.file.Path;

@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
+import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.database.api.ARDBQueryType;
-import com.io7m.aradine.instrument.api.ARInstrumentData;
 
 /**
  * The instrument update query.

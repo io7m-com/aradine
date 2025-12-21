@@ -16,15 +16,15 @@
 
 package com.io7m.aradine.tests.inventory;
 
+import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.ARHash;
+import com.io7m.aradine.api.instrument.ARInstrumentData;
+import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBConfiguration;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.database.sqlite3.ARDBFactory;
-import com.io7m.aradine.instrument.api.ARBlob;
-import com.io7m.aradine.instrument.api.ARBytes;
-import com.io7m.aradine.instrument.api.ARHash;
-import com.io7m.aradine.instrument.api.ARInstrumentData;
-import com.io7m.aradine.instrument.api.ARInstrumentDataSummary;
-import com.io7m.aradine.instrument.api.ARInstrumentID;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
@@ -51,7 +51,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.io7m.aradine.instrument.api.ARHashAlgorithm.SHA_256;
+import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
 import static com.io7m.aradine.inventory.api.queries.ARInventoryUnit.UNIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

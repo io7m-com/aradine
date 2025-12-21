@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
-import com.io7m.aradine.instrument.api.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 

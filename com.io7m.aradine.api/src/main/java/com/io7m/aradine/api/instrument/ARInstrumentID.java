@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.instrument;
 
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;

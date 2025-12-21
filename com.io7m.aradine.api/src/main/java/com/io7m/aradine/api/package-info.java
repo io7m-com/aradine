@@ -14,35 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
-
-import java.util.Objects;
-
 /**
- * An instrument summary.
- *
- * @param identifier  The identifier
- * @param title       The title
- * @param description The description
+ * Modular programmable synthesis (Core API)
  */
 
-public record ARInstrumentDataSummary(
-  ARInstrumentID identifier,
-  String title,
-  String description)
-{
-  /**
-   * An instrument summary.
-   *
-   * @param identifier  The identifier
-   * @param title       The title
-   * @param description The description
-   */
+@Export
+@Version("1.0.0")
+package com.io7m.aradine.api;
 
-  public ARInstrumentDataSummary
-  {
-    Objects.requireNonNull(identifier, "identifier");
-    Objects.requireNonNull(title, "Title");
-    Objects.requireNonNull(description, "Description");
-  }
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

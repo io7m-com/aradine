@@ -14,31 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.sample_map;
 
-import java.util.Objects;
+import com.io7m.jmulticlose.core.CloseableType;
 
 /**
- * A hash value.
- *
- * @param algorithm The hash algorithm
- * @param value     The hash value
+ * A sample map.
  */
 
-public record ARHash(
-  ARHashAlgorithm algorithm,
-  String value)
+public interface ARSampleMapType
+  extends CloseableType
 {
-  /**
-   * A hash value.
-   *
-   * @param algorithm The hash algorithm
-   * @param value     The hash value
-   */
 
-  public ARHash
-  {
-    Objects.requireNonNull(algorithm, "hashAlgorithm");
-    Objects.requireNonNull(value, "hashValue");
-  }
 }

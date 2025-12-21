@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.api;
 
-import com.io7m.aradine.instrument.api.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentException;
 
 import java.nio.file.Path;
 

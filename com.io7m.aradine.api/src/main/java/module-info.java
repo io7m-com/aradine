@@ -14,18 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
-
-import com.io7m.jmulticlose.core.CloseableType;
-
 /**
- * A loaded instrument instance.
+ * Modular programmable synthesis (Core API)
  */
 
-public interface ARInstrumentType
-  extends CloseableType
+module com.io7m.aradine.api
 {
-  @Override
-  void close()
-    throws ARInstrumentException;
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
+  requires com.io7m.jmulticlose.core;
+  requires com.io7m.lanark.core;
+  requires com.io7m.mime2045.core;
+  requires com.io7m.seltzer.api;
+  requires com.io7m.verona.core;
+
+  exports com.io7m.aradine.api.instrument;
+  exports com.io7m.aradine.api.sample_map;
+  exports com.io7m.aradine.api;
 }

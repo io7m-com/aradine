@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.tests.inventory;
 
-import com.io7m.aradine.instrument.api.ARHash;
-import com.io7m.aradine.instrument.api.ARHashAlgorithm;
+import com.io7m.aradine.api.ARHash;
+import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.inventory.internal.ARInventoryBlobDirectory;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;

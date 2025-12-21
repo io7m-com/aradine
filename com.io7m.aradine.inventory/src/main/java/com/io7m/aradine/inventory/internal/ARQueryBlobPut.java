@@ -16,11 +16,11 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
-import com.io7m.aradine.instrument.api.ARBlob;
 import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
 

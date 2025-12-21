@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.instrument.api.ARHash;
+import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.streamtime.core.STTimedInputStream;

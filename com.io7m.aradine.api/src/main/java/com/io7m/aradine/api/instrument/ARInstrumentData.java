@@ -14,8 +14,10 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.instrument;
 
+import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARBytes;
 import com.io7m.lanark.core.RDottedName;
 
 import java.util.Objects;

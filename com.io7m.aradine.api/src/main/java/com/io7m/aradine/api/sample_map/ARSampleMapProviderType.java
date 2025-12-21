@@ -14,36 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.api;
+package com.io7m.aradine.api.sample_map;
 
-import com.io7m.mime2045.core.MimeType;
-
-import java.util.Objects;
+import org.osgi.annotation.versioning.ConsumerType;
 
 /**
- * A blob.
- *
- * @param size The size
- * @param hash The hash
- * @param type The type
+ * The type of sample map providers.
  */
 
-public record ARBlob(
-  long size,
-  ARHash hash,
-  MimeType type)
+@ConsumerType
+public interface ARSampleMapProviderType
 {
-  /**
-   * A blob.
-   *
-   * @param size The size
-   * @param hash The hash
-   * @param type The type
-   */
 
-  public ARBlob
-  {
-    Objects.requireNonNull(hash, "hash");
-    Objects.requireNonNull(type, "type");
-  }
 }

@@ -6,8 +6,9 @@
 
   <Subsection title="Overview">
     <Paragraph>
-      This section of the documentation describes the design and implementation
-      of the <Term type="package">aradine</Term> package.
+      This section of the documentation describes the design and implementation of the
+      <Term type="package">aradine</Term>
+      package.
     </Paragraph>
   </Subsection>
 
@@ -15,29 +16,37 @@
               id="88bd6518-4ea9-461d-af88-229297ec652e">
     <Subsection title="Overview">
       <Paragraph>
-        The <Term type="package">aradine</Term> package works in terms of a
-        standard <Term type="term">discretized sampled audio</Term> model.
-        Informally, the system generates a <Term type="term">buffer</Term> of
-        audio <Link target="d3aa3565-be3e-40cc-9831-b02b39179cd7">samples</Link>
-        at a fixed <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">rate</Link>
+        The <Term type="package">aradine</Term> package works in terms of a standard
+        <Term type="term">discretized sampled audio</Term>
+        model. Informally, the system generates a
+        <Term type="term">buffer</Term>
+        of audio
+        <Link target="d3aa3565-be3e-40cc-9831-b02b39179cd7">samples</Link>
+        at a fixed
+        <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">rate</Link>
         determined by the underlying audio hardware.
       </Paragraph>
     </Subsection>
-    <Subsection title="Continuous Signals" id="b907d714-e5a9-44b0-b71f-3603ce4a6b9b">
+    <Subsection title="Continuous Signals"
+                id="b907d714-e5a9-44b0-b71f-3603ce4a6b9b">
       <Paragraph>
         A <Term type="term">continuous signal</Term> in the
-        <Term type="term">time domain</Term> can be considered as a function
-        from <Term type="term">time</Term> to
+        <Term type="term">time domain</Term>
+        can be considered as a function from <Term type="term">time</Term> to
         <Term type="term">amplitude</Term>. At any given time
-        <Term type="expression">t</Term>, we can evaluate a continuous
-        time domain signal
-        <Term type="expression">A(t)</Term> to obtain the
-        <Term type="term">amplitude</Term> of the signal
-        <Term type="expression">A</Term> at time
+        <Term type="expression">t</Term>, we can evaluate a continuous time domain signal
+        <Term type="expression">A(t)</Term>
+        to obtain the
+        <Term type="term">amplitude</Term>
+        of the signal
+        <Term type="expression">A</Term>
+        at time
         <Term type="expression">t</Term>.
       </Paragraph>
       <FormalItem title="Continuous Signal Example">
-        <Image source="continuous.png" width="640" height="480">
+        <Image source="continuous.png"
+               width="640"
+               height="480">
           A continuous signal.
         </Image>
       </FormalItem>
@@ -45,144 +54,210 @@
     <Subsection title="Discrete Signals"
                 id="74037c75-4cc1-42e7-82ad-3832ecbe5093">
       <Paragraph>
-        A <Term type="term">discrete signal</Term> can be considered as
-        a <Term type="term">discretized</Term> form of a
+        A <Term type="term">discrete signal</Term> can be considered as a <Term type="term">discretized</Term> form of a
         <Link target="b907d714-e5a9-44b0-b71f-3603ce4a6b9b">continuous</Link>
-        signal. In digital audio systems, in modern computing environments,
-        both <Term type="term">time</Term> and
-        <Term type="term">amplitude</Term> are treated as discrete values.
-        Time is discretized by dividing it into a fixed
+        signal. In digital audio systems, in modern computing environments, both <Term type="term">time</Term> and
+        <Term type="term">amplitude</Term>
+        are treated as discrete values. Time is discretized by dividing it into a fixed
         <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>
-        (typically specified in <Term type="term">samples per second</Term>).
-        Amplitude values are discretized by expressing them as either
-        machine integer values of a chosen size, or floating-point values
-        of a chosen size. The <Term type="package">aradine</Term> package
-        expresses amplitude values as 64-bit IEEE754 floating point values.
+        (typically specified in <Term type="term">samples per second</Term>). Amplitude values are discretized by
+        expressing them as either machine integer values of a chosen size, or floating-point values of a chosen size.
+        The <Term type="package">aradine</Term> package expresses amplitude values as 64-bit IEEE754 floating point
+        values.
       </Paragraph>
       <Paragraph>
-        As an example, a continuous signal <Term type="expression">A</Term>
+        As an example, a continuous signal
+        <Term type="expression">A</Term>
         could be discretized as the discrete signal
-        <Term type="expression">Q</Term> as follows:
+        <Term type="expression">Q</Term>
+        as follows:
       </Paragraph>
       <FormalItem title="Discrete Signal Example">
-        <Image source="pcm.png" width="640" height="480">
+        <Image source="pcm.png"
+               width="640"
+               height="480">
           A discreate signal.
         </Image>
       </FormalItem>
     </Subsection>
-    <Subsection title="Sample" id="d3aa3565-be3e-40cc-9831-b02b39179cd7">
+    <Subsection title="Sample"
+                id="d3aa3565-be3e-40cc-9831-b02b39179cd7">
       <Paragraph>
         A <Term type="term">sample</Term> is a single amplitude value in a
-        <Link target="74037c75-4cc1-42e7-82ad-3832ecbe5093">discrete
-          signal</Link>.
+        <Link target="74037c75-4cc1-42e7-82ad-3832ecbe5093">discrete signal</Link>.
       </Paragraph>
     </Subsection>
-    <Subsection title="Sample Rate" id="48cd9d12-46d1-43d4-8833-e0e2e07068d5">
+    <Subsection title="Sample Rate"
+                id="48cd9d12-46d1-43d4-8833-e0e2e07068d5">
       <Paragraph>
-        The <Term type="term">sample rate</Term> of a discrete signal is
-        the number of
+        The <Term type="term">sample rate</Term> of a discrete signal is the number of
         <Link target="d3aa3565-be3e-40cc-9831-b02b39179cd7">samples</Link>
         that comprise one second of the signal. The unit of measurement is
         <Term type="term">hertz (hz)</Term>.
       </Paragraph>
       <Paragraph>
-        At the time of writing, most consumer audio hardware works in terms
-        of a <Term type="constant">48000 hz</Term> sample rate.
+        At the time of writing, most consumer audio hardware works in terms of a
+        <Term type="constant">48000 hz</Term>
+        sample rate.
       </Paragraph>
     </Subsection>
-    <Subsection title="Sample Period" id="57ea8c41-af4a-41d0-a801-3c06c3b60664">
+    <Subsection title="Sample Period"
+                id="57ea8c41-af4a-41d0-a801-3c06c3b60664">
       <Paragraph>
-        The <Term type="term">sample period</Term> of a discrete signal is
-        the length of time represented by one sample in the signal. This is
-        a function of the
+        The <Term type="term">sample period</Term> of a discrete signal is the length of time represented by one sample
+        in the signal. This is a function of the
         <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>
         of the signal. In a signal with sample rate
         <Term type="expression">r</Term>, the sample period
         <Term type="expression">p</Term>
-        of the signal
-        is <Term type="expression">p = 1 / r</Term>.
+        of the signal is <Term type="expression">p = 1 / r</Term>.
       </Paragraph>
       <Paragraph>
         For example, in a signal that has a
-        <Term type="constant">48000 hz</Term> sample rate, the sample period
-        is <Term type="expression">1 / 48000 ≈ 0.00002083 seconds ≈ 20.83
+        <Term type="constant">48000 hz</Term>
+        sample rate, the sample period is <Term type="expression">1 / 48000 ≈ 0.00002083 seconds ≈ 20.83
         microseconds</Term>.
       </Paragraph>
     </Subsection>
-    <Subsection title="Buffer" id="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">
+    <Subsection title="Buffer"
+                id="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">
       <Paragraph>
-        The physical realities of digital audio hardware and software mean that
-        audio signals are not typically produced one-sample-at-a-time.
-        There are many different limitations at all parts of the hardware
-        and software stack that ultimately mean that it is more efficient
-        to produce a <Term type="term">buffer</Term> of samples
+        The physical realities of digital audio hardware and software mean that audio signals are not typically produced
+        one-sample-at-a-time. There are many different limitations at all parts of the hardware and software stack that
+        ultimately mean that it is more efficient to produce a <Term type="term">buffer</Term> of samples
         <Term type="emphasis">less</Term>
-        frequently, than a single sample <Term type="emphasis">more</Term>
-        frequently. At a configurable
-        (but constant) rate, the audio hardware and software will request
-        a buffer of samples from applications. The
-        <Term type="term">buffer size</Term> specifies the number of
-        samples that must be produced in a single request, and is typically
-        configurable (although most hardware will have a minimum
-        buffer size that it can handle).
+        frequently, than a single sample
+        <Term type="emphasis">more</Term>
+        frequently. At a configurable (but constant) rate, the audio hardware and software will request a buffer of
+        samples from applications. The
+        <Term type="term">buffer size</Term>
+        specifies the number of samples that must be produced in a single request, and is typically configurable
+        (although most hardware will have a minimum buffer size that it can handle).
       </Paragraph>
       <Paragraph>
-        The <Term type="term">buffer duration</Term> of a buffer is simply
-        the number of samples in the buffer multiplied by the
+        The <Term type="term">buffer duration</Term> of a buffer is simply the number of samples in the buffer
+        multiplied by the
         <Link target="57ea8c41-af4a-41d0-a801-3c06c3b60664">sample period</Link>
         of the samples.
       </Paragraph>
       <Paragraph>
-        Buffering increases <Term type="term">latency</Term> in the
-        system. If an audio system is configured such that the
-        <Term type="term">buffer duration</Term> equals
-        <Term type="constant">10 milliseconds</Term>, then each time the
-        system requests a buffer of samples, the system is essentially
-        saying "Produce the most recent
-        10 milliseconds of audio for
-        playback right now". This means that a listener is necessarily
-        going to hear the audio
-        10 milliseconds later than the
-        events that actually produced it. There is, therefore, a tension
-        between specifying a <Term type="term">larger</Term> buffer size in
-        order to reduce the hardware and software overhead of producing the
-        audio, and specifying a <Term type="term">smaller</Term> buffer size
-        in order to reduce the effective latency of the system.
+        Buffering increases <Term type="term">latency</Term> in the system. If an audio system is configured such that
+        the
+        <Term type="term">buffer duration</Term>
+        equals
+        <Term type="constant">10 milliseconds</Term>, then each time the system requests a buffer of samples, the system
+        is essentially saying "Produce the most recent 10 milliseconds of audio for playback right now". This means that
+        a listener is necessarily going to hear the audio 10 milliseconds later than the events that actually produced
+        it. There is, therefore, a tension between specifying a <Term type="term">larger</Term> buffer size in order to
+        reduce the hardware and software overhead of producing the audio, and specifying a
+        <Term type="term">smaller</Term>
+        buffer size in order to reduce the effective latency of the system.
       </Paragraph>
       <Paragraph>
         For example, in a system with sample duration
-        <Term type="expression">P</Term> and a buffer
-        duration <Term type="expression">B</Term>, at
-        <Term type="expression">Time = 8</Term>, the listener is going
-        to hear the contents of
-        the sample buffer <Term type="expression">SB0</Term>, even though
-        the first sample in that buffer occurred at
+        <Term type="expression">P</Term>
+        and a buffer duration <Term type="expression">B</Term>, at
+        <Term type="expression">Time = 8</Term>, the listener is going to hear the contents of the sample
+        buffer <Term type="expression">SB0</Term>, even though the first sample in that buffer occurred at
         <Term type="expression">Time = 0</Term>:
       </Paragraph>
       <FormalItem title="Buffered Audio">
-        <Image source="sampled_audio.png" width="640" height="400">
+        <Image source="sampled_audio.png"
+               width="640"
+               height="400">
           Buffered audio.
         </Image>
       </FormalItem>
       <Paragraph>
-        At the time of writing, on most consumer and professional
-        hardware, typical buffer sizes are in the
-        <Term type="constant">64-512</Term> range. This implies a typical
-        latency of around <Term type="constant">2</Term> milliseconds, which
-        is mostly below the threshold of human perception.
+        At the time of writing, on most consumer and professional hardware, typical buffer sizes are in the
+        <Term type="constant">64-512</Term>
+        range. This implies a typical latency of around
+        <Term type="constant">2</Term>
+        milliseconds, which is mostly below the threshold of human perception.
       </Paragraph>
     </Subsection>
-    <Subsection title="Buffer Underrun" id="72f0502f-c887-4d03-ae6b-b49b97834204">
+    <Subsection title="Frame Index"
+                id="d0612b03-634f-4ac3-9b73-8154ee0304ec">
       <Paragraph>
-        Much of the practical aspect of digital signal processing is concerned
-        with avoiding <Term type="term">buffer underrun</Term>. This occurs when
-        the operations required to produce a buffer of samples take
-        longer to execute than the <Term type="term">buffer duration</Term>.
-        Essentially, the system has asked for a buffer of samples, but it has
-        taken the application code longer than this duration to actually produce
-        the buffer. Therefore, the buffer of samples is not ready in time
-        and the audio system has nothing to play! This manifests as audible
+        A <Term type="term">frame index</Term> is an integer index that refers to a set of samples across a set of
+        <Link target="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">buffers</Link>. A
+        <Term type="term">frame index</Term>
+        is a non-negative <Term type="term">relative</Term> index, with a value of
+        <Term type="constant">0</Term>
+        referring to the first sample in a buffer.
+      </Paragraph>
+      <Paragraph>
+        As an example, assume a buffer size of <Term type="constant">8</Term>, and three
+        signals <Term type="expression">S0</Term>,
+        <Term type="expression">S1</Term>, and
+        <Term type="expression">S2</Term>. At
+        <Term type="expression">Time = 16</Term>, a frame index of <Term type="constant">4</Term> refers to the sample
+        values in the buffers at
+        <Term type="expression">Time = 20</Term>:
+      </Paragraph>
+      <FormalItem title="Frame Index"
+                  id="07b75ca6-e791-4921-b2d1-0ad25b8287c1">
+        <Image source="frame.png"
+               width="640"
+               height="400">
+          Frame indices.
+        </Image>
+      </FormalItem>
+      <Paragraph>
+        The term <Term type="term">frame</Term> comes from the general term
+        <Term type="term">sampling frame</Term>
+        in DSP. In other systems, audio signals are often divided into multiple
+        <Term type="term">channels</Term>. For example, stereo audio is divided into
+        <Term type="term">left</Term>
+        and
+        <Term type="term">right</Term>
+        channels. In an audio signal with
+        <Term type="expression">n</Term>
+        channels, the individual sample values in each of the channels at a given time are collectively referred to as a
+        <Term type="term">sampling frame</Term>
+        (or <Term type="term">frame</Term>, in short). For example, in a stereo audio signal <Term type="expression">
+        A</Term>, the sample value
+        <Term type="expression">x</Term>
+        in the left channel at time <Term type="expression">0</Term>, and the sample value
+        <Term type="expression">y</Term>
+        in the right channel at time
+        <Term type="expression">0</Term>
+        can be viewed as the frame <Term type="expression">(x, y)</Term> at time
+        <Term type="expression">0</Term>. Conceptually, the audio signal
+        <Term type="expression">A</Term>
+        can be seen as a function
+        <Term type="expression">A(t) = (p, q)</Term>, where
+        <Term type="expression">t</Term>
+        is time, and <Term type="expression">(p, q)</Term> is the sampling frame at time
+        <Term type="expression">t</Term>. The <Term type="package">aradine</Term> package only works with audio signals
+        that have a single channel, but re-uses the term <Term type="term">frame</Term> to refer to samples across
+        coincident audio buffers.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Buffer Underrun"
+                id="72f0502f-c887-4d03-ae6b-b49b97834204">
+      <Paragraph>
+        Much of the practical aspect of digital signal processing is concerned with avoiding <Term type="term">buffer
+        underrun</Term>. This occurs when the operations required to produce a buffer of samples take longer to execute
+        than the <Term type="term">buffer duration</Term>. Essentially, the system has asked for a buffer of samples,
+        but it has taken the application code longer than this duration to actually produce the buffer. Therefore, the
+        buffer of samples is not ready in time and the audio system has nothing to play! This manifests as audible
         glitches in the audio output.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Audio Callback"
+                id="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">
+      <Paragraph>
+        In the <Term type="package">aradine</Term> package, the underlying audio system periodically requests that a
+        <Link target="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">buffer</Link>
+        of samples be produced for each audio output in the system. We refer to this request as the
+        <Term type="term">audio callback</Term>. More precisely, we say that the underlying audio system periodically
+        calls the
+        <Term type="package">aradine</Term>
+        <Term type="term">audio callback</Term>, and the code in the
+        <Term type="package">aradine</Term>
+        package referenced by the callback performs all of the required processing and then writes out the resulting
+        buffer of samples.
       </Paragraph>
     </Subsection>
   </Subsection>
@@ -190,12 +265,206 @@
   <Subsection title="Instrument Model">
     <Subsection title="Overview">
       <Paragraph>
-        The <Term type="package">aradine</Term> package collects DSP
-        code into <Term type="term">instruments</Term>, and
-        <Term type="term">instruments</Term> can be connected together
-        arbitrarily to form an
+        The <Term type="package">aradine</Term> package collects DSP code into <Term type="term">instruments</Term>, and
+        <Term type="term">instruments</Term>
+        can be connected together arbitrarily to form an
         <Term type="term">ensemble</Term>.
       </Paragraph>
+      <Paragraph>
+        Within an <Term type="term">ensemble</Term>, the
+        <Link target="44cff131-9097-4843-a753-9171bc5188da">ports</Link>
+        of the instruments are connected together to form a graph. An <Term type="term">input</Term> port may be
+        connected to at most one <Term type="term">output</Term> port at any given time. An
+        <Term type="term">output</Term>
+        port may be connected to zero or more
+        <Term type="term">input</Term>
+        ports at any given time. The
+        <Link target="7f823646-248a-473a-a3a8-8cd078d6c3e2">types</Link>
+        of ports must match; it is not permitted to try to connect a port of an <Term type="term">audio</Term> type to a
+        port of a <Term type="term">note</Term> type, for example.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Ports"
+                id="44cff131-9097-4843-a753-9171bc5188da">
+      <Paragraph>
+        Instruments have zero or more <Term type="term">ports</Term>. A
+        <Term type="term">port</Term>
+        may either be an
+        <Term type="term">input</Term>
+        port or an <Term type="term">output</Term> port. An
+        <Term type="term">input</Term>
+        port
+        <Term type="term">consumes</Term>
+        data, while an
+        <Term type="term">output</Term>
+        port
+        <Term type="term">produces</Term>
+        data.
+      </Paragraph>
+      <Paragraph id="7f823646-248a-473a-a3a8-8cd078d6c3e2">
+        Ports have a <Term type="term">type</Term>. Currently, ports may have either an
+        <Term type="term">audio</Term>
+        type or a <Term type="term">note</Term> type.
+      </Paragraph>
+      <Paragraph>
+        An <Term type="term">input</Term> port
+        <Term type="expression">I</Term>
+        of an
+        <Term type="term">audio</Term>
+        type will, at
+        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
+        time, consume a buffer of audio samples that was produced by whatever <Term type="term">
+        output
+      </Term> port
+        <Term type="expression">O</Term>
+        is connected to <Term type="expression">I</Term>. If no
+        <Term type="term">output</Term>
+        port is connected to
+        <Term type="expression">I</Term>, then
+        <Term type="expression">I</Term>
+        will be presented with a buffer of audio samples where every sample value is equal to
+        <Term type="constant">0.0</Term>.
+      </Paragraph>
+      <Paragraph>
+        An <Term type="term">input</Term> port
+        <Term type="expression">I</Term>
+        of a
+        <Term type="term">note</Term>
+        type will, at
+        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback
+        </Link>
+        time, consume a buffer of
+        <Link target="cbf22334-3431-4198-9895-53ba40dc8110">note events</Link>
+        that was produced by whatever <Term type="term">output</Term> port
+        <Term type="expression">O</Term>
+        is connected to <Term type="expression">I</Term>. If no
+        <Term type="term">output</Term>
+        port is connected to
+        <Term type="expression">I</Term>, then
+        <Term type="expression">I</Term>
+        will be presented with an empty buffer.
+      </Paragraph>
+      <Paragraph>
+        An <Term type="term">output</Term> port
+        <Term type="expression">O</Term>
+        of a
+        <Term type="term">audio</Term>
+        type will, at
+        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
+        time, produce a buffer of audio samples that is then consumed by each of the input ports connected
+        to <Term type="expression">O</Term>.
+      </Paragraph>
+      <Paragraph>
+        An <Term type="term">output</Term> port
+        <Term type="expression">O</Term>
+        of a
+        <Term type="term">note</Term>
+        type will, at
+        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
+        time, produce a buffer of note events that is then consumed by each of the input ports connected
+        to <Term type="expression">O</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Events"
+                id="cbf22334-3431-4198-9895-53ba40dc8110">
+      <Paragraph>
+        An <Term type="term">event</Term> is a discrete, typed, timestamped value delivered to an
+        instrument.
+      </Paragraph>
+      <Paragraph>
+        An event may be one of the following base types:
+      </Paragraph>
+      <FormalItem title="Event Base Types" id="516ac342-da88-4cb1-8501-819466ac2f39">
+        <ListUnordered>
+          <Item>
+            A <Term type="term">note</Term> event type.
+          </Item>
+          <Item>
+            A <Term type="term">configuration</Term> event type.
+          </Item>
+        </ListUnordered>
+      </FormalItem>
+      <Paragraph>
+        A <Term type="term">note</Term>-typed event may be one of the following types:
+      </Paragraph>
+      <FormalItem title="Note Event Types" id="06ca3255-9fc2-416c-a3f0-9dfbec70a295">
+        <ListUnordered>
+          <Item>
+            A <Term type="term">note-on</Term> event type. This event type is published when the user presses
+            a key on a musical keyboard.
+          </Item>
+          <Item>
+            A <Term type="term">note-off</Term> event type. This event type is published when the user releases
+            a key on a musical keyboard.
+          </Item>
+          <Item>
+            A <Term type="term">pitch-bend</Term> event type. This event type is published when the user touches
+            the pitch bend control on a musical keyboard.
+          </Item>
+        </ListUnordered>
+      </FormalItem>
+      <Paragraph>
+        A <Term type="term">configuration</Term>-typed event may be one of the following types:
+      </Paragraph>
+      <FormalItem title="Configuration Event Types" id="78d92efb-2e45-4321-879c-01f62ed8639f">
+        <ListUnordered>
+          <Item>
+            A <Term type="term">buffer-size-changed</Term> event type. This event type is published when the
+            underlying audio system is reconfigured to use a different
+            <Link target="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">buffer size</Link>.
+          </Item>
+          <Item>
+            A <Term type="term">sample-rate-changed</Term> event type. This event type is published when the
+            underlying audio system is reconfigured to use a different
+            <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>.
+          </Item>
+          <Item>
+            A <Term type="term">parameter-changed</Term> event type. This event type is published when the
+            value of a
+            <Link target="df1ddaf5-9c8e-4c82-8c51-b1f10bf6db13">parameter</Link> is changed on an instrument.
+          </Item>
+        </ListUnordered>
+      </FormalItem>
+      <Paragraph>
+        Events are typically delivered to instruments via an <Term type="term">event buffer</Term>. An
+        <Term type="term">event buffer</Term> is an opaque buffer type that, given a
+        <Link target="07b75ca6-e791-4921-b2d1-0ad25b8287c1">frame index</Link>, returns all
+        events that occurred at that frame index.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Parameters"
+                id="df1ddaf5-9c8e-4c82-8c51-b1f10bf6db13">
+      <Paragraph>
+        Instruments have zero or more <Term type="term">parameters</Term>. A
+        <Term type="term">parameter</Term>
+        is effectively a named and typed mutable variable, the value of which can be read and/or modified
+        (atomically) at any time. Parameters have unique (within an instrument) integer
+        <Term type="term">identifiers</Term>, and humanly-readable string
+        <Term type="term">labels</Term>. Additionally, parameters that are of numeric types are declared with
+        <Term type="term">minimum</Term>
+        and
+        <Term type="term">maximum</Term>
+        value range constraints. All parameters also have defined <Term type="term">
+        default
+      </Term> values.
+      </Paragraph>
+      <Paragraph>
+        A parameter may be of one of the following types:
+      </Paragraph>
+      <FormalItem title="Parameter Types"
+                  id="9b8ff7ef-c1d4-4618-b5c2-fd843a05b837">
+        <ListUnordered>
+          <Item>
+            64-bit integer.
+          </Item>
+          <Item>
+            64-bit floating point.
+          </Item>
+          <Item>
+            Sample map.
+          </Item>
+        </ListUnordered>
+      </FormalItem>
     </Subsection>
   </Subsection>
 

@@ -313,9 +313,9 @@
         <Term type="term">audio</Term>
         type will, at
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
-        time, consume a buffer of audio samples that was produced by whatever <Term type="term">
-        output
-      </Term> port
+        time, consume a buffer of audio samples that was produced by whatever
+        <Term type="term">output</Term>
+        port
         <Term type="expression">O</Term>
         is connected to <Term type="expression">I</Term>. If no
         <Term type="term">output</Term>
@@ -331,10 +331,9 @@
         of a
         <Term type="term">note</Term>
         type will, at
-        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback
-        </Link>
+        <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
         time, consume a buffer of
-        <Link target="cbf22334-3431-4198-9895-53ba40dc8110">note events</Link>
+        <Link target="8e3ae382-497c-4312-aa5f-ebed6fb18c80">note events</Link>
         that was produced by whatever <Term type="term">output</Term> port
         <Term type="expression">O</Term>
         is connected to <Term type="expression">I</Term>. If no
@@ -361,20 +360,21 @@
         <Term type="term">note</Term>
         type will, at
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
-        time, produce a buffer of note events that is then consumed by each of the input ports connected
-        to <Term type="expression">O</Term>.
+        time, produce a buffer of
+        <Link target="8e3ae382-497c-4312-aa5f-ebed6fb18c80">note events</Link>
+        that is then consumed by each of the input ports connected to <Term type="expression">O</Term>.
       </Paragraph>
     </Subsection>
     <Subsection title="Events"
                 id="cbf22334-3431-4198-9895-53ba40dc8110">
       <Paragraph>
-        An <Term type="term">event</Term> is a discrete, typed, timestamped value delivered to an
-        instrument.
+        An <Term type="term">event</Term> is a discrete, typed, timestamped value delivered to an instrument.
       </Paragraph>
       <Paragraph>
         An event may be one of the following base types:
       </Paragraph>
-      <FormalItem title="Event Base Types" id="516ac342-da88-4cb1-8501-819466ac2f39">
+      <FormalItem title="Event Base Types"
+                  id="516ac342-da88-4cb1-8501-819466ac2f39">
         <ListUnordered>
           <Item>
             A <Term type="term">note</Term> event type.
@@ -384,52 +384,55 @@
           </Item>
         </ListUnordered>
       </FormalItem>
-      <Paragraph>
+      <Paragraph id="8e3ae382-497c-4312-aa5f-ebed6fb18c80">
         A <Term type="term">note</Term>-typed event may be one of the following types:
       </Paragraph>
-      <FormalItem title="Note Event Types" id="06ca3255-9fc2-416c-a3f0-9dfbec70a295">
+      <FormalItem title="Note Event Types"
+                  id="06ca3255-9fc2-416c-a3f0-9dfbec70a295">
         <ListUnordered>
           <Item>
-            A <Term type="term">note-on</Term> event type. This event type is published when the user presses
-            a key on a musical keyboard.
+            A <Term type="term">note-on</Term> event type. This event type is published when the user presses a key on a
+            musical keyboard.
           </Item>
           <Item>
-            A <Term type="term">note-off</Term> event type. This event type is published when the user releases
-            a key on a musical keyboard.
+            A <Term type="term">note-off</Term> event type. This event type is published when the user releases a key on
+            a musical keyboard.
           </Item>
           <Item>
-            A <Term type="term">pitch-bend</Term> event type. This event type is published when the user touches
-            the pitch bend control on a musical keyboard.
+            A <Term type="term">pitch-bend</Term> event type. This event type is published when the user touches the
+            pitch bend control on a musical keyboard.
           </Item>
         </ListUnordered>
       </FormalItem>
       <Paragraph>
         A <Term type="term">configuration</Term>-typed event may be one of the following types:
       </Paragraph>
-      <FormalItem title="Configuration Event Types" id="78d92efb-2e45-4321-879c-01f62ed8639f">
+      <FormalItem title="Configuration Event Types"
+                  id="78d92efb-2e45-4321-879c-01f62ed8639f">
         <ListUnordered>
           <Item>
-            A <Term type="term">buffer-size-changed</Term> event type. This event type is published when the
-            underlying audio system is reconfigured to use a different
+            A <Term type="term">buffer-size-changed</Term> event type. This event type is published when the underlying
+            audio system is reconfigured to use a different
             <Link target="f9ed1ec0-27d0-4472-aa7a-825c7759f85e">buffer size</Link>.
           </Item>
           <Item>
-            A <Term type="term">sample-rate-changed</Term> event type. This event type is published when the
-            underlying audio system is reconfigured to use a different
+            A <Term type="term">sample-rate-changed</Term> event type. This event type is published when the underlying
+            audio system is reconfigured to use a different
             <Link target="48cd9d12-46d1-43d4-8833-e0e2e07068d5">sample rate</Link>.
           </Item>
           <Item>
-            A <Term type="term">parameter-changed</Term> event type. This event type is published when the
-            value of a
-            <Link target="df1ddaf5-9c8e-4c82-8c51-b1f10bf6db13">parameter</Link> is changed on an instrument.
+            A <Term type="term">parameter-changed</Term> event type. This event type is published when the value of a
+            <Link target="df1ddaf5-9c8e-4c82-8c51-b1f10bf6db13">parameter</Link>
+            is changed on an instrument.
           </Item>
         </ListUnordered>
       </FormalItem>
       <Paragraph>
         Events are typically delivered to instruments via an <Term type="term">event buffer</Term>. An
-        <Term type="term">event buffer</Term> is an opaque buffer type that, given a
-        <Link target="07b75ca6-e791-4921-b2d1-0ad25b8287c1">frame index</Link>, returns all
-        events that occurred at that frame index.
+        <Term type="term">event buffer</Term>
+        is an opaque buffer type that, given a
+        <Link target="07b75ca6-e791-4921-b2d1-0ad25b8287c1">frame index</Link>, returns all events that occurred at that
+        frame index.
       </Paragraph>
     </Subsection>
     <Subsection title="Parameters"
@@ -437,8 +440,8 @@
       <Paragraph>
         Instruments have zero or more <Term type="term">parameters</Term>. A
         <Term type="term">parameter</Term>
-        is effectively a named and typed mutable variable, the value of which can be read and/or modified
-        (atomically) at any time. Parameters have unique (within an instrument) integer
+        is effectively a named and typed mutable variable, the value of which can be read and/or modified (atomically)
+        at any time. Parameters have unique (within an instrument) integer
         <Term type="term">identifiers</Term>, and humanly-readable string
         <Term type="term">labels</Term>. Additionally, parameters that are of numeric types are declared with
         <Term type="term">minimum</Term>

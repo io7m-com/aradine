@@ -22,10 +22,10 @@ import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryException;
-import com.io7m.aradine.inventory.api.ARInventoryProgress;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
@@ -42,7 +42,6 @@ import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -115,7 +114,7 @@ public final class ARInventory implements ARInventoryType
   public CompletableFuture<ARBlob> blobInstall(
     final Path file,
     final MimeType type,
-    final Consumer<ARInventoryProgress> progressConsumer)
+    final Consumer<ARProgress> progressConsumer)
   {
     Objects.requireNonNull(file, "file");
     Objects.requireNonNull(type, "type");
@@ -128,7 +127,7 @@ public final class ARInventory implements ARInventoryType
   @Override
   public CompletableFuture<ARInstrumentID> instrumentInstall(
     final Path file,
-    final Consumer<ARInventoryProgress> progressConsumer)
+    final Consumer<ARProgress> progressConsumer)
   {
     Objects.requireNonNull(file, "file");
     Objects.requireNonNull(progressConsumer, "progressConsumer");
@@ -169,26 +168,33 @@ public final class ARInventory implements ARInventoryType
   private static final class ARInventoryInstrumentInstallOp
     implements ARInventoryOpType<ARInstrumentData>
   {
+    private static final int SUBTASK_COUNT = 3;
     private final ARInventory inventory;
     private final Path file;
     private final MimeType type;
-    private final Consumer<ARInventoryProgress> progressConsumer;
-    private final int taskCount;
-    private volatile int taskIndex;
-    private volatile long fileSize;
-    private volatile String task = "";
+    private final Consumer<ARProgress> progressConsumer;
+    private final String task;
+    private volatile double taskProgress;
+    private volatile String subTask;
+    private volatile double subtaskProgress;
+
+    private static double taskProgressOf(
+      final int subTaskIndex)
+    {
+      return (double) (subTaskIndex + 1) / (double) SUBTASK_COUNT;
+    }
 
     private ARInventoryInstrumentInstallOp(
       final ARInventory inInventory,
       final Path inFile,
       final MimeType inType,
-      final Consumer<ARInventoryProgress> inProgressConsumer)
+      final Consumer<ARProgress> inProgressConsumer)
     {
       this.inventory = inInventory;
       this.file = inFile;
       this.type = inType;
       this.progressConsumer = inProgressConsumer;
-      this.taskCount = 3;
+      this.task = "Installing instrument.";
     }
 
     private static void checkCancelled(
@@ -218,9 +224,10 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARInstrumentData> future)
       throws Exception
     {
-      this.task = "Saving instrument to database.";
-      this.taskIndex = 2;
-      this.publishProgressNow(OptionalDouble.empty());
+      this.taskProgress = taskProgressOf(2);
+      this.subTask = "Saving instrument to database.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
 
       checkCancelled(future);
       try (var transaction = this.inventory.database.openTransaction()) {
@@ -230,7 +237,8 @@ public final class ARInventory implements ARInventoryType
         transaction.commit();
         return instrument;
       } finally {
-        this.publishProgressNow(OptionalDouble.of(1.0));
+        this.subtaskProgress = 1.0;
+        this.publishProgressNow();
       }
     }
 
@@ -245,19 +253,24 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARInstrumentData> future)
       throws Exception
     {
-      this.task = "Copying file to blob directory.";
-      this.taskIndex = 1;
-      this.publishProgressNow(OptionalDouble.empty());
+      this.taskProgress = taskProgressOf(1);
+      this.subTask = "Copying file to blob directory.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
 
       checkCancelled(future);
       this.inventory.blobDirectory.copyIn(
         instrument.blob().hash(),
         this.file,
-        progress -> this.progressNow(OptionalDouble.of(progress)),
+        progress -> {
+          this.subtaskProgress = progress.doubleValue();
+          this.publishProgressNow();
+        },
         future::isCancelled
       );
 
-      this.publishProgressNow(OptionalDouble.of(1.0));
+      this.subtaskProgress = 1.0;
+      this.publishProgressNow();
       return instrument;
     }
 
@@ -270,17 +283,17 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARInstrumentData> future)
       throws Exception
     {
-      this.task = "Parsing instrument file.";
-      this.taskIndex = 0;
-      this.publishProgressNow(OptionalDouble.empty());
-      this.fileSize = Files.size(this.file);
+      this.taskProgress = taskProgressOf(0);
+      this.subTask = "Parsing instrument file.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
 
       checkCancelled(future);
-
       final var readers = this.inventory.configuration.readers();
       try (var reader = readers.create(this.file)) {
         final var instrument = reader.execute();
-        this.publishProgressNow(OptionalDouble.of(1.0));
+        this.subtaskProgress = 1.0;
+        this.publishProgressNow();
         return instrument;
       } catch (final ARInstrumentException e) {
         throw new ARInventoryException(
@@ -293,47 +306,54 @@ public final class ARInventory implements ARInventoryType
       }
     }
 
-    private ARInventoryProgress progressNow(
-      final OptionalDouble progress)
+    private ARProgress progressNow()
     {
-      return new ARInventoryProgress(
+      return new ARProgress(
         this.task,
-        this.taskCount,
-        this.taskIndex + 1,
-        progress.orElse(0.0)
+        this.taskProgress,
+        this.subTask,
+        this.subtaskProgress
       );
     }
 
-    private void publishProgressNow(
-      final OptionalDouble progress)
+    private void publishProgressNow()
     {
-      this.progressConsumer.accept(this.progressNow(progress));
+      this.progressConsumer.accept(this.progressNow());
     }
   }
 
   private static final class ARInventoryBlobInstallOp
     implements ARInventoryOpType<ARBlob>
   {
+    private static final int SUBTASK_COUNT = 3;
+
     private final ARInventory inventory;
     private final Path file;
     private final MimeType type;
-    private final Consumer<ARInventoryProgress> progressConsumer;
-    private final int taskCount;
-    private volatile int taskIndex;
-    private volatile long fileSize;
-    private volatile String task = "";
+    private final Consumer<ARProgress> progressConsumer;
+    private final String task;
+    private volatile double taskProgress;
+    private volatile String subTask;
+    private volatile double subtaskProgress;
+    private long fileSize;
+
+    private static double taskProgressOf(
+      final int subTaskIndex)
+    {
+      return (double) (subTaskIndex + 1) / (double) SUBTASK_COUNT;
+    }
 
     private ARInventoryBlobInstallOp(
       final ARInventory inInventory,
       final Path inFile,
       final MimeType inType,
-      final Consumer<ARInventoryProgress> inProgressConsumer)
+      final Consumer<ARProgress> inProgressConsumer)
     {
       this.inventory = inInventory;
       this.file = inFile;
       this.type = inType;
       this.progressConsumer = inProgressConsumer;
-      this.taskCount = 3;
+      this.task = "Installing blob.";
     }
 
     private static void checkCancelled(
@@ -363,9 +383,10 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARBlob> future)
       throws Exception
     {
-      this.task = "Saving blob to database.";
-      this.taskIndex = 2;
-      this.publishProgressNow(OptionalDouble.empty());
+      this.taskProgress = taskProgressOf(2);
+      this.subTask = "Saving blob to database.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
 
       try (var transaction = this.inventory.database.openTransaction()) {
         final var blob = new ARBlob(this.fileSize, hash, this.type);
@@ -373,7 +394,8 @@ public final class ARInventory implements ARInventoryType
         transaction.commit();
         return blob;
       } finally {
-        this.publishProgressNow(OptionalDouble.of(1.0));
+        this.subtaskProgress = 1.0;
+        this.publishProgressNow();
       }
     }
 
@@ -388,18 +410,23 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARHash> future)
       throws Exception
     {
-      this.task = "Copying file to blob directory.";
-      this.taskIndex = 1;
-      this.publishProgressNow(OptionalDouble.empty());
+      this.taskProgress = taskProgressOf(1);
+      this.subTask = "Copying file to blob directory.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
 
       this.inventory.blobDirectory.copyIn(
         hash,
         this.file,
-        progress -> this.progressNow(OptionalDouble.of(progress)),
+        progress -> {
+          this.subtaskProgress = progress.doubleValue();
+          this.publishProgressNow();
+        },
         future::isCancelled
       );
 
-      this.publishProgressNow(OptionalDouble.of(1.0));
+      this.subtaskProgress = 1.0;
+      this.publishProgressNow();
       return hash;
     }
 
@@ -412,16 +439,18 @@ public final class ARInventory implements ARInventoryType
       final CompletableFuture<ARHash> future)
       throws Exception
     {
-      this.task = "Computing hash of file.";
-      this.taskIndex = 0;
-      this.publishProgressNow(OptionalDouble.empty());
+      this.taskProgress = taskProgressOf(0);
+      this.subTask = "Computing hash of file.";
+      this.subtaskProgress = 0.0;
+      this.publishProgressNow();
       this.fileSize = Files.size(this.file);
 
       final var digest =
         MessageDigest.getInstance("SHA-256");
 
       final Consumer<STTransferStatistics> statConsumer = stats -> {
-        this.publishProgressNow(stats.percentNormalized());
+        this.subtaskProgress = stats.percentNormalized().orElse(0.0);
+        this.publishProgressNow();
       };
 
       try (var stream = Files.newInputStream(this.file)) {
@@ -443,28 +472,27 @@ public final class ARInventory implements ARInventoryType
         }
       }
 
-      this.publishProgressNow(OptionalDouble.of(1.0));
+      this.subtaskProgress = 1.0;
+      this.publishProgressNow();
       return new ARHash(
         ARHashAlgorithm.SHA_256,
         HexFormat.of().formatHex(digest.digest())
       );
     }
 
-    private ARInventoryProgress progressNow(
-      final OptionalDouble progress)
+    private ARProgress progressNow()
     {
-      return new ARInventoryProgress(
+      return new ARProgress(
         this.task,
-        this.taskCount,
-        this.taskIndex + 1,
-        progress.orElse(0.0)
+        this.taskProgress,
+        this.subTask,
+        this.subtaskProgress
       );
     }
 
-    private void publishProgressNow(
-      final OptionalDouble progress)
+    private void publishProgressNow()
     {
-      this.progressConsumer.accept(this.progressNow(progress));
+      this.progressConsumer.accept(this.progressNow());
     }
   }
 }

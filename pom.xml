@@ -346,6 +346,13 @@
         <artifactId>com.io7m.streamtime.core</artifactId>
         <version>1.0.0</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.aurantium</groupId>
+        <artifactId>com.io7m.aurantium.bom</artifactId>
+        <version>1.0.0-beta0002</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
       <!-- Database -->
       <dependency>

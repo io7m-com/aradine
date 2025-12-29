@@ -18,25 +18,7 @@
  * Modular programmable synthesis (Sample Map [Aurantium])
  */
 
-module com.io7m.aradine.sample_map.aurantium
-{
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+@Version("1.0.0")
+package com.io7m.aradine.sample_map.aurantium.internal;
 
-  requires com.io7m.aradine.api;
-
-  requires com.io7m.aurantium.api;
-  requires com.io7m.aurantium.parser.api;
-  requires com.io7m.aurantium.vanilla;
-  requires com.io7m.aurantium.xmedia;
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.jsamplebuffer.api;
-  requires com.io7m.jsamplebuffer.vanilla;
-  requires com.io7m.jsamplebuffer.xmedia;
-  requires com.io7m.seltzer.api;
-  requires com.io7m.seltzer.io;
-  requires java.desktop;
-  requires com.io7m.wendover.core;
-
-  exports com.io7m.aradine.sample_map.aurantium;
-}
+import org.osgi.annotation.versioning.Version;

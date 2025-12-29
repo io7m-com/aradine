@@ -19,11 +19,13 @@ package com.io7m.aradine.api.sample_map;
 import com.io7m.jmulticlose.core.CloseableType;
 
 /**
- * A sample map.
+ * A sample map instance.
  */
 
 public interface ARSampleMapType
   extends CloseableType
 {
-
+  @Override
+  void close()
+    throws ARSampleMapException;
 }

@@ -39,6 +39,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.aradine.inventory.api;
   requires com.io7m.aradine.inventory;
+  requires com.io7m.aradine.sample_map.aurantium;
   requires com.io7m.aradine.server;
   requires com.io7m.aradine.tests.arbitraries;
 
@@ -49,6 +50,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.jsamplebuffer.api;
   requires com.io7m.jsamplebuffer.vanilla;
   requires com.io7m.jsamplebuffer.xmedia;
+  requires com.io7m.junreachable.core;
   requires com.io7m.lanark.core;
   requires com.io7m.mime2045.core;
   requires com.io7m.verona.core;
@@ -75,5 +77,4 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
-  requires com.io7m.junreachable.core;
 }

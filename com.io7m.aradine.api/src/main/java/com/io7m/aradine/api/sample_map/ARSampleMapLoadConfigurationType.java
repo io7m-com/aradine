@@ -14,45 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.inventory.api;
+package com.io7m.aradine.api.sample_map;
 
-import java.util.Objects;
+import com.io7m.aradine.api.progress.ARProgress;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import org.immutables.value.Value;
+
+import java.util.function.Consumer;
 
 /**
- * The progress of an operation.
- *
- * @param task         The task name
- * @param taskCount    The task count
- * @param taskIndex    The task index
- * @param taskProgress The task progress
+ * A sample map load configuration.
  */
 
-public record ARInventoryProgress(
-  String task,
-  int taskCount,
-  int taskIndex,
-  double taskProgress)
+@ImmutablesStyleType
+@Value.Immutable
+public interface ARSampleMapLoadConfigurationType
 {
   /**
-   * The progress of an operation.
-   *
-   * @param task         The task name
-   * @param taskCount    The task count
-   * @param taskIndex    The task index
-   * @param taskProgress The task progress
+   * @return The required sample rate for loaded samples
    */
 
-  public ARInventoryProgress
-  {
-    Objects.requireNonNull(task, "task");
-  }
+  double sampleRate();
 
   /**
-   * @return The major task progress
+   * @return A consumer of progress events
    */
 
-  double taskProgressMajor()
-  {
-    return (double) this.taskIndex / (double) this.taskCount;
-  }
+  Consumer<ARProgress> progressConsumer();
 }

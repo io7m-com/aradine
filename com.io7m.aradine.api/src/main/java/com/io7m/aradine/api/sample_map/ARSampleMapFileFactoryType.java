@@ -16,14 +16,30 @@
 
 package com.io7m.aradine.api.sample_map;
 
-import org.osgi.annotation.versioning.ConsumerType;
+import com.io7m.aradine.api.progress.ARProgress;
+
+import java.nio.file.Path;
+import java.util.function.Consumer;
 
 /**
- * The type of sample map providers.
+ * The type of sample map file factories.
  */
 
-@ConsumerType
-public interface ARSampleMapProviderType
+public interface ARSampleMapFileFactoryType
 {
+  /**
+   * Open a sample map file.
+   *
+   * @param file             The file
+   * @param progressConsumer The progress consumer
+   *
+   * @return An open file
+   *
+   * @throws ARSampleMapException On errors
+   */
 
+  ARSampleMapFileType open(
+    Path file,
+    Consumer<ARProgress> progressConsumer)
+    throws ARSampleMapException;
 }

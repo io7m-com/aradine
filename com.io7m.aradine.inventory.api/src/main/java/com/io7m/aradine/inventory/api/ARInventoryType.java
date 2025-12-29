@@ -18,6 +18,7 @@ package com.io7m.aradine.inventory.api;
 
 import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.mime2045.core.MimeType;
 
@@ -59,7 +60,7 @@ public interface ARInventoryType
   CompletableFuture<ARBlob> blobInstall(
     Path file,
     MimeType type,
-    Consumer<ARInventoryProgress> progressConsumer);
+    Consumer<ARProgress> progressConsumer);
 
   /**
    * Install the given instrument into the inventory.
@@ -72,7 +73,7 @@ public interface ARInventoryType
 
   CompletableFuture<ARInstrumentID> instrumentInstall(
     Path file,
-    Consumer<ARInventoryProgress> progressConsumer);
+    Consumer<ARProgress> progressConsumer);
 
   /**
    * Get the file for the installed instrument.

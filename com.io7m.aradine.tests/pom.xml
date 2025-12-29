@@ -123,6 +123,11 @@
       <artifactId>com.io7m.aradine.instrument.loader.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.sample_map.aurantium</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.io7m.jattribute</groupId>

@@ -26,6 +26,51 @@
     </dependency>
 
     <dependency>
+      <groupId>com.io7m.aurantium</groupId>
+      <artifactId>com.io7m.aurantium.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.aurantium</groupId>
+      <artifactId>com.io7m.aurantium.parser.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.aurantium</groupId>
+      <artifactId>com.io7m.aurantium.vanilla</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.aurantium</groupId>
+      <artifactId>com.io7m.aurantium.xmedia</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.xmedia</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.vanilla</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.seltzer</groupId>
+      <artifactId>com.io7m.seltzer.io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.seltzer</groupId>
+      <artifactId>com.io7m.seltzer.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.wendover</groupId>
+      <artifactId>com.io7m.wendover.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jmulticlose</groupId>
+      <artifactId>com.io7m.jmulticlose.core</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.annotation.bundle</artifactId>
       <scope>provided</scope>

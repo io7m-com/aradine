@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,24 +15,7 @@
  */
 
 /**
- * Modular programmable synthesis (Core API)
+ * Modular programmable synthesis (Test suite)
  */
 
-module com.io7m.aradine.api
-{
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
-
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.mime2045.core;
-  requires com.io7m.seltzer.api;
-  requires com.io7m.verona.core;
-
-  exports com.io7m.aradine.api.instrument;
-  exports com.io7m.aradine.api.progress;
-  exports com.io7m.aradine.api.sample_map;
-  exports com.io7m.aradine.api;
-}
+package com.io7m.aradine.tests.sample_map.aradine;

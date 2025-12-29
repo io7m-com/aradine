@@ -14,29 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.sample_map.aurantium.internal;
+
+import com.io7m.aradine.api.sample_map.ARSampleMapException;
+import com.io7m.jmulticlose.core.CloseableCollection;
+import com.io7m.jmulticlose.core.CloseableCollectionType;
+
+import java.util.Map;
+import java.util.Optional;
+
 /**
- * Modular programmable synthesis (Sample Map [Aurantium])
+ * Closeable collections.
  */
 
-module com.io7m.aradine.sample_map.aurantium
+public final class ARCloseables
 {
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  private ARCloseables()
+  {
 
-  requires com.io7m.aradine.api;
+  }
 
-  requires com.io7m.aurantium.api;
-  requires com.io7m.aurantium.parser.api;
-  requires com.io7m.aurantium.vanilla;
-  requires com.io7m.aurantium.xmedia;
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.jsamplebuffer.api;
-  requires com.io7m.jsamplebuffer.vanilla;
-  requires com.io7m.jsamplebuffer.xmedia;
-  requires com.io7m.seltzer.api;
-  requires com.io7m.seltzer.io;
-  requires java.desktop;
-  requires com.io7m.wendover.core;
+  /**
+   * @return A new collection
+   */
 
-  exports com.io7m.aradine.sample_map.aurantium;
+  public static CloseableCollectionType<ARSampleMapException> create()
+  {
+    return CloseableCollection.create(() -> {
+      return new ARSampleMapException(
+        "Closing a resource failed.",
+        "error-resource-close",
+        Map.of(),
+        Optional.empty()
+      );
+    });
+  }
 }

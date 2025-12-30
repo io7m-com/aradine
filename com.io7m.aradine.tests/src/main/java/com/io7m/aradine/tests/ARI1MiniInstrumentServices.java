@@ -19,6 +19,7 @@ package com.io7m.aradine.tests;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
@@ -51,6 +52,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ARI1MiniInstrumentServices
@@ -60,6 +62,7 @@ public final class ARI1MiniInstrumentServices
     LoggerFactory.getLogger(ARI1MiniInstrumentServices.class);
 
   private final ARI1InstrumentDescription instrumentDescription;
+  private final ARInstrumentInstanceID instanceID;
   private final AttributeType<Integer> sampleRate;
   private final AttributeType<Integer> bufferSize;
   private final ARI1SampleMapEmpty emptyMap;
@@ -73,6 +76,7 @@ public final class ARI1MiniInstrumentServices
   private ARI1MiniInstrumentServices(
     final CloseableCollectionType<ClosingResourceFailedException> inCloseables,
     final ARI1InstrumentDescription inInstrumentDescription,
+    final ARInstrumentInstanceID inInstance,
     final AttributeType<Integer> inSampleRate,
     final AttributeType<Integer> inBufferSize,
     final Map<ARI1ParameterId, ARI1ParameterType> inParameters,
@@ -84,6 +88,8 @@ public final class ARI1MiniInstrumentServices
       Objects.requireNonNull(
         inInstrumentDescription,
         "inInstrumentDescription");
+    this.instanceID =
+      Objects.requireNonNull(inInstance, "instance");
     this.sampleRate =
       Objects.requireNonNull(inSampleRate, "inSampleRate");
     this.bufferSize =
@@ -110,6 +116,7 @@ public final class ARI1MiniInstrumentServices
 
   public static ARI1MiniInstrumentServices create(
     final ARI1InstrumentFactoryType instrumentFactory,
+    final ARInstrumentInstanceID instance,
     final int sampleRate,
     final int bufferSize)
     throws Exception
@@ -144,6 +151,7 @@ public final class ARI1MiniInstrumentServices
     return new ARI1MiniInstrumentServices(
       closeables,
       instrumentDescription,
+      instance,
       sampleRateAttribute,
       bufferSizeAttribute,
       parameters,
@@ -355,5 +363,11 @@ public final class ARI1MiniInstrumentServices
   {
     final var rate = (double) this.statusCurrentSampleRate();
     return Math.round((rate * (milliseconds / 1000.0)));
+  }
+
+  @Override
+  public UUID idInstance()
+  {
+    return this.instanceID.value();
   }
 }

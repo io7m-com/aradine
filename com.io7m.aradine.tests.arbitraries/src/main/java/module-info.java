@@ -24,14 +24,20 @@ module com.io7m.aradine.tests.arbitraries
 {
   requires transitive net.jqwik.api;
 
-  requires transitive com.io7m.aradine.instrument.spi1;
+  requires com.io7m.aradine.api;
+  requires com.io7m.aradine.instrument.spi1;
+  requires com.io7m.lanark.core;
+  requires com.io7m.verona.core;
 
   provides ArbitraryProvider
     with
       com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentID,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterId,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderPortId,
+      com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedReal,

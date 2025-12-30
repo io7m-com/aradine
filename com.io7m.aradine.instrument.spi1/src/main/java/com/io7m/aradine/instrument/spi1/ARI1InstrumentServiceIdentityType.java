@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,24 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.api.instrument;
 
-import com.io7m.jmulticlose.core.CloseableType;
+package com.io7m.aradine.instrument.spi1;
+
+import java.util.UUID;
 
 /**
- * A loaded instrument instance.
+ * Methods to retrieve identity information.
  */
 
-public interface ARInstrumentType
-  extends CloseableType
+public interface ARI1InstrumentServiceIdentityType
 {
   /**
-   * @return The instrument instance ID
+   * @return The instance ID of the instrument
    */
 
-  ARInstrumentInstanceID instanceId();
-
-  @Override
-  void close()
-    throws ARInstrumentException;
+  UUID idInstance();
 }

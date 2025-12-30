@@ -19,6 +19,7 @@ package com.io7m.aradine.tests.instrument.loader;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -49,6 +50,7 @@ import com.io7m.junreachable.UnimplementedCodeException;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.UUID;
 
 public final class ARInstrumentLoaderServicesConstructor
   implements ARInstrumentLoaderServicesConstructorType
@@ -70,11 +72,13 @@ public final class ARInstrumentLoaderServicesConstructor
     implements ARI1InstrumentServicesType
   {
     private final ARI1InstrumentDescription description;
+    private final ARInstrumentInstanceID instanceId;
 
     Services1(
       final ARI1InstrumentDescription description)
     {
       this.description = description;
+      this.instanceId = ARInstrumentInstanceID.random();
     }
 
     @Override
@@ -203,6 +207,12 @@ public final class ARInstrumentLoaderServicesConstructor
       @ARTimeMilliseconds final double milliseconds)
     {
       throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public UUID idInstance()
+    {
+      return this.instanceId.value();
     }
   }
 }

@@ -17,6 +17,7 @@
 package com.io7m.aradine.instrument.loader.internal;
 
 import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
@@ -381,6 +382,7 @@ public final class ARInstrumentLoader
     private final ARInstrumentLoader1 loader;
     private final ARI1InstrumentType instrument;
     private final ARI1InstrumentServicesType services;
+    private final ARInstrumentInstanceID instanceId;
 
     private ARInstrument1(
       final ARInstrumentLoader1 inLoader,
@@ -393,9 +395,16 @@ public final class ARInstrumentLoader
         Objects.requireNonNull(inServices, "Services");
       this.instrument =
         Objects.requireNonNull(inInstrument, "Instrument");
-
+      this.instanceId =
+        new ARInstrumentInstanceID(inServices.idInstance());
       this.closed =
         new AtomicBoolean(false);
+    }
+
+    @Override
+    public ARInstrumentInstanceID instanceId()
+    {
+      return this.instanceId;
     }
 
     @Override

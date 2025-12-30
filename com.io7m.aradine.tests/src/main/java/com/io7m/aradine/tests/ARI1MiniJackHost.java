@@ -17,6 +17,7 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
@@ -101,6 +102,7 @@ public final class ARI1MiniJackHost
     final var services =
       ARI1MiniInstrumentServices.create(
         samplers,
+        ARInstrumentInstanceID.ofString("9bac8eb0-f217-4e2b-89a2-8d1a02d4b196"),
         client.getSampleRate(),
         client.getBufferSize()
       );

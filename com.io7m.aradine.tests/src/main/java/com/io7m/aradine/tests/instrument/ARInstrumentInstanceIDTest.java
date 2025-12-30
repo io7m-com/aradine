@@ -14,24 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.api.instrument;
+package com.io7m.aradine.tests.instrument;
 
-import com.io7m.jmulticlose.core.CloseableType;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
+import org.junit.jupiter.api.Assertions;
 
-/**
- * A loaded instrument instance.
- */
-
-public interface ARInstrumentType
-  extends CloseableType
+public final class ARInstrumentInstanceIDTest
 {
-  /**
-   * @return The instrument instance ID
-   */
+  @Property
+  public void testParseToString(
+    final @ForAll ARInstrumentInstanceID id)
+  {
+    Assertions.assertEquals(
+      id,
+      ARInstrumentInstanceID.ofString(id.toString())
+    );
+  }
 
-  ARInstrumentInstanceID instanceId();
-
-  @Override
-  void close()
-    throws ARInstrumentException;
+  @Property
+  public void testCompare(
+    final @ForAll ARInstrumentInstanceID id)
+  {
+    Assertions.assertEquals(
+      0,
+      id.compareTo(id)
+    );
+  }
 }

@@ -14,21 +14,47 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+
+package com.io7m.aradine.tests.arbitraries;
+
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.providers.ArbitraryProvider;
+import net.jqwik.api.providers.TypeUsage;
+
+import java.util.Set;
+import java.util.UUID;
 
 /**
- * The services available to a single instrument instance. Each instrument
- * instance gets a separate instance of this interface.
+ * A provider of values.
  */
 
-public interface ARI1InstrumentServicesType
-  extends ARI1InstrumentServiceAudioStatusType,
-  ARI1InstrumentServiceDeclarationsType,
-  ARI1InstrumentServiceEventsType,
-  ARI1InstrumentServiceIdentityType,
-  ARI1InstrumentServiceImplementationObjectsType,
-  ARI1InstrumentServiceSamplesType,
-  ARI1InstrumentServiceTimeType
+public final class ARI1ProviderUUID
+  implements ArbitraryProvider
 {
+  /**
+   * A provider of values.
+   */
 
+  public ARI1ProviderUUID()
+  {
+
+  }
+
+  @Override
+  public boolean canProvideFor(
+    final TypeUsage targetType)
+  {
+    return targetType.isOfType(UUID.class);
+  }
+
+  @Override
+  public Set<Arbitrary<?>> provideFor(
+    final TypeUsage targetType,
+    final SubtypeProvider subtypeProvider)
+  {
+    return Set.of(
+      Arbitraries.create(UUID::randomUUID)
+    );
+  }
 }

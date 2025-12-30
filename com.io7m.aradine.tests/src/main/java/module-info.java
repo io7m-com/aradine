@@ -40,7 +40,6 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.inventory.api;
   requires com.io7m.aradine.inventory;
   requires com.io7m.aradine.sample_map.aurantium;
-  requires com.io7m.aradine.server;
   requires com.io7m.aradine.tests.arbitraries;
 
   requires com.io7m.anethum.api;

@@ -17,7 +17,6 @@
 package com.io7m.aradine.tests.instrument;
 
 import com.io7m.aradine.api.instrument.ARInstrumentID;
-import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import org.junit.jupiter.api.Assertions;

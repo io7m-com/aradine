@@ -19,7 +19,7 @@ package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.tests.ARI1ParameterReal;
 
 import java.util.Optional;
@@ -29,7 +29,7 @@ public final class ARI1ParameterRealTest
 {
   @Override
   protected ARI1ParameterReal createParameter(
-    final ARI1ParameterId id,
+    final ARI1ParameterNumber id,
     final double valueMinimum,
     final double valueMaximum,
     final double valueDefault)

@@ -25,7 +25,6 @@ public interface ARI1InstrumentServicesType
   extends ARI1InstrumentServiceAudioStatusType,
   ARI1InstrumentServiceDeclarationsType,
   ARI1InstrumentServiceEventsType,
-  ARI1InstrumentServiceIdentityType,
   ARI1InstrumentServiceImplementationObjectsType,
   ARI1InstrumentServiceSamplesType,
   ARI1InstrumentServiceTimeType

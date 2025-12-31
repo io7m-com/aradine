@@ -16,6 +16,8 @@
 
 package com.io7m.aradine.database.api;
 
+import com.io7m.jmulticlose.core.CloseableType;
+
 import static com.io7m.aradine.database.api.ARDBTransactionCloseBehavior.ON_CLOSE_CLOSE_CONNECTION;
 
 /**
@@ -23,7 +25,7 @@ import static com.io7m.aradine.database.api.ARDBTransactionCloseBehavior.ON_CLOS
  */
 
 public interface ARDBType
-  extends AutoCloseable
+  extends CloseableType
 {
   /**
    * @return A new connection

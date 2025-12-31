@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.spi1.json_schemagen;
 
-import com.io7m.aradine.instrument.spi1.ARI1Version;
+import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersion;
 import com.io7m.sumjack.core.SjDefinitionProviderType;
 import com.io7m.sumjack.core.SjDefinitionType;
 import com.io7m.sumjack.core.SjGeneratorConfiguration;
@@ -37,7 +37,7 @@ public enum ARIJ1VersionDefinition
   @Override
   public String typeName()
   {
-    return ARI1Version.class.getSimpleName();
+    return ARI1JVersion.class.getSimpleName();
   }
 
   @Override

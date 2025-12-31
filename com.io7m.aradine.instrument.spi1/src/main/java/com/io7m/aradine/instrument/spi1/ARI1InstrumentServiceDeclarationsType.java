@@ -30,7 +30,7 @@ public interface ARI1InstrumentServiceDeclarationsType
    * @return The instantiated parameters declared by the instrument
    */
 
-  Map<ARI1ParameterId, ARI1ParameterType> declaredParameters();
+  Map<ARI1ParameterNumber, ARI1ParameterType> declaredParameters();
 
   /**
    * Retrieve a declared parameter and cast it to the given type.
@@ -43,7 +43,7 @@ public interface ARI1InstrumentServiceDeclarationsType
    */
 
   <C extends ARI1ParameterType> C declaredParameter(
-    ARI1ParameterId id,
+    ARI1ParameterNumber id,
     Class<C> clazz
   );
 
@@ -51,7 +51,7 @@ public interface ARI1InstrumentServiceDeclarationsType
    * @return The instantiated ports declared by the instrument
    */
 
-  Map<ARI1PortId, ARI1PortType> declaredPorts();
+  Map<ARI1PortNumber, ARI1PortType> declaredPorts();
 
   /**
    * Retrieve a declared port and cast it to the given type.
@@ -64,7 +64,7 @@ public interface ARI1InstrumentServiceDeclarationsType
    */
 
   <C extends ARI1PortType> C declaredPort(
-    ARI1PortId id,
+    ARI1PortNumber id,
     Class<C> clazz
   );
 }

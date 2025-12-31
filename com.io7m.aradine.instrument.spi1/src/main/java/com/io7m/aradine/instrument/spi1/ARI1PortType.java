@@ -18,14 +18,21 @@ package com.io7m.aradine.instrument.spi1;
 
 /**
  * A port used to supply data to, or extract data from, an instrument.
+ *
+ * <p>
+ * Note that the term "source" and "target" for ports is effectively reversed
+ * when inside an instrument implementation as opposed to the ensemble:
+ * The instrument implementation writes to its own sources to produce data,
+ * and reads from its own targets to consume data.
+ * </p>
  */
 
 public sealed interface ARI1PortType
-  permits ARI1PortInputType, ARI1PortOutputType
+  permits ARI1PortSourceType, ARI1PortTargetType
 {
   /**
    * @return The port ID
    */
 
-  ARI1PortId id();
+  ARI1PortNumber id();
 }

@@ -30,7 +30,7 @@ import tools.jackson.databind.exc.ValueInstantiationException;
  */
 
 public final class ARI1JVersionDeserializer
-  extends ValueDeserializer<ARI1Version>
+  extends ValueDeserializer<ARI1JVersion>
 {
   /**
    * A version number deserializer.
@@ -42,13 +42,19 @@ public final class ARI1JVersionDeserializer
   }
 
   @Override
-  public ARI1Version deserialize(
+  public ARI1JVersion deserialize(
     final JsonParser p,
     final DeserializationContext ctxt)
     throws JacksonException
   {
     try {
-      return ARI1VersionParser.parse(p.getString());
+      final ARI1Version v1 = ARI1VersionParser.parse(p.getString());
+      return new ARI1JVersion(
+        v1.major(),
+        v1.minor(),
+        v1.patch(),
+        v1.qualifier().map(x -> new ARI1JVersionQualifier(x.text()))
+      );
     } catch (final ARI1VersionException e) {
       throw ValueInstantiationException.from(p, e.getMessage(), e);
     }

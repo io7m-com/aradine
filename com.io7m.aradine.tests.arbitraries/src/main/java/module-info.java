@@ -14,6 +14,8 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterNumber;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortNumber;
 import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
@@ -35,8 +37,8 @@ module com.io7m.aradine.tests.arbitraries
       com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentID,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterId,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderPortId,
+      ARI1ProviderParameterNumber,
+      ARI1ProviderPortNumber,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger,
       com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps,

@@ -19,7 +19,6 @@ package com.io7m.aradine.tests.instrument.loader;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.instrument.ARInstrumentException;
-import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -29,12 +28,9 @@ import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
@@ -43,14 +39,14 @@ import com.io7m.aradine.tests.ARI1IntMapMutable;
 import com.io7m.aradine.tests.ARI1ParameterInteger;
 import com.io7m.aradine.tests.ARI1ParameterReal;
 import com.io7m.aradine.tests.ARI1ParameterSampleMap;
-import com.io7m.aradine.tests.ARI1PortInputAudio;
-import com.io7m.aradine.tests.ARI1PortInputNote;
-import com.io7m.aradine.tests.ARI1PortOutputAudio;
+import com.io7m.aradine.tests.ARI1PortSourceAudio;
+import com.io7m.aradine.tests.ARI1PortSourceNote;
+import com.io7m.aradine.tests.ARI1PortTargetAudio;
+import com.io7m.aradine.tests.ARI1PortTargetNote;
 import com.io7m.junreachable.UnimplementedCodeException;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.UUID;
 
 public final class ARInstrumentLoaderServicesConstructor
   implements ARInstrumentLoaderServicesConstructorType
@@ -72,13 +68,11 @@ public final class ARInstrumentLoaderServicesConstructor
     implements ARI1InstrumentServicesType
   {
     private final ARI1InstrumentDescription description;
-    private final ARInstrumentInstanceID instanceId;
 
     Services1(
       final ARI1InstrumentDescription description)
     {
       this.description = description;
-      this.instanceId = ARInstrumentInstanceID.random();
     }
 
     @Override
@@ -94,14 +88,14 @@ public final class ARInstrumentLoaderServicesConstructor
     }
 
     @Override
-    public Map<ARI1ParameterId, ARI1ParameterType> declaredParameters()
+    public Map<ARI1ParameterNumber, ARI1ParameterType> declaredParameters()
     {
       throw new UnimplementedCodeException();
     }
 
     @Override
     public <C extends ARI1ParameterType> C declaredParameter(
-      final ARI1ParameterId id,
+      final ARI1ParameterNumber id,
       final Class<C> clazz)
     {
       return clazz.cast(
@@ -125,33 +119,37 @@ public final class ARInstrumentLoaderServicesConstructor
     }
 
     @Override
-    public Map<ARI1PortId, ARI1PortType> declaredPorts()
+    public Map<ARI1PortNumber, ARI1PortType> declaredPorts()
     {
       throw new UnimplementedCodeException();
     }
 
     @Override
     public <C extends ARI1PortType> C declaredPort(
-      final ARI1PortId id,
+      final ARI1PortNumber id,
       final Class<C> clazz)
     {
-      return clazz.cast(
-        switch (this.description.ports().get(id)) {
-          case final ARI1PortDescriptionOutputAudio oa -> {
-            yield new ARI1PortOutputAudio(id, 1024);
-          }
-          case final ARI1PortDescriptionInputAudio ia -> {
-            yield new ARI1PortInputAudio(id, 1024);
-          }
-          case final ARI1PortDescriptionInputNote in -> {
-            yield new ARI1PortInputNote(id);
-          }
-          case null -> {
-            throw new IllegalArgumentException(
-              "No such parameter: %s".formatted(id)
-            );
-          }
+      final var port = this.description.ports().get(id);
+      if (port == null) {
+        throw new IllegalArgumentException(
+          "No such parameter: %s".formatted(id)
+        );
+      }
 
+      return clazz.cast(
+        switch (port.kind()) {
+          case AR_AUDIO -> {
+            yield switch (port.direction()) {
+              case AR_SOURCE -> new ARI1PortSourceAudio(id, 1024);
+              case AR_TARGET -> new ARI1PortTargetAudio(id, 1024);
+            };
+          }
+          case AR_NOTE -> {
+            yield switch (port.direction()) {
+              case AR_SOURCE -> new ARI1PortSourceNote(id);
+              case AR_TARGET -> new ARI1PortTargetNote(id);
+            };
+          }
         }
       );
     }
@@ -207,12 +205,6 @@ public final class ARInstrumentLoaderServicesConstructor
       @ARTimeMilliseconds final double milliseconds)
     {
       throw new UnimplementedCodeException();
-    }
-
-    @Override
-    public UUID idInstance()
-    {
-      return this.instanceId.value();
     }
   }
 }

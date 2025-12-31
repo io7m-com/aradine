@@ -28,6 +28,7 @@ module com.io7m.aradine.database.api
   requires com.io7m.lanark.core;
   requires com.io7m.seltzer.api;
   requires java.sql;
+  requires com.io7m.jmulticlose.core;
 
   exports com.io7m.aradine.database.api;
 }

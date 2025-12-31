@@ -17,9 +17,6 @@
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.io7m.aradine.instrument.spi1.ARI1Documentation;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +24,7 @@ import java.util.Optional;
 /**
  * <p>An integer-typed parameter description.</p>
  *
- * @param id                The parameter ID
+ * @param number            The parameter ID
  * @param label             The parameter label
  * @param documentation     The parameter documentation
  * @param unitOfMeasurement The unit of measurement for the parameter
@@ -37,14 +34,14 @@ import java.util.Optional;
  */
 
 public record ARI1JParameterDescriptionInteger(
-  @JsonProperty(value = "ID", required = true)
-  ARI1ParameterId id,
+  @JsonProperty(value = "Number", required = true)
+  ARI1JParameterNumber number,
   @JsonProperty(value = "Label", required = true)
   String label,
   @JsonProperty(value = "Documentation")
-  Optional<ARI1Documentation> documentation,
+  Optional<ARI1JDocumentation> documentation,
   @JsonProperty(value = "UnitOfMeasurement", required = true)
-  ARI1DottedName unitOfMeasurement,
+  ARI1JDottedName unitOfMeasurement,
   @JsonProperty(value = "IntegerValueMinimumInclusive", required = true)
   long valueMinimum,
   @JsonProperty(value = "IntegerValueMaximumInclusive", required = true)
@@ -57,7 +54,7 @@ public record ARI1JParameterDescriptionInteger(
   /**
    * <p>An integer-typed parameter description.</p>
    *
-   * @param id                The parameter ID
+   * @param number            The parameter ID
    * @param label             The parameter label
    * @param documentation     The parameter documentation
    * @param unitOfMeasurement The unit of measurement for the parameter
@@ -68,7 +65,7 @@ public record ARI1JParameterDescriptionInteger(
 
   public ARI1JParameterDescriptionInteger
   {
-    Objects.requireNonNull(id, "id");
+    Objects.requireNonNull(number, "id");
     Objects.requireNonNull(label, "label");
     Objects.requireNonNull(documentation, "documentation");
     Objects.requireNonNull(unitOfMeasurement, "unitOfMeasurement");

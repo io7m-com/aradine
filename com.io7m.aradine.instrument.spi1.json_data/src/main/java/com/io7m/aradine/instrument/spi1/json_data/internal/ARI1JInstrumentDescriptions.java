@@ -16,23 +16,25 @@
 
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
+import com.io7m.aradine.instrument.spi1.ARI1Documentation;
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescription;
+import com.io7m.aradine.instrument.spi1.ARI1PortDirection;
+import com.io7m.aradine.instrument.spi1.ARI1PortKind;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
+import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1Schemas;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -59,9 +61,9 @@ public final class ARI1JInstrumentDescriptions
   {
     return new ARI1JInstrumentDescription(
       ARI1Schemas.schema1().toString(),
-      description.group(),
-      description.identifier(),
-      description.version(),
+      toJSONDottedName(description.group()),
+      toJSONDottedName(description.identifier()),
+      toJSONVersion(description.version()),
       description.metadata(),
       description.parameters()
         .values()
@@ -76,42 +78,78 @@ public final class ARI1JInstrumentDescriptions
     );
   }
 
-  private static ARI1JPortDescriptionType toJSONPort(
-    final ARI1PortDescriptionType p)
+  private static ARI1JVersion toJSONVersion(
+    final ARI1Version version)
   {
-    return switch (p) {
-      case final ARI1PortDescriptionInputType pi -> {
-        yield switch (pi) {
-          case final ARI1PortDescriptionInputAudio ia -> {
-            yield new ARI1JPortDescriptionInputAudio(
-              ia.id(),
-              ia.label(),
-              ia.semantics(),
-              ia.documentation()
-            );
-          }
-          case final ARI1PortDescriptionInputNote in -> {
-            yield new ARI1JPortDescriptionInputNote(
-              in.id(),
-              in.label(),
-              in.semantics(),
-              in.documentation()
-            );
-          }
-        };
-      }
-      case final ARI1PortDescriptionOutputType po -> {
-        yield switch (po) {
-          case final ARI1PortDescriptionOutputAudio oa -> {
-            yield new ARI1JPortDescriptionOutputAudio(
-              oa.id(),
-              oa.label(),
-              oa.semantics(),
-              oa.documentation()
-            );
-          }
-        };
-      }
+    return new ARI1JVersion(
+      version.major(),
+      version.minor(),
+      version.patch(),
+      toJSONVersionQualifierOpt(version.qualifier())
+    );
+  }
+
+  private static Optional<ARI1JVersionQualifier> toJSONVersionQualifierOpt(
+    final Optional<ARI1VersionQualifier> qualifier)
+  {
+    return qualifier.map(q -> new ARI1JVersionQualifier(q.text()));
+  }
+
+  private static ARI1JPortDescription toJSONPort(
+    final ARI1PortDescription p)
+  {
+    return new ARI1JPortDescription(
+      toJSONPortKind(p.kind()),
+      toJSONPortDirection(p.direction()),
+      toJSONPortNumber(p.number()),
+      p.label(),
+      p.semantics(),
+      toJSONDocumentationOpt(p.documentation())
+    );
+  }
+
+  private static Optional<ARI1JDocumentation> toJSONDocumentationOpt(
+    final Optional<ARI1Documentation> documentation)
+  {
+    return documentation.map(ARI1JInstrumentDescriptions::toJSONDocumentation);
+  }
+
+  private static ARI1JDocumentation toJSONDocumentation(
+    final ARI1Documentation x)
+  {
+    return new ARI1JDocumentation(
+      toJSONDottedName(x.format()),
+      x.lines()
+    );
+  }
+
+  private static ARI1JDottedName toJSONDottedName(
+    final ARI1DottedName format)
+  {
+    return new ARI1JDottedName(format.value());
+  }
+
+  private static ARI1JPortNumber toJSONPortNumber(
+    final ARI1PortNumber number)
+  {
+    return new ARI1JPortNumber(number.value());
+  }
+
+  private static ARI1JPortDirection toJSONPortDirection(
+    final ARI1PortDirection direction)
+  {
+    return switch (direction) {
+      case AR_SOURCE -> ARI1JPortDirection.AR_SOURCE;
+      case AR_TARGET -> ARI1JPortDirection.AR_TARGET;
+    };
+  }
+
+  private static ARI1JPortKind toJSONPortKind(
+    final ARI1PortKind kind)
+  {
+    return switch (kind) {
+      case AR_AUDIO -> ARI1JPortKind.AR_AUDIO;
+      case AR_NOTE -> ARI1JPortKind.AR_NOTE;
     };
   }
 
@@ -121,10 +159,10 @@ public final class ARI1JInstrumentDescriptions
     return switch (p) {
       case final ARI1ParameterDescriptionInteger di -> {
         yield new ARI1JParameterDescriptionInteger(
-          di.id(),
+          toJSONParameterNumber(di.id()),
           di.label(),
-          di.documentation(),
-          di.unitOfMeasurement(),
+          toJSONDocumentationOpt(di.documentation()),
+          toJSONDottedName(di.unitOfMeasurement()),
           di.valueMinimum(),
           di.valueMaximum(),
           di.valueDefault()
@@ -132,10 +170,10 @@ public final class ARI1JInstrumentDescriptions
       }
       case final ARI1ParameterDescriptionReal dr -> {
         yield new ARI1JParameterDescriptionReal(
-          dr.id(),
+          toJSONParameterNumber(dr.id()),
           dr.label(),
-          dr.documentation(),
-          dr.unitOfMeasurement(),
+          toJSONDocumentationOpt(dr.documentation()),
+          toJSONDottedName(dr.unitOfMeasurement()),
           dr.valueMinimum(),
           dr.valueMaximum(),
           dr.valueDefault()
@@ -143,12 +181,18 @@ public final class ARI1JInstrumentDescriptions
       }
       case final ARI1ParameterDescriptionSampleMap ds -> {
         yield new ARI1JParameterDescriptionSampleMap(
-          ds.id(),
+          toJSONParameterNumber(ds.id()),
           ds.label(),
-          ds.documentation()
+          toJSONDocumentationOpt(ds.documentation())
         );
       }
     };
+  }
+
+  private static ARI1JParameterNumber toJSONParameterNumber(
+    final ARI1ParameterNumber id)
+  {
+    return new ARI1JParameterNumber(id.value());
   }
 
   /**
@@ -163,85 +207,118 @@ public final class ARI1JInstrumentDescriptions
     final ARI1JInstrumentDescription description)
   {
     return new ARI1InstrumentDescription(
-      description.group(),
-      description.identifier(),
-      description.version(),
+      fromJSONDottedName(description.group()),
+      fromJSONDottedName(description.identifier()),
+      fromJSONVersion(description.version()),
       description.metadata(),
       fromJSONParameters(description.parameters()),
       fromJSONPorts(description.ports())
     );
   }
 
-  private static Map<ARI1PortId, ARI1PortDescriptionType> fromJSONPorts(
-    final List<ARI1JPortDescriptionType> ports)
+  private static ARI1Version fromJSONVersion(
+    final ARI1JVersion version)
+  {
+    return new ARI1Version(
+      version.major(),
+      version.minor(),
+      version.patch(),
+      version.qualifier().map(x -> new ARI1VersionQualifier(x.text()))
+    );
+  }
+
+  private static Map<ARI1PortNumber, ARI1PortDescription> fromJSONPorts(
+    final List<ARI1JPortDescription> ports)
   {
     return ports.stream()
-      .map(p -> Map.entry(p.id(), p))
+      .map(p -> Map.entry(p.number(), p))
       .map(ARI1JInstrumentDescriptions::mapPortEntry)
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private static Map.Entry<ARI1PortId, ARI1PortDescriptionType>
+  private static Map.Entry<ARI1PortNumber, ARI1PortDescription>
   mapPortEntry(
-    final Map.Entry<ARI1PortId, ARI1JPortDescriptionType> e)
+    final Map.Entry<ARI1JPortNumber, ARI1JPortDescription> e)
   {
-    return Map.entry(e.getKey(), fromJSONPort(e.getValue()));
+    return Map.entry(
+      fromJSONPortNumber(e.getKey()),
+      fromJSONPort(e.getValue())
+    );
   }
 
-  private static ARI1PortDescriptionType fromJSONPort(
-    final ARI1JPortDescriptionType value)
+  private static ARI1PortDescription fromJSONPort(
+    final ARI1JPortDescription value)
   {
-    return switch (value) {
-      case final ARI1JPortDescriptionInputType i -> {
-        yield switch (i) {
-          case final ARI1JPortDescriptionInputAudio ia -> {
-            yield new ARI1PortDescriptionInputAudio(
-              ia.id(),
-              ia.label(),
-              ia.semantics(),
-              ia.documentation()
-            );
-          }
-          case final ARI1JPortDescriptionInputNote in -> {
-            yield new ARI1PortDescriptionInputNote(
-              in.id(),
-              in.label(),
-              in.semantics(),
-              in.documentation()
-            );
-          }
-        };
-      }
-      case final ARI1JPortDescriptionOutputType o -> {
-        yield switch (o) {
-          case final ARI1JPortDescriptionOutputAudio oa -> {
-            yield new ARI1PortDescriptionOutputAudio(
-              oa.id(),
-              oa.label(),
-              oa.semantics(),
-              oa.documentation()
-            );
-          }
-        };
-      }
+    return new ARI1PortDescription(
+      fromJSONPortKind(value.kind()),
+      fromJSONPortDirection(value.direction()),
+      fromJSONPortNumber(value.number()),
+      value.label(),
+      value.semantics(),
+      fromJSONDocumentationOpt(value.documentation())
+    );
+  }
+
+  private static Optional<ARI1Documentation> fromJSONDocumentationOpt(
+    final Optional<ARI1JDocumentation> documentation)
+  {
+    return documentation.map(ARI1JInstrumentDescriptions::fromJSONDocumentation);
+  }
+
+  private static ARI1Documentation fromJSONDocumentation(
+    final ARI1JDocumentation x)
+  {
+    return new ARI1Documentation(fromJSONDottedName(x.format()), x.lines());
+  }
+
+  private static ARI1DottedName fromJSONDottedName(
+    final ARI1JDottedName format)
+  {
+    return new ARI1DottedName(format.value());
+  }
+
+  private static ARI1PortNumber fromJSONPortNumber(
+    final ARI1JPortNumber number)
+  {
+    return new ARI1PortNumber(number.value());
+  }
+
+  private static ARI1PortDirection fromJSONPortDirection(
+    final ARI1JPortDirection direction)
+  {
+    return switch (direction) {
+      case AR_SOURCE -> ARI1PortDirection.AR_SOURCE;
+      case AR_TARGET -> ARI1PortDirection.AR_TARGET;
     };
   }
 
-  private static Map<ARI1ParameterId, ARI1ParameterDescriptionType>
+  private static ARI1PortKind fromJSONPortKind(
+    final ARI1JPortKind kind)
+  {
+    return switch (kind) {
+      case AR_AUDIO -> ARI1PortKind.AR_AUDIO;
+      case AR_NOTE -> ARI1PortKind.AR_NOTE;
+    };
+  }
+
+  private static Map<ARI1ParameterNumber, ARI1ParameterDescriptionType>
   fromJSONParameters(
     final List<ARI1JParameterDescriptionType> parameters)
   {
     return parameters.stream()
-      .map(p -> Map.entry(p.id(), p))
+      .map(p -> Map.entry(p.number(), p))
       .map(ARI1JInstrumentDescriptions::fromJSONParameterEntry)
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private static Map.Entry<ARI1ParameterId, ARI1ParameterDescriptionType>
+  private static Map.Entry<ARI1ParameterNumber, ARI1ParameterDescriptionType>
   fromJSONParameterEntry(
-    final Map.Entry<ARI1ParameterId, ARI1JParameterDescriptionType> e)
+    final Map.Entry<ARI1JParameterNumber, ARI1JParameterDescriptionType> e)
   {
-    return Map.entry(e.getKey(), fromJSONParameter(e.getValue()));
+    return Map.entry(
+      fromJSONParameterNumber(e.getKey()),
+      fromJSONParameter(e.getValue())
+    );
   }
 
   private static ARI1ParameterDescriptionType
@@ -251,10 +328,10 @@ public final class ARI1JInstrumentDescriptions
     return switch (value) {
       case final ARI1JParameterDescriptionInteger pi -> {
         yield new ARI1ParameterDescriptionInteger(
-          pi.id(),
+          fromJSONParameterNumber(pi.number()),
           pi.label(),
-          pi.documentation(),
-          pi.unitOfMeasurement(),
+          fromJSONDocumentationOpt(pi.documentation()),
+          fromJSONDottedName(pi.unitOfMeasurement()),
           pi.valueMinimum(),
           pi.valueMaximum(),
           pi.valueDefault()
@@ -262,10 +339,10 @@ public final class ARI1JInstrumentDescriptions
       }
       case final ARI1JParameterDescriptionReal pr -> {
         yield new ARI1ParameterDescriptionReal(
-          pr.id(),
+          fromJSONParameterNumber(pr.number()),
           pr.label(),
-          pr.documentation(),
-          pr.unitOfMeasurement(),
+          fromJSONDocumentationOpt(pr.documentation()),
+          fromJSONDottedName(pr.unitOfMeasurement()),
           pr.valueMinimum(),
           pr.valueMaximum(),
           pr.valueDefault()
@@ -273,11 +350,17 @@ public final class ARI1JInstrumentDescriptions
       }
       case final ARI1JParameterDescriptionSampleMap psm -> {
         yield new ARI1ParameterDescriptionSampleMap(
-          psm.id(),
+          fromJSONParameterNumber(psm.number()),
           psm.label(),
-          psm.documentation()
+          fromJSONDocumentationOpt(psm.documentation())
         );
       }
     };
+  }
+
+  private static ARI1ParameterNumber fromJSONParameterNumber(
+    final ARI1JParameterNumber id)
+  {
+    return new ARI1ParameterNumber(id.value());
   }
 }

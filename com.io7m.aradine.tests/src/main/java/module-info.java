@@ -24,6 +24,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.api;
   requires com.io7m.aradine.database.api;
   requires com.io7m.aradine.database.sqlite3;
+  requires com.io7m.aradine.ensemble;
   requires com.io7m.aradine.envelope.table1;
   requires com.io7m.aradine.filter.biquad1;
   requires com.io7m.aradine.filter.recursive1;
@@ -70,6 +71,8 @@ open module com.io7m.aradine.tests
   requires org.mockito.junit.jupiter;
   requires org.mockito;
   requires org.slf4j;
+  requires tools.jackson.core;
+  requires tools.jackson.databind;
 
   requires org.junit.jupiter.api;
   requires org.junit.jupiter.engine;

@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedReal;
 import net.jqwik.api.ForAll;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
 {
   protected abstract T createParameter(
-    ARI1ParameterId id,
+    ARI1ParameterNumber id,
     double valueMinimum,
     double valueMaximum,
     double valueDefault
@@ -54,7 +54,7 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
 
   @Property
   public void testEventLastWins(
-    @ForAll final ARI1ParameterId id,
+    @ForAll final ARI1ParameterNumber id,
     @ForAll final double valueDefault,
     @ForAll final Map<Integer, ARI1ValueChangedReal> updates)
   {
@@ -106,7 +106,7 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
 
   @Property
   public void testEventsSameTime(
-    @ForAll final ARI1ParameterId id,
+    @ForAll final ARI1ParameterNumber id,
     @ForAll final double valueDefault,
     @ForAll final double valueA,
     @ForAll final double valueB,

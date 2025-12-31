@@ -6,11 +6,11 @@
     "$ref" : "#/$defs/ARI1JInstrumentDescription"
   } ],
   "$defs" : {
-    "ARI1Documentation" : {
+    "ARI1JDocumentation" : {
       "type" : "object",
       "properties" : {
         "Format" : {
-          "$ref" : "#/$defs/ARI1DottedName"
+          "$ref" : "#/$defs/ARI1JDottedName"
         },
         "Lines" : {
           "$ref" : "#/$defs/List<String>"
@@ -18,7 +18,7 @@
       },
       "required" : [ "Format", "Lines" ]
     },
-    "ARI1DottedName" : {
+    "ARI1JDottedName" : {
       "type" : "string",
       "description" : "A Lanark dotted name.",
       "pattern" : "([a-z][a-z0-9_-]{0,63})(\\.[a-z][a-z0-9_-]{0,62}){0,15}"
@@ -32,11 +32,11 @@
         },
         "Group" : {
           "description" : "The instrument group.",
-          "$ref" : "#/$defs/ARI1DottedName"
+          "$ref" : "#/$defs/ARI1JDottedName"
         },
         "ID" : {
           "description" : "The instrument ID.",
-          "$ref" : "#/$defs/ARI1DottedName"
+          "$ref" : "#/$defs/ARI1JDottedName"
         },
         "Metadata" : {
           "description" : "The instrument metadata.",
@@ -48,11 +48,11 @@
         },
         "Ports" : {
           "description" : "The instrument ports.",
-          "$ref" : "#/$defs/List<ARI1JPortDescriptionType>"
+          "$ref" : "#/$defs/List<ARI1JPortDescription>"
         },
         "Version" : {
           "description" : "The instrument version.",
-          "$ref" : "#/$defs/ARI1Version"
+          "$ref" : "#/$defs/ARI1JVersion"
         }
       },
       "required" : [ "%Schema", "Group", "ID", "Version" ],
@@ -62,10 +62,7 @@
       "type" : "object",
       "properties" : {
         "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1ParameterId"
+          "$ref" : "#/$defs/Optional<ARI1JDocumentation>"
         },
         "IntegerValueDefault" : {
           "$ref" : "#/$defs/long"
@@ -79,28 +76,31 @@
         "Label" : {
           "$ref" : "#/$defs/String"
         },
+        "Number" : {
+          "$ref" : "#/$defs/ARI1JParameterNumber"
+        },
         "UnitOfMeasurement" : {
-          "$ref" : "#/$defs/ARI1DottedName"
+          "$ref" : "#/$defs/ARI1JDottedName"
         },
         "@Type" : {
           "type" : "string",
           "pattern" : "ParameterInteger"
         }
       },
-      "required" : [ "@Type", "ID", "IntegerValueDefault", "IntegerValueMaximumInclusive", "IntegerValueMinimumInclusive", "Label", "UnitOfMeasurement" ],
+      "required" : [ "@Type", "IntegerValueDefault", "IntegerValueMaximumInclusive", "IntegerValueMinimumInclusive", "Label", "Number", "UnitOfMeasurement" ],
       "additionalProperties" : false
     },
     "ARI1JParameterDescriptionReal" : {
       "type" : "object",
       "properties" : {
         "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1ParameterId"
+          "$ref" : "#/$defs/Optional<ARI1JDocumentation>"
         },
         "Label" : {
           "$ref" : "#/$defs/String"
+        },
+        "Number" : {
+          "$ref" : "#/$defs/ARI1JParameterNumber"
         },
         "RealValueDefault" : {
           "$ref" : "#/$defs/double"
@@ -112,34 +112,34 @@
           "$ref" : "#/$defs/double"
         },
         "UnitOfMeasurement" : {
-          "$ref" : "#/$defs/ARI1DottedName"
+          "$ref" : "#/$defs/ARI1JDottedName"
         },
         "@Type" : {
           "type" : "string",
           "pattern" : "ParameterReal"
         }
       },
-      "required" : [ "@Type", "ID", "Label", "RealValueDefault", "RealValueMaximumInclusive", "RealValueMinimumInclusive", "UnitOfMeasurement" ],
+      "required" : [ "@Type", "Label", "Number", "RealValueDefault", "RealValueMaximumInclusive", "RealValueMinimumInclusive", "UnitOfMeasurement" ],
       "additionalProperties" : false
     },
     "ARI1JParameterDescriptionSampleMap" : {
       "type" : "object",
       "properties" : {
         "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1ParameterId"
+          "$ref" : "#/$defs/Optional<ARI1JDocumentation>"
         },
         "Label" : {
           "$ref" : "#/$defs/String"
+        },
+        "Number" : {
+          "$ref" : "#/$defs/ARI1JParameterNumber"
         },
         "@Type" : {
           "type" : "string",
           "pattern" : "ParameterSampleMap"
         }
       },
-      "required" : [ "@Type", "ID", "Label" ],
+      "required" : [ "@Type", "Label", "Number" ],
       "additionalProperties" : false
     },
     "ARI1JParameterDescriptionType" : {
@@ -151,107 +151,52 @@
         "$ref" : "#/$defs/ARI1JParameterDescriptionSampleMap"
       } ]
     },
-    "ARI1JPortDescriptionInputAudio" : {
-      "type" : "object",
-      "properties" : {
-        "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1PortId"
-        },
-        "Label" : {
-          "$ref" : "#/$defs/String"
-        },
-        "Semantics" : {
-          "$ref" : "#/$defs/Set<String>"
-        },
-        "@Type" : {
-          "type" : "string",
-          "pattern" : "InputAudio"
-        }
-      },
-      "required" : [ "@Type", "ID", "Label" ],
-      "additionalProperties" : false
-    },
-    "ARI1JPortDescriptionInputNote" : {
-      "type" : "object",
-      "properties" : {
-        "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1PortId"
-        },
-        "Label" : {
-          "$ref" : "#/$defs/String"
-        },
-        "Semantics" : {
-          "$ref" : "#/$defs/Set<String>"
-        },
-        "@Type" : {
-          "type" : "string",
-          "pattern" : "InputNote"
-        }
-      },
-      "required" : [ "@Type", "ID", "Label" ],
-      "additionalProperties" : false
-    },
-    "ARI1JPortDescriptionInputType" : {
-      "oneOf" : [ {
-        "$ref" : "#/$defs/ARI1JPortDescriptionInputAudio"
-      }, {
-        "$ref" : "#/$defs/ARI1JPortDescriptionInputNote"
-      } ]
-    },
-    "ARI1JPortDescriptionOutputAudio" : {
-      "type" : "object",
-      "properties" : {
-        "Documentation" : {
-          "$ref" : "#/$defs/Optional<ARI1Documentation>"
-        },
-        "ID" : {
-          "$ref" : "#/$defs/ARI1PortId"
-        },
-        "Label" : {
-          "$ref" : "#/$defs/String"
-        },
-        "Semantics" : {
-          "$ref" : "#/$defs/Set<String>"
-        },
-        "@Type" : {
-          "type" : "string",
-          "pattern" : "OutputAudio"
-        }
-      },
-      "required" : [ "@Type", "ID", "Label" ],
-      "additionalProperties" : false
-    },
-    "ARI1JPortDescriptionOutputType" : {
-      "oneOf" : [ {
-        "$ref" : "#/$defs/ARI1JPortDescriptionOutputAudio"
-      } ]
-    },
-    "ARI1JPortDescriptionType" : {
-      "oneOf" : [ {
-        "$ref" : "#/$defs/ARI1JPortDescriptionOutputType"
-      }, {
-        "$ref" : "#/$defs/ARI1JPortDescriptionInputType"
-      } ]
-    },
-    "ARI1ParameterId" : {
+    "ARI1JParameterNumber" : {
       "type" : "integer",
-      "description" : "A parameter ID.",
+      "description" : "A parameter number.",
       "minimum" : 0,
       "maximum" : 4294967295
     },
-    "ARI1PortId" : {
+    "ARI1JPortDescription" : {
+      "type" : "object",
+      "properties" : {
+        "Direction" : {
+          "$ref" : "#/$defs/ARI1JPortDirection"
+        },
+        "Documentation" : {
+          "$ref" : "#/$defs/Optional<ARI1JDocumentation>"
+        },
+        "Kind" : {
+          "$ref" : "#/$defs/ARI1JPortKind"
+        },
+        "Label" : {
+          "$ref" : "#/$defs/String"
+        },
+        "Number" : {
+          "$ref" : "#/$defs/ARI1JPortNumber"
+        },
+        "Semantics" : {
+          "$ref" : "#/$defs/Set<String>"
+        }
+      },
+      "required" : [ "Direction", "Kind", "Label", "Number" ],
+      "additionalProperties" : false
+    },
+    "ARI1JPortDirection" : {
+      "type" : "string",
+      "enum" : [ "AR_INPUT", "AR_OUTPUT" ]
+    },
+    "ARI1JPortKind" : {
+      "type" : "string",
+      "enum" : [ "AR_AUDIO", "AR_NOTE" ]
+    },
+    "ARI1JPortNumber" : {
       "type" : "integer",
-      "description" : "A port ID.",
+      "description" : "A port number.",
       "minimum" : 0,
       "maximum" : 4294967295
     },
-    "ARI1Version" : {
+    "ARI1JVersion" : {
       "type" : "string",
       "description" : "A version string."
     },
@@ -261,10 +206,10 @@
         "$ref" : "#/$defs/ARI1JParameterDescriptionType"
       }
     },
-    "List<ARI1JPortDescriptionType>" : {
+    "List<ARI1JPortDescription>" : {
       "type" : "array",
       "items" : {
-        "$ref" : "#/$defs/ARI1JPortDescriptionType"
+        "$ref" : "#/$defs/ARI1JPortDescription"
       }
     },
     "List<String>" : {
@@ -280,8 +225,8 @@
         "$ref" : "#/$defs/String"
       }
     },
-    "Optional<ARI1Documentation>" : {
-      "$ref" : "#/$defs/ARI1Documentation"
+    "Optional<ARI1JDocumentation>" : {
+      "$ref" : "#/$defs/ARI1JDocumentation"
     },
     "Set<String>" : {
       "type" : "array",

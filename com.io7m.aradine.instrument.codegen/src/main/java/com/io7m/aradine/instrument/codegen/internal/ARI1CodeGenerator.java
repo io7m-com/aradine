@@ -28,18 +28,16 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionType;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1PortInputAudioType;
-import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortDescription;
+import com.io7m.aradine.instrument.spi1.ARI1PortSourceAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
+import com.io7m.aradine.instrument.spi1.ARI1PortTargetAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortTargetNoteType;
 import com.io7m.jodist.ClassName;
 import com.io7m.jodist.FieldSpec;
 import com.io7m.jodist.JavaFile;
@@ -88,8 +86,8 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private static MethodSpec generatePortConstructor(
-    final List<ARI1PortId> ids,
-    final Map<ARI1PortId, ARI1PortDescriptionType> instrumentPorts)
+    final List<ARI1PortNumber> ids,
+    final Map<ARI1PortNumber, ARI1PortDescription> instrumentPorts)
   {
     final var builder = MethodSpec.constructorBuilder();
     builder.addModifiers(PUBLIC);
@@ -109,8 +107,8 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
         "this.$L = $L.declaredPort(new $T($L), $T.class);\n",
         name,
         "$services",
-        ARI1PortId.class,
-        Integer.valueOf(port.id().value()),
+        ARI1PortNumber.class,
+        Long.valueOf(port.number().value()),
         generatePortFieldType(port)
       );
 
@@ -119,7 +117,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
         Objects.class,
         name,
         "Port %d (%s) must be non-null".formatted(
-          Integer.valueOf(id.value()),
+          Long.valueOf(id.value()),
           port.label()
         )
       );
@@ -129,23 +127,34 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private static Class<?> generatePortFieldType(
-    final ARI1PortDescriptionType description)
+    final ARI1PortDescription description)
   {
-    return switch (description) {
-      case ARI1PortDescriptionOutputAudio _ -> {
-        yield ARI1PortOutputAudioType.class;
+    return switch (description.kind()) {
+      case AR_AUDIO -> {
+        yield switch (description.direction()) {
+          case AR_SOURCE -> {
+            yield ARI1PortSourceAudioType.class;
+          }
+          case AR_TARGET -> {
+            yield ARI1PortTargetAudioType.class;
+          }
+        };
       }
-      case ARI1PortDescriptionInputAudio _ -> {
-        yield ARI1PortInputAudioType.class;
-      }
-      case ARI1PortDescriptionInputNote _ -> {
-        yield ARI1PortInputNoteType.class;
+      case AR_NOTE -> {
+        yield switch (description.direction()) {
+          case AR_SOURCE -> {
+            yield ARI1PortSourceNoteType.class;
+          }
+          case AR_TARGET -> {
+            yield ARI1PortTargetNoteType.class;
+          }
+        };
       }
     };
   }
 
   private static FieldSpec generatePortField(
-    final ARI1PortDescriptionType description)
+    final ARI1PortDescription description)
   {
     return FieldSpec.builder(
       ClassName.get(generatePortFieldType(description)),
@@ -155,18 +164,18 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
   }
 
   private static String generatePortFieldName(
-    final ARI1PortDescriptionType description)
+    final ARI1PortDescription description)
   {
     return CaseUtils.toCamelCase(
       description.label(),
       false,
       ARI1Labels.labelDelimiters()
-    ) + description.id().value();
+    ) + description.number().value();
   }
 
   private static MethodSpec generateParameterConstructor(
-    final List<ARI1ParameterId> ids,
-    final Map<ARI1ParameterId, ARI1ParameterDescriptionType> instrumentParameters)
+    final List<ARI1ParameterNumber> ids,
+    final Map<ARI1ParameterNumber, ARI1ParameterDescriptionType> instrumentParameters)
   {
     final var builder = MethodSpec.constructorBuilder();
     builder.addModifiers(PUBLIC);
@@ -186,8 +195,8 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
         "this.$L = $L.declaredParameter(new $T($L), $T.class);\n",
         name,
         "$services",
-        ARI1ParameterId.class,
-        Integer.valueOf(param.id().value()),
+        ARI1ParameterNumber.class,
+        Long.valueOf(param.id().value()),
         generateParameterFieldType(param)
       );
 
@@ -196,7 +205,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
         Objects.class,
         name,
         "Parameter %d (%s) must be non-null".formatted(
-          Integer.valueOf(id.value()),
+          Long.valueOf(id.value()),
           param.label()
         )
       );

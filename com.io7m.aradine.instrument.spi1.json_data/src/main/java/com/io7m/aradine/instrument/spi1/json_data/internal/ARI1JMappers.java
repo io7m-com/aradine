@@ -16,11 +16,6 @@
 
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1Documentation;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.dixmont.core.DmJsonRestrictedDeserializers;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
@@ -44,27 +39,26 @@ public final class ARI1JMappers
     final var dixBuilder =
       DmJsonRestrictedDeserializers.builder();
 
-    dixBuilder.allowClass(ARI1Documentation.class);
-    dixBuilder.allowClass(ARI1DottedName.class);
-    dixBuilder.allowClass(ARI1JDocumentation.class);
+    dixBuilder.allowClass(ARI1JDottedName.class);
     dixBuilder.allowClass(ARI1JInstrumentDescription.class);
     dixBuilder.allowClass(ARI1JParameterDescriptionInteger.class);
     dixBuilder.allowClass(ARI1JParameterDescriptionReal.class);
     dixBuilder.allowClass(ARI1JParameterDescriptionSampleMap.class);
-    dixBuilder.allowClass(ARI1JPortDescriptionInputAudio.class);
-    dixBuilder.allowClass(ARI1JPortDescriptionInputNote.class);
-    dixBuilder.allowClass(ARI1JPortDescriptionOutputAudio.class);
-    dixBuilder.allowClass(ARI1ParameterId.class);
-    dixBuilder.allowClass(ARI1PortId.class);
-    dixBuilder.allowClass(ARI1Version.class);
+    dixBuilder.allowClass(ARI1JParameterNumber.class);
+    dixBuilder.allowClass(ARI1JPortDirection.class);
+    dixBuilder.allowClass(ARI1JPortKind.class);
+    dixBuilder.allowClass(ARI1JPortNumber.class);
+    dixBuilder.allowClass(ARI1JVersion.class);
     dixBuilder.allowClass(String.class);
     dixBuilder.allowClass(double.class);
+    dixBuilder.allowClass(int.class);
     dixBuilder.allowClass(long.class);
     dixBuilder.allowListsOfClass(ARI1JParameterDescriptionType.class);
-    dixBuilder.allowListsOfClass(ARI1JPortDescriptionType.class);
+    dixBuilder.allowListsOfClass(ARI1JPortDescription.class);
     dixBuilder.allowListsOfClass(String.class);
     dixBuilder.allowMapsOfClass(String.class, String.class);
-    dixBuilder.allowOptionalOfClass(ARI1Documentation.class);
+    dixBuilder.allowOptionalOfClass(ARI1JDocumentation.class);
+    dixBuilder.allowOptionalOfClass(ARI1JVersionQualifier.class);
     dixBuilder.allowSetsOfClass(String.class);
 
     final var serializers =
@@ -74,48 +68,39 @@ public final class ARI1JMappers
     simpleModule.setDeserializers(serializers);
 
     simpleModule.addSerializer(
-      ARI1Version.class,
+      ARI1JVersion.class,
       new ARI1JVersionSerializer()
     );
     simpleModule.addDeserializer(
-      ARI1Version.class,
+      ARI1JVersion.class,
       new ARI1JVersionDeserializer()
     );
 
     simpleModule.addSerializer(
-      ARI1DottedName.class,
+      ARI1JDottedName.class,
       new ARI1JDottedNameSerializer()
     );
     simpleModule.addDeserializer(
-      ARI1DottedName.class,
+      ARI1JDottedName.class,
       new ARI1JDottedNameDeserializer()
     );
 
     simpleModule.addSerializer(
-      ARI1ParameterId.class,
-      new ARI1JParameterIdSerializer()
+      ARI1JParameterNumber.class,
+      new ARI1JParameterNumberSerializer()
     );
     simpleModule.addDeserializer(
-      ARI1ParameterId.class,
-      new ARI1JParameterIdDeserializer()
+      ARI1JParameterNumber.class,
+      new ARI1JParameterNumberDeserializer()
     );
 
     simpleModule.addSerializer(
-      ARI1PortId.class,
-      new ARI1JPortIdSerializer()
+      ARI1JPortNumber.class,
+      new ARI1JPortNumberSerializer()
     );
     simpleModule.addDeserializer(
-      ARI1PortId.class,
-      new ARI1JPortIdDeserializer()
-    );
-
-    simpleModule.addSerializer(
-      ARI1Documentation.class,
-      new ARI1JDocumentationSerializer()
-    );
-    simpleModule.addDeserializer(
-      ARI1Documentation.class,
-      new ARI1JDocumentationDeserializer()
+      ARI1JPortNumber.class,
+      new ARI1JPortNumberDeserializer()
     );
 
     final var builder = JsonMapper.builder();

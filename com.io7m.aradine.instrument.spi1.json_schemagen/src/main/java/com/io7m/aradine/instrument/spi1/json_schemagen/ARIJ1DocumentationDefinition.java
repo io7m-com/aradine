@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.spi1.json_schemagen;
 
-import com.io7m.aradine.instrument.spi1.ARI1Documentation;
+import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JDocumentation;
 import com.io7m.sumjack.core.SjDefinitionProviderType;
 import com.io7m.sumjack.core.SjDefinitionType;
 import com.io7m.sumjack.core.SjGeneratorConfiguration;
@@ -37,7 +37,7 @@ public enum ARIJ1DocumentationDefinition
   @Override
   public String typeName()
   {
-    return ARI1Documentation.class.getSimpleName();
+    return ARI1JDocumentation.class.getSimpleName();
   }
 
   @Override
@@ -48,7 +48,7 @@ public enum ARIJ1DocumentationDefinition
       final var mapper = configuration.mapper();
 
       final var format = mapper.createObjectNode();
-      format.put("$ref", "#/$defs/ARI1DottedName");
+      format.put("$ref", "#/$defs/ARI1JDottedName");
 
       final var lines = mapper.createObjectNode();
       lines.put("$ref", "#/$defs/List<String>");

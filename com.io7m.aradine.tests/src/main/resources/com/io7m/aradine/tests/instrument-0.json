@@ -10,7 +10,7 @@
   "Parameters": [
     {
       "@Type": "ParameterSampleMap",
-      "ID": 0,
+      "Number": 0,
       "Label": "Samples",
       "Documentation": {
         "Format": "com.io7m.aradine.plain_text",
@@ -21,7 +21,7 @@
     },
     {
       "@Type": "ParameterReal",
-      "ID": 1,
+      "Number": 1,
       "Label": "Loop Point",
       "RealValueMinimumInclusive": 0.0,
       "RealValueMaximumInclusive": 1.0,
@@ -36,7 +36,7 @@
     },
     {
       "@Type": "ParameterInteger",
-      "ID": 2,
+      "Number": 2,
       "Label": "Pitch Bend Range",
       "IntegerValueMinimumInclusive": 1,
       "IntegerValueMaximumInclusive": 120,
@@ -52,8 +52,9 @@
   ],
   "Ports": [
     {
-      "@Type": "OutputAudio",
-      "ID": 0,
+      "Number": 0,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_AUDIO",
       "Label": "Output L",
       "Semantics": [
         "com.io7m.aradine.port.output.main_left"
@@ -66,8 +67,9 @@
       }
     },
     {
-      "@Type": "OutputAudio",
-      "ID": 1,
+      "Number": 1,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_AUDIO",
       "Label": "Output R",
       "Semantics": [
         "com.io7m.aradine.port.output.main_right"
@@ -80,8 +82,9 @@
       }
     },
     {
-      "@Type": "InputNote",
-      "ID": 2,
+      "Number": 2,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_NOTE",
       "Label": "Note Input",
       "Semantics": [
         "com.io7m.aradine.port.output.main_right"
@@ -94,8 +97,9 @@
       }
     },
     {
-      "@Type": "InputAudio",
-      "ID": 3,
+      "Number": 3,
+      "Direction": "AR_TARGET",
+      "Kind": "AR_AUDIO",
       "Label": "Input L",
       "Semantics": [
         "com.io7m.aradine.port.input.main_left"
@@ -103,13 +107,14 @@
       "Documentation": {
         "Format": "com.io7m.aradine.plain_text",
         "Lines": [
-          "The left input output."
+          "The left audio input."
         ]
       }
     },
     {
-      "@Type": "InputAudio",
-      "ID": 4,
+      "Number": 4,
+      "Direction": "AR_TARGET",
+      "Kind": "AR_AUDIO",
       "Label": "Input R",
       "Semantics": [
         "com.io7m.aradine.port.input.main_right"
@@ -117,7 +122,7 @@
       "Documentation": {
         "Format": "com.io7m.aradine.plain_text",
         "Lines": [
-          "The right input output."
+          "The right audio input."
         ]
       }
     }

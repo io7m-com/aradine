@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedSampleMap;
 import net.jqwik.api.ForAll;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSampleMapType>
 {
   protected abstract T createParameter(
-    ARI1ParameterId id,
+    ARI1ParameterNumber id,
     URI valueDefault
   );
 
@@ -52,7 +52,7 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
 
   @Property
   public void testEventLastWins(
-    @ForAll final ARI1ParameterId id,
+    @ForAll final ARI1ParameterNumber id,
     @ForAll final URI valueDefault,
     @ForAll final Map<Integer, ARI1ValueChangedSampleMap> updates)
   {
@@ -104,7 +104,7 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
 
   @Property
   public void testEventsSameTime(
-    @ForAll final ARI1ParameterId id,
+    @ForAll final ARI1ParameterNumber id,
     @ForAll final URI valueDefault,
     @ForAll final URI valueA,
     @ForAll final URI valueB,

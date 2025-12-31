@@ -23,7 +23,6 @@ import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionCloseBehavior;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBType;
-import com.io7m.jmulticlose.core.CloseableType;
 import org.sqlite.SQLiteDataSource;
 
 import java.sql.Connection;
@@ -37,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The SQLite database.
  */
 
-public final class ARDB implements CloseableType, ARDBType
+public final class ARDB implements ARDBType
 {
   private final SQLiteDataSource dataSource;
   private final AtomicBoolean closed;

@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.instrument.spi1.json_schemagen;
 
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1DottedNamePatterns;
+import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JDottedName;
 import com.io7m.sumjack.core.SjDefinitionProviderType;
 import com.io7m.sumjack.core.SjDefinitionType;
 import com.io7m.sumjack.core.SjGeneratorConfiguration;
@@ -38,7 +38,7 @@ public enum ARIJ1DottedNameDefinition
   @Override
   public String typeName()
   {
-    return ARI1DottedName.class.getSimpleName();
+    return ARI1JDottedName.class.getSimpleName();
   }
 
   @Override

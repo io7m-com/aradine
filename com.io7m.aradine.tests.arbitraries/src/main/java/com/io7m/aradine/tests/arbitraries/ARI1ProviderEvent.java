@@ -22,7 +22,7 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -118,7 +118,7 @@ public final class ARI1ProviderEvent
       Arbitraries.integers()
         .between(0, 1_000_000);
     final var bend =
-      Arbitraries.defaultFor(ARI1ParameterId.class);
+      Arbitraries.defaultFor(ARI1ParameterNumber.class);
 
     return Combinators.combine(time, bend)
       .as(ARI1EventConfigurationParameterChanged::new);

@@ -17,6 +17,7 @@
 package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
@@ -46,6 +47,7 @@ public final class ARInstrumentLoaderTest
   private Path directory;
   private ARInstrumentLoaders loaders;
   private ARInstrumentLoaderServicesConstructor serviceConstructor;
+  private ARFakeInstrumentPortAssigner assigner;
 
   @BeforeEach
   public void setup()
@@ -56,6 +58,7 @@ public final class ARInstrumentLoaderTest
     this.serviceConstructor =
       new ARInstrumentLoaderServicesConstructor();
 
+    this.assigner = new ARFakeInstrumentPortAssigner();
     this.loaders = new ARInstrumentLoaders();
     Files.createDirectories(this.directory);
   }
@@ -170,7 +173,7 @@ public final class ARInstrumentLoaderTest
     final var loader =
       this.loaders.createLoader(this.serviceConstructor, file);
 
-    try (var instrument = loader.execute()) {
+    try (var instrument = loader.execute(this.assigner, ARInstrumentInstanceID.random())) {
       assertFalse(instrument.isClosed());
     }
   }
@@ -193,7 +196,8 @@ public final class ARInstrumentLoaderTest
       new ARInstrumentType[loaders.length];
 
     for (int index = 0; index < loaders.length; ++index) {
-      instruments[index] = loaders[index].execute();
+      instruments[index] =
+        loaders[index].execute(this.assigner, ARInstrumentInstanceID.random());
     }
 
     for (int index = 0; index < loaders.length; ++index) {

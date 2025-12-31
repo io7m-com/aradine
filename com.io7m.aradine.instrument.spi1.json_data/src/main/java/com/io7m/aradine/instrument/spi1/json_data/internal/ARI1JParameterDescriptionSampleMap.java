@@ -17,8 +17,6 @@
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.io7m.aradine.instrument.spi1.ARI1Documentation;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -26,32 +24,32 @@ import java.util.Optional;
 /**
  * <p>The type of sample map parameters.</p>
  *
- * @param id            The parameter ID
+ * @param number        The parameter ID
  * @param label         The parameter label
  * @param documentation The parameter documentation
  */
 
 public record ARI1JParameterDescriptionSampleMap(
-  @JsonProperty(value = "ID", required = true)
-  ARI1ParameterId id,
+  @JsonProperty(value = "Number", required = true)
+  ARI1JParameterNumber number,
   @JsonProperty(value = "Label", required = true)
   String label,
   @JsonProperty(value = "Documentation")
-  Optional<ARI1Documentation> documentation)
+  Optional<ARI1JDocumentation> documentation)
   implements ARI1JParameterDescriptionType,
   ARI1JElementType
 {
   /**
    * <p>The type of sample map parameters.</p>
    *
-   * @param id            The parameter ID
+   * @param number        The parameter ID
    * @param label         The parameter label
    * @param documentation The parameter documentation
    */
 
   public ARI1JParameterDescriptionSampleMap
   {
-    Objects.requireNonNull(id, "id");
+    Objects.requireNonNull(number, "id");
     Objects.requireNonNull(label, "label");
     Objects.requireNonNull(documentation, "documentation");
   }

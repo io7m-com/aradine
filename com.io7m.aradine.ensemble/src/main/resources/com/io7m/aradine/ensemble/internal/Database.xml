@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Schemas xmlns="urn:com.io7m.trasco.database.statements:1:0">
+
+  <Schema versionCurrent="0">
+    <Comment>
+      The schema version table stores the current version of the database schema. Implementations are expected to query
+      this table on connecting to the database in order to ensure that the calling code is compatible with the tables in
+      the database.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE schema_version (
+  sv_lock              TEXT    NOT NULL DEFAULT 'X',
+  sv_application_id    TEXT    NOT NULL,
+  sv_version           INTEGER NOT NULL,
+
+  CONSTRAINT sv_check_lock_primary
+    PRIMARY KEY (sv_lock),
+
+  CONSTRAINT sv_check_lock_locked
+    CHECK (sv_lock = 'X'),
+
+  CONSTRAINT sv_version_range
+    CHECK ((sv_version >= 0) AND (sv_version <= 2147483647))
+
+) STRICT
+]]>
+    </Statement>
+  </Schema>
+
+  <Schema versionCurrent="1">
+    <Comment>
+      The instruments table stores set of loaded instrument instances.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE instruments (
+  instrument_instance_id           TEXT    NOT NULL PRIMARY KEY,
+  instrument_group                 TEXT    NOT NULL,
+  instrument_name                  TEXT    NOT NULL,
+  instrument_version_major         INTEGER NOT NULL,
+  instrument_version_minor         INTEGER NOT NULL,
+  instrument_version_patch         INTEGER NOT NULL,
+  instrument_qualifier             TEXT    NOT NULL,
+
+  CONSTRAINT instrument_instance_id_valid
+    CHECK (instrument_instance_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
+
+  CONSTRAINT instrument_group_valid
+    CHECK (instrument_group REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
+
+  CONSTRAINT instrument_name_valid
+    CHECK (instrument_name REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$')
+
+  CONSTRAINT instrument_version_major_range
+    CHECK ((instrument_version_major >= 0) AND (instrument_version_major <= 4294967295)),
+
+  CONSTRAINT instrument_version_minor_range
+    CHECK ((instrument_version_minor >= 0) AND (instrument_version_minor <= 4294967295)),
+
+  CONSTRAINT instrument_version_patch_range
+    CHECK ((instrument_version_patch >= 0) AND (instrument_version_patch <= 4294967295))
+
+) STRICT
+]]></Statement>
+
+    <Comment>
+      The ports table stores set of ports on the ensemble and all loaded instrument instances.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE ports (
+  port_id                     TEXT    NOT NULL PRIMARY KEY,
+  port_category               TEXT    NOT NULL,
+  port_instrument_instance    TEXT,
+  port_kind                   TEXT    NOT NULL,
+  port_direction              TEXT    NOT NULL,
+  port_number                 INTEGER NOT NULL,
+  port_label                  TEXT    NOT NULL,
+  port_semantics              TEXT    NOT NULL,
+
+  CONSTRAINT port_id_valid
+    CHECK (port_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
+
+  CONSTRAINT port_category_valid
+    CHECK (
+         (port_category = 'AR_ENSEMBLE')
+      OR (port_category = 'AR_INSTRUMENT')
+    ),
+
+  CONSTRAINT port_kind_valid
+    CHECK (
+         (port_kind = 'AR_AUDIO')
+      OR (port_kind = 'AR_NOTE')
+    ),
+
+  CONSTRAINT port_direction_valid
+    CHECK (
+         (port_direction = 'AR_SOURCE')
+      OR (port_direction = 'AR_TARGET')
+    ),
+
+  CONSTRAINT port_instrument_instance_exists
+    FOREIGN KEY (port_instrument_instance)
+      REFERENCES instruments (instrument_instance_id),
+
+  CONSTRAINT port_number_valid
+    CHECK ((port_number >= 0) AND (port_number <= 4294967295)),
+
+  CONSTRAINT port_unique
+    UNIQUE (port_instrument_instance, port_number),
+
+  CONSTRAINT port_instrument_valid
+    CHECK (
+         (port_instrument_instance IS NULL)
+      OR (port_instrument_instance REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+    ),
+
+  CONSTRAINT port_category_invariant
+    CHECK (
+      CASE port_category
+        WHEN 'AR_INSTRUMENT' THEN
+          (port_instrument_instance IS NOT NULL)
+        WHEN 'AR_ENSEMBLE' THEN
+          (port_instrument_instance IS NULL)
+        ELSE 0
+      END
+    )
+
+) STRICT
+]]></Statement>
+
+    <Comment>
+      The port_connections table stores set of connections between ports.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE port_connections (
+  port_connection_source    TEXT NOT NULL,
+  port_connection_target    TEXT NOT NULL,
+
+  CONSTRAINT port_connection_key
+    PRIMARY KEY (port_connection_source, port_connection_target),
+
+  CONSTRAINT port_connection_source_exists
+    FOREIGN KEY (port_connection_source)
+      REFERENCES ports (port_id),
+
+  CONSTRAINT port_connection_target_exists
+    FOREIGN KEY (port_connection_target)
+      REFERENCES ports (port_id),
+
+  CONSTRAINT port_connection_no_self
+    CHECK (NOT (port_connection_source = port_connection_target)),
+
+  CONSTRAINT port_connection_single_target
+    UNIQUE (port_connection_target)
+
+) STRICT
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_source_insert
+  BEFORE INSERT ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_direction FROM ports WHERE ports.port_id = NEW.port_connection_source) = ('AR_SOURCE') THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Source port must have AR_SOURCE direction.')
+  END;
+END;
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_source_update
+  BEFORE UPDATE ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_direction FROM ports WHERE ports.port_id = NEW.port_connection_source) = ('AR_SOURCE') THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Source port must have AR_SOURCE direction.')
+  END;
+END;
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_target_insert
+  BEFORE INSERT ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_direction FROM ports WHERE ports.port_id = NEW.port_connection_target) = ('AR_TARGET') THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Target port must have AR_TARGET direction.')
+  END;
+END;
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_target_update
+  BEFORE UPDATE ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_direction FROM ports WHERE ports.port_id = NEW.port_connection_target) = ('AR_TARGET') THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Target port must have AR_TARGET direction.')
+  END;
+END;
+]]></Statement>
+
+    <Comment>
+      The undo table stores the undo history.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE undo (
+  undo_id             INTEGER PRIMARY KEY NOT NULL,
+  undo_description    TEXT                NOT NULL,
+  undo_time           INTEGER             NOT NULL,
+  undo_data           BLOB                NOT NULL
+) STRICT
+]]></Statement>
+
+    <Comment>
+      The redo table stores the redo history.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE redo (
+  redo_id             INTEGER PRIMARY KEY NOT NULL,
+  redo_description    TEXT                NOT NULL,
+  redo_time           INTEGER             NOT NULL,
+  redo_data           BLOB                NOT NULL
+) STRICT
+]]></Statement>
+  </Schema>
+
+</Schemas>

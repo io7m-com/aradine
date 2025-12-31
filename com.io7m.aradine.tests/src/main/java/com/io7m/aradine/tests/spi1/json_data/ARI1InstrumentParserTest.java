@@ -22,11 +22,8 @@ import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentSerializers;
@@ -102,7 +99,7 @@ public final class ARI1InstrumentParserTest
     {
       final var p =
         (ARI1ParameterDescriptionSampleMap)
-          instrument.parameters().get(new ARI1ParameterId(0));
+          instrument.parameters().get(new ARI1ParameterNumber(0));
 
       assertEquals("Samples", p.label());
     }
@@ -110,9 +107,11 @@ public final class ARI1InstrumentParserTest
     {
       final var p =
         (ARI1ParameterDescriptionReal)
-          instrument.parameters().get(new ARI1ParameterId(1));
+          instrument.parameters().get(new ARI1ParameterNumber(1));
 
-      assertEquals("com.io7m.aradine.position_normal", p.unitOfMeasurement().value());
+      assertEquals(
+        "com.io7m.aradine.position_normal",
+        p.unitOfMeasurement().value());
       assertEquals(0.0, p.valueMinimum());
       assertEquals(1.0, p.valueMaximum());
       assertEquals(0.8, p.valueDefault());
@@ -122,7 +121,7 @@ public final class ARI1InstrumentParserTest
     {
       final var p =
         (ARI1ParameterDescriptionInteger)
-          instrument.parameters().get(new ARI1ParameterId(2));
+          instrument.parameters().get(new ARI1ParameterNumber(2));
 
       assertEquals("com.io7m.aradine.semitones", p.unitOfMeasurement().value());
       assertEquals(1L, p.valueMinimum());
@@ -133,46 +132,49 @@ public final class ARI1InstrumentParserTest
 
     {
       final var p =
-        (ARI1PortDescriptionOutputAudio)
-          instrument.ports().get(new ARI1PortId(0));
+        instrument.ports().get(new ARI1PortNumber(0));
 
       assertEquals("Output L", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.output.main_left"), p.semantics());
+      assertEquals(
+        Set.of("com.io7m.aradine.port.output.main_left"),
+        p.semantics());
     }
 
     {
       final var p =
-        (ARI1PortDescriptionOutputAudio)
-          instrument.ports().get(new ARI1PortId(1));
+        instrument.ports().get(new ARI1PortNumber(1));
 
       assertEquals("Output R", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.output.main_right"), p.semantics());
+      assertEquals(
+        Set.of("com.io7m.aradine.port.output.main_right"),
+        p.semantics());
     }
 
     {
       final var p =
-        (ARI1PortDescriptionInputNote)
-          instrument.ports().get(new ARI1PortId(2));
+        instrument.ports().get(new ARI1PortNumber(2));
 
       assertEquals("Note Input", p.label());
     }
 
     {
       final var p =
-        (ARI1PortDescriptionInputAudio)
-          instrument.ports().get(new ARI1PortId(3));
+        instrument.ports().get(new ARI1PortNumber(3));
 
       assertEquals("Input L", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.input.main_left"), p.semantics());
+      assertEquals(
+        Set.of("com.io7m.aradine.port.input.main_left"),
+        p.semantics());
     }
 
     {
       final var p =
-        (ARI1PortDescriptionInputAudio)
-          instrument.ports().get(new ARI1PortId(4));
+        instrument.ports().get(new ARI1PortNumber(4));
 
       assertEquals("Input R", p.label());
-      assertEquals(Set.of("com.io7m.aradine.port.input.main_right"), p.semantics());
+      assertEquals(
+        Set.of("com.io7m.aradine.port.input.main_right"),
+        p.semantics());
     }
 
     this.roundTrip(instrument);
@@ -193,21 +195,23 @@ public final class ARI1InstrumentParserTest
       "instrument-error-4.xml",
       "instrument-error-5.xml"
     ).map(name -> {
-      return DynamicTest.dynamicTest("testErrors_" + name, () -> {
-        final var file =
-          ARTestDirectories.resourceOf(
-            ARI1InstrumentParserTest.class,
-            this.directory,
-            name
-          );
+      return DynamicTest.dynamicTest(
+        "testErrors_" + name, () -> {
+          final var file =
+            ARTestDirectories.resourceOf(
+              ARI1InstrumentParserTest.class,
+              this.directory,
+              name
+            );
 
-        final var ex =
-          assertThrows(ParsingException.class, () -> {
-            this.parsers.parseFile(file);
-          });
+          final var ex =
+            assertThrows(
+              ParsingException.class, () -> {
+                this.parsers.parseFile(file);
+              });
 
-        assertNotEquals(0, ex.statusValues().size());
-      });
+          assertNotEquals(0, ex.statusValues().size());
+        });
     });
   }
 

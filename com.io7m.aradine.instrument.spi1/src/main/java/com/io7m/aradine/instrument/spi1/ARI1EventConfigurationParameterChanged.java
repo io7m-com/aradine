@@ -28,7 +28,7 @@ import com.io7m.aradine.annotations.ARTimeFrames;
 
 public record ARI1EventConfigurationParameterChanged(
   @ARTimeFrames int timeOffsetInFrames,
-  ARI1ParameterId parameter)
+  ARI1ParameterNumber parameter)
   implements ARI1EventConfigurationType
 {
 

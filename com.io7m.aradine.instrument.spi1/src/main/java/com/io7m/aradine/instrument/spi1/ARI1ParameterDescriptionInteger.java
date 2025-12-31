@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 
 public record ARI1ParameterDescriptionInteger(
-  ARI1ParameterId id,
+  ARI1ParameterNumber id,
   String label,
   Optional<ARI1Documentation> documentation,
   ARI1DottedName unitOfMeasurement,

@@ -18,7 +18,7 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import it.unimi.dsi.fastutil.ints.Int2DoubleRBTreeMap;
 
@@ -82,7 +82,7 @@ public final class ARI1ParameterReal
   }
 
   @Override
-  public ARI1ParameterId id()
+  public ARI1ParameterNumber id()
   {
     return this.description.id();
   }

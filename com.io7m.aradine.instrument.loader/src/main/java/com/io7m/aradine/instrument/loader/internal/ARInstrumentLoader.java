@@ -16,11 +16,13 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
+import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadV1;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
@@ -28,8 +30,9 @@ import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
+import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
+import com.io7m.verona.core.VersionQualifier;
 
-import java.lang.module.Configuration;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
@@ -137,7 +140,7 @@ public final class ARInstrumentLoader
           null
         );
 
-      final Configuration instrumentConfiguration =
+      final var instrumentConfiguration =
         BASE_LAYER.configuration()
           .resolve(
             ModuleFinder.of(),
@@ -168,7 +171,7 @@ public final class ARInstrumentLoader
     final ARInstrumentReadResultType instrumentDescription,
     final URLClassLoader instrumentClassLoader)
   {
-    final ARI1InstrumentDescription v1 = switch (instrumentDescription) {
+    final var v1 = switch (instrumentDescription) {
       case final ARInstrumentReadV1 rv1 -> {
         yield rv1.description();
       }
@@ -226,7 +229,7 @@ public final class ARInstrumentLoader
     }
 
     final var provides = providesAll.iterator().next();
-    final String providesService = provides.service();
+    final var providesService = provides.service();
     if (!Objects.equals(providesService, INSTRUMENT_SPI1_SERVICE_TYPE)) {
       throw errorModuleProvideWrong(file, moduleName, providesService);
     }
@@ -382,12 +385,13 @@ public final class ARInstrumentLoader
     private final ARInstrumentLoader1 loader;
     private final ARI1InstrumentType instrument;
     private final ARI1InstrumentServicesType services;
-    private final ARInstrumentInstanceID instanceId;
+    private final ARInstrumentDescription description;
 
     private ARInstrument1(
       final ARInstrumentLoader1 inLoader,
       final ARI1InstrumentServicesType inServices,
-      final ARI1InstrumentType inInstrument)
+      final ARI1InstrumentType inInstrument,
+      final ARInstrumentDescription inDescription)
     {
       this.loader =
         Objects.requireNonNull(inLoader, "Loader");
@@ -395,16 +399,16 @@ public final class ARInstrumentLoader
         Objects.requireNonNull(inServices, "Services");
       this.instrument =
         Objects.requireNonNull(inInstrument, "Instrument");
-      this.instanceId =
-        new ARInstrumentInstanceID(inServices.idInstance());
+      this.description =
+        Objects.requireNonNull(inDescription, "Description");
       this.closed =
         new AtomicBoolean(false);
     }
 
     @Override
-    public ARInstrumentInstanceID instanceId()
+    public ARInstrumentDescription description()
     {
-      return this.instanceId;
+      return this.description;
     }
 
     @Override
@@ -455,19 +459,33 @@ public final class ARInstrumentLoader
     }
 
     @Override
-    public ARInstrumentType execute()
+    public ARInstrumentType execute(
+      final ARInstrumentPortAssignerType assigner,
+      final ARInstrumentInstanceID instanceID)
       throws ARInstrumentException
     {
+      Objects.requireNonNull(assigner, "assigner");
+      Objects.requireNonNull(instanceID, "InstanceID");
+
       final var services =
         this.serviceConstructor.createServicesV1(this.instrumentDescription);
       final var instrument =
         this.instrumentFactory.createInstrument(services);
 
-      return new ARInstrument1(
-        this,
-        services,
-        instrument
-      );
+      final var description =
+        ARInstrumentDescriptionsV1.fromV1(
+          assigner,
+          instanceID,
+          this.instrumentDescription
+        );
+
+      return new ARInstrument1(this, services, instrument, description);
+    }
+
+    private static VersionQualifier qualifierOf(
+      final ARI1VersionQualifier x)
+    {
+      return new VersionQualifier(x.text());
     }
 
     @Override

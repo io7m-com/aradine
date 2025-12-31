@@ -29,8 +29,8 @@ import java.nio.file.Paths;
 import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1DocumentationDefinition.DOCUMENTATION;
 import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1DottedNameDefinition.DOTTED_NAME_DEFINITION;
 import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1ListStringDefinition.LIST_STRING_DEFINITION;
-import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1ParameterIdDefinition.PARAMETER_ID_DEFINITION;
-import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1PortIdDefinition.PORT_ID_DEFINITION;
+import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1ParameterNumberDefinition.PARAMETER_NUMBER_DEFINITION;
+import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1PortNumberDefinition.PORT_NUMBER_DEFINITION;
 import static com.io7m.aradine.instrument.spi1.json_schemagen.ARIJ1VersionDefinition.VERSION_DEFINITION;
 
 /**
@@ -65,8 +65,8 @@ public final class ARIJ1SchemaGeneratorMain
         .addDefinitions(DOCUMENTATION)
         .addDefinitions(DOTTED_NAME_DEFINITION)
         .addDefinitions(LIST_STRING_DEFINITION)
-        .addDefinitions(PARAMETER_ID_DEFINITION)
-        .addDefinitions(PORT_ID_DEFINITION)
+        .addDefinitions(PARAMETER_NUMBER_DEFINITION)
+        .addDefinitions(PORT_NUMBER_DEFINITION)
         .addDefinitions(VERSION_DEFINITION)
         .setId(URI.create("urn:com.io7m.aradine.instrument:1.0"))
         .setMapper(JsonMapper.shared())

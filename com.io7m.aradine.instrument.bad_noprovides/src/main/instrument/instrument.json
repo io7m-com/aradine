@@ -12,8 +12,9 @@
   ],
   "Ports": [
     {
-      "@Type": "OutputAudio",
-      "ID": 0,
+      "Number": 0,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_AUDIO",
       "Label": "Output L",
       "Semantics": [
         "com.io7m.aradine.port.output.main_left"

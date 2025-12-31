@@ -16,7 +16,6 @@
 
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
@@ -28,7 +27,7 @@ import tools.jackson.databind.exc.ValueInstantiationException;
  */
 
 public final class ARI1JDottedNameDeserializer
-  extends ValueDeserializer<ARI1DottedName>
+  extends ValueDeserializer<ARI1JDottedName>
 {
   /**
    * A dotted name deserializer.
@@ -40,13 +39,13 @@ public final class ARI1JDottedNameDeserializer
   }
 
   @Override
-  public ARI1DottedName deserialize(
+  public ARI1JDottedName deserialize(
     final JsonParser p,
     final DeserializationContext ctxt)
     throws JacksonException
   {
     try {
-      return new ARI1DottedName(p.getString());
+      return new ARI1JDottedName(p.getString());
     } catch (final IllegalArgumentException e) {
       throw ValueInstantiationException.from(p, e.getMessage(), e);
     }

@@ -18,7 +18,7 @@
 package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.tests.ARI1ParameterSampleMap;
 
 import java.net.URI;
@@ -29,7 +29,7 @@ public final class ARI1ParameterSampleMapTest
 {
   @Override
   protected ARI1ParameterSampleMap createParameter(
-    final ARI1ParameterId id,
+    final ARI1ParameterNumber id,
     final URI valueDefault)
   {
     return new ARI1ParameterSampleMap(

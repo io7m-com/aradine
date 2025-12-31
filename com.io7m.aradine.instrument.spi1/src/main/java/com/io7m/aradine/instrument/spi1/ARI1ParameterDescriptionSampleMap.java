@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 
 public record ARI1ParameterDescriptionSampleMap(
-  ARI1ParameterId id,
+  ARI1ParameterNumber id,
   String label,
   Optional<ARI1Documentation> documentation)
   implements ARI1ParameterDescriptionType

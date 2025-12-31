@@ -30,7 +30,7 @@ public sealed interface ARI1ParameterDescriptionType
    * @return The unique-within-an-instrument identifier for the parameter
    */
 
-  ARI1ParameterId id();
+  ARI1ParameterNumber id();
 
   /**
    * @return The humanly-readable parameter label

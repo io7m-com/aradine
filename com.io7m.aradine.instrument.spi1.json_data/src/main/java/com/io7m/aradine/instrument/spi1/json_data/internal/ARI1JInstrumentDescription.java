@@ -18,8 +18,6 @@ package com.io7m.aradine.instrument.spi1.json_data.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
-import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1Schemas;
 
 import java.util.HashSet;
@@ -46,13 +44,13 @@ public record ARI1JInstrumentDescription(
   String schema,
   @JsonPropertyDescription("The instrument group.")
   @JsonProperty(value = "Group", required = true)
-  ARI1DottedName group,
+  ARI1JDottedName group,
   @JsonPropertyDescription("The instrument ID.")
   @JsonProperty(value = "ID", required = true)
-  ARI1DottedName identifier,
+  ARI1JDottedName identifier,
   @JsonPropertyDescription("The instrument version.")
   @JsonProperty(value = "Version", required = true)
-  ARI1Version version,
+  ARI1JVersion version,
   @JsonPropertyDescription("The instrument metadata.")
   @JsonProperty("Metadata")
   Map<String, String> metadata,
@@ -61,7 +59,7 @@ public record ARI1JInstrumentDescription(
   List<ARI1JParameterDescriptionType> parameters,
   @JsonPropertyDescription("The instrument ports.")
   @JsonProperty("Ports")
-  List<ARI1JPortDescriptionType> ports)
+  List<ARI1JPortDescription> ports)
   implements ARI1JElementType
 {
   /**
@@ -90,8 +88,8 @@ public record ARI1JInstrumentDescription(
     parameters = List.copyOf(parameters);
     ports = List.copyOf(ports);
 
-    checkUniqueness(parameters, ARI1JParameterDescriptionType::id);
-    checkUniqueness(ports, ARI1JPortDescriptionType::id);
+    checkUniqueness(parameters, ARI1JParameterDescriptionType::number);
+    checkUniqueness(ports, ARI1JPortDescription::number);
     checkSchemaIdentifier(schema);
   }
 

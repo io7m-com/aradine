@@ -16,7 +16,6 @@
 
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1Version;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -27,7 +26,7 @@ import tools.jackson.databind.ValueSerializer;
  */
 
 public final class ARI1JVersionSerializer
-  extends ValueSerializer<ARI1Version>
+  extends ValueSerializer<ARI1JVersion>
 {
   /**
    * A version number serializer.
@@ -40,7 +39,7 @@ public final class ARI1JVersionSerializer
 
   @Override
   public void serialize(
-    final ARI1Version value,
+    final ARI1JVersion value,
     final JsonGenerator gen,
     final SerializationContext ctxt)
     throws JacksonException

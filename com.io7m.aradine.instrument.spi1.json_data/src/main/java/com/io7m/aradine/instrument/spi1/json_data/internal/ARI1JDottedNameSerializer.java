@@ -16,7 +16,6 @@
 
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -27,7 +26,7 @@ import tools.jackson.databind.ValueSerializer;
  */
 
 public final class ARI1JDottedNameSerializer
-  extends ValueSerializer<ARI1DottedName>
+  extends ValueSerializer<ARI1JDottedName>
 {
   /**
    * A dotted name serializer.
@@ -40,7 +39,7 @@ public final class ARI1JDottedNameSerializer
 
   @Override
   public void serialize(
-    final ARI1DottedName value,
+    final ARI1JDottedName value,
     final JsonGenerator gen,
     final SerializationContext ctxt)
     throws JacksonException

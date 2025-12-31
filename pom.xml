@@ -24,6 +24,7 @@
     <module>com.io7m.aradine.database.api</module>
     <module>com.io7m.aradine.database.sqlite3</module>
     <module>com.io7m.aradine.documentation</module>
+    <module>com.io7m.aradine.ensemble</module>
     <module>com.io7m.aradine.envelope.table1</module>
     <module>com.io7m.aradine.filter.biquad1</module>
     <module>com.io7m.aradine.filter.recursive1</module>

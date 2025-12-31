@@ -32,6 +32,7 @@ module com.io7m.aradine.api
   requires com.io7m.verona.core;
 
   exports com.io7m.aradine.api.instrument;
+  exports com.io7m.aradine.api.ports;
   exports com.io7m.aradine.api.progress;
   exports com.io7m.aradine.api.sample_map;
   exports com.io7m.aradine.api;

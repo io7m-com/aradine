@@ -17,7 +17,6 @@
 package com.io7m.aradine.instrument.spi1.json_data.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +30,7 @@ import java.util.Objects;
 
 public record ARI1JDocumentation(
   @JsonProperty(value = "Format", required = true)
-  ARI1DottedName format,
+  ARI1JDottedName format,
   @JsonProperty("Lines")
   List<String> lines)
 {

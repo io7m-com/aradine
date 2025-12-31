@@ -26,10 +26,10 @@ public interface ARInstrumentType
   extends CloseableType
 {
   /**
-   * @return The instrument instance ID
+   * @return An immutable description of the instrument
    */
 
-  ARInstrumentInstanceID instanceId();
+  ARInstrumentDescription description();
 
   @Override
   void close()

@@ -35,8 +35,8 @@ public record ARI1InstrumentDescription(
   ARI1DottedName identifier,
   ARI1Version version,
   Map<String, String> metadata,
-  Map<ARI1ParameterId, ARI1ParameterDescriptionType> parameters,
-  Map<ARI1PortId, ARI1PortDescriptionType> ports)
+  Map<ARI1ParameterNumber, ARI1ParameterDescriptionType> parameters,
+  Map<ARI1PortNumber, ARI1PortDescription> ports)
 {
   /**
    * Create an instrument description.

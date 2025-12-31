@@ -10,7 +10,7 @@
   "Parameters": [
     {
       "@Type": "ParameterSampleMap",
-      "ID": 0,
+      "Number": 0,
       "Label": "Samples",
       "Documentation": {
         "Format": "com.io7m.aradine.plain_text",
@@ -21,7 +21,7 @@
     },
     {
       "@Type": "ParameterReal",
-      "ID": 1,
+      "Number": 1,
       "Label": "Speed",
       "RealValueMinimumInclusive": 0.0,
       "RealValueMaximumInclusive": 8.0,
@@ -39,7 +39,7 @@
     },
     {
       "@Type": "ParameterReal",
-      "ID": 2,
+      "Number": 2,
       "Label": "Grain Position Jitter",
       "RealValueMinimumInclusive": 0.0,
       "RealValueMaximumInclusive": 1000.0,
@@ -56,7 +56,7 @@
     },
     {
       "@Type": "ParameterReal",
-      "ID": 3,
+      "Number": 3,
       "Label": "Grain Length",
       "RealValueMinimumInclusive": 0.0,
       "RealValueMaximumInclusive": 1000.0,
@@ -71,7 +71,7 @@
     },
     {
       "@Type": "ParameterInteger",
-      "ID": 4,
+      "Number": 4,
       "Label": "Pitch Bend Range",
       "IntegerValueMinimumInclusive": 1,
       "IntegerValueMaximumInclusive": 120,
@@ -87,8 +87,9 @@
   ],
   "Ports": [
     {
-      "@Type": "OutputAudio",
-      "ID": 0,
+      "Number": 0,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_AUDIO",
       "Label": "Output L",
       "Semantics": [
         "com.io7m.aradine.port.output.main_left"
@@ -101,8 +102,9 @@
       }
     },
     {
-      "@Type": "OutputAudio",
-      "ID": 1,
+      "Number": 1,
+      "Direction": "AR_SOURCE",
+      "Kind": "AR_AUDIO",
       "Label": "Output R",
       "Semantics": [
         "com.io7m.aradine.port.output.main_right"
@@ -115,8 +117,9 @@
       }
     },
     {
-      "@Type": "InputNote",
-      "ID": 2,
+      "Number": 2,
+      "Direction": "AR_TARGET",
+      "Kind": "AR_NOTE",
       "Label": "Note Input",
       "Semantics": [
         "com.io7m.aradine.port.output.main_right"

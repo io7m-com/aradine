@@ -18,8 +18,6 @@ package com.io7m.aradine.instrument.spi1.json_data.internal;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.io7m.aradine.instrument.spi1.ARI1DocumentedType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 
 /**
  * <p>The type of parameters.</p>
@@ -45,7 +43,6 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
   )
 })
 public sealed interface ARI1JParameterDescriptionType
-  extends ARI1DocumentedType
   permits ARI1JParameterDescriptionInteger,
   ARI1JParameterDescriptionReal,
   ARI1JParameterDescriptionSampleMap
@@ -54,7 +51,7 @@ public sealed interface ARI1JParameterDescriptionType
    * @return The unique-within-an-instrument identifier for the parameter
    */
 
-  ARI1ParameterId id();
+  ARI1JParameterNumber number();
 
   /**
    * @return The humanly-readable parameter label

@@ -18,8 +18,8 @@
 package com.io7m.aradine.tests;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterIntegerType;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import it.unimi.dsi.fastutil.ints.Int2LongRBTreeMap;
 
 import java.util.Objects;
@@ -82,7 +82,7 @@ public final class ARI1ParameterInteger
   }
 
   @Override
-  public ARI1ParameterId id()
+  public ARI1ParameterNumber id()
   {
     return this.description.id();
   }

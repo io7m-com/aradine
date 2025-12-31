@@ -29,12 +29,9 @@ import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionInputNote;
-import com.io7m.aradine.instrument.spi1.ARI1PortDescriptionOutputAudio;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
@@ -52,7 +49,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ARI1MiniInstrumentServices
@@ -62,13 +58,12 @@ public final class ARI1MiniInstrumentServices
     LoggerFactory.getLogger(ARI1MiniInstrumentServices.class);
 
   private final ARI1InstrumentDescription instrumentDescription;
-  private final ARInstrumentInstanceID instanceID;
   private final AttributeType<Integer> sampleRate;
   private final AttributeType<Integer> bufferSize;
   private final ARI1SampleMapEmpty emptyMap;
   private final CloseableCollectionType<ClosingResourceFailedException> closeables;
-  private final Map<ARI1ParameterId, ARI1ParameterType> parameters;
-  private final Map<ARI1PortId, ARI1PortType> ports;
+  private final Map<ARI1ParameterNumber, ARI1ParameterType> parameters;
+  private final Map<ARI1PortNumber, ARI1PortType> ports;
   private final ConcurrentHashMap<URI, ARI1SampleMapType> sampleMaps;
   private final AttributeSubscriptionType sampleRateSubscription;
   private double millisecondsPerFrame;
@@ -76,11 +71,10 @@ public final class ARI1MiniInstrumentServices
   private ARI1MiniInstrumentServices(
     final CloseableCollectionType<ClosingResourceFailedException> inCloseables,
     final ARI1InstrumentDescription inInstrumentDescription,
-    final ARInstrumentInstanceID inInstance,
     final AttributeType<Integer> inSampleRate,
     final AttributeType<Integer> inBufferSize,
-    final Map<ARI1ParameterId, ARI1ParameterType> inParameters,
-    final Map<ARI1PortId, ARI1PortType> inPorts)
+    final Map<ARI1ParameterNumber, ARI1ParameterType> inParameters,
+    final Map<ARI1PortNumber, ARI1PortType> inPorts)
   {
     this.closeables =
       Objects.requireNonNull(inCloseables, "closeables");
@@ -88,8 +82,6 @@ public final class ARI1MiniInstrumentServices
       Objects.requireNonNull(
         inInstrumentDescription,
         "inInstrumentDescription");
-    this.instanceID =
-      Objects.requireNonNull(inInstance, "instance");
     this.sampleRate =
       Objects.requireNonNull(inSampleRate, "inSampleRate");
     this.bufferSize =
@@ -151,7 +143,6 @@ public final class ARI1MiniInstrumentServices
     return new ARI1MiniInstrumentServices(
       closeables,
       instrumentDescription,
-      instance,
       sampleRateAttribute,
       bufferSizeAttribute,
       parameters,
@@ -159,53 +150,63 @@ public final class ARI1MiniInstrumentServices
     );
   }
 
-  private static HashMap<ARI1PortId, ARI1PortType> instantiatePorts(
+  private static HashMap<ARI1PortNumber, ARI1PortType> instantiatePorts(
     final AttributeType<Integer> bufferSizeAttribute,
     final CloseableCollectionType<ClosingResourceFailedException> closeables,
     final ARI1InstrumentDescription instrumentDescription)
   {
-    final var ports = new HashMap<ARI1PortId, ARI1PortType>();
+    final var ports = new HashMap<ARI1PortNumber, ARI1PortType>();
     for (final var entry : instrumentDescription.ports().entrySet()) {
-      final var id = entry.getKey();
-      final var description = entry.getValue();
+      final var id =
+        entry.getKey();
+      final var description =
+        entry.getValue();
+      final var currentBufferSize =
+        bufferSizeAttribute.get().intValue();
 
-      final var currentBufferSize = bufferSizeAttribute.get().intValue();
-      switch (description) {
-        case final ARI1PortDescriptionOutputAudio _ -> {
-          final var port =
-            new ARI1PortOutputAudio(id, currentBufferSize);
-          ports.put(id, port);
-          closeables.add(
-            bufferSizeAttribute.subscribe((_, newValue) -> {
-              port.setBufferSize(newValue.intValue());
-            })
-          );
-          continue;
+      switch (description.kind()) {
+        case AR_AUDIO -> {
+          switch (description.direction()) {
+            case AR_SOURCE -> {
+              final var port = new ARI1PortSourceAudio(id, currentBufferSize);
+              ports.put(id, port);
+              closeables.add(
+                bufferSizeAttribute.subscribe((_, newValue) -> {
+                  port.setBufferSize(newValue.intValue());
+                })
+              );
+            }
+            case AR_TARGET -> {
+              final var port =
+                new ARI1PortTargetAudio(id, currentBufferSize);
+              ports.put(id, port);
+              closeables.add(
+                bufferSizeAttribute.subscribe((_, newValue) -> {
+                  port.setBufferSize(newValue.intValue());
+                })
+              );
+            }
+          }
         }
-        case final ARI1PortDescriptionInputAudio _ -> {
-          final var port = new ARI1PortInputAudio(id, currentBufferSize);
-          ports.put(id, port);
-          closeables.add(
-            bufferSizeAttribute.subscribe((_, newValue) -> {
-              port.setBufferSize(newValue.intValue());
-            })
-          );
-          continue;
-        }
-        case final ARI1PortDescriptionInputNote _ -> {
-          ports.put(id, new ARI1PortInputNote(id));
-          continue;
+        case AR_NOTE -> {
+          switch (description.direction()) {
+            case AR_SOURCE -> {
+              ports.put(id, new ARI1PortSourceNote(id));
+            }
+            case AR_TARGET -> {
+              ports.put(id, new ARI1PortTargetNote(id));
+            }
+          }
         }
       }
-
     }
     return ports;
   }
 
-  private static HashMap<ARI1ParameterId, ARI1ParameterType> instantiateParameters(
+  private static HashMap<ARI1ParameterNumber, ARI1ParameterType> instantiateParameters(
     final ARI1InstrumentDescription instrumentDescription)
   {
-    final var parameters = new HashMap<ARI1ParameterId, ARI1ParameterType>();
+    final var parameters = new HashMap<ARI1ParameterNumber, ARI1ParameterType>();
     for (final var entry : instrumentDescription.parameters().entrySet()) {
       final var id = entry.getKey();
       final var description = entry.getValue();
@@ -221,7 +222,8 @@ public final class ARI1MiniInstrumentServices
             id,
             new ARI1ParameterSampleMap(
               d,
-              URI.create("aradine:unspecified")));
+              URI.create("aradine:unspecified"))
+          );
           continue;
         }
       }
@@ -317,28 +319,28 @@ public final class ARI1MiniInstrumentServices
   }
 
   @Override
-  public Map<ARI1ParameterId, ARI1ParameterType> declaredParameters()
+  public Map<ARI1ParameterNumber, ARI1ParameterType> declaredParameters()
   {
     return this.parameters;
   }
 
   @Override
   public <C extends ARI1ParameterType> C declaredParameter(
-    final ARI1ParameterId id,
+    final ARI1ParameterNumber id,
     final Class<C> clazz)
   {
     return clazz.cast(this.parameters.get(id));
   }
 
   @Override
-  public Map<ARI1PortId, ARI1PortType> declaredPorts()
+  public Map<ARI1PortNumber, ARI1PortType> declaredPorts()
   {
     return this.ports;
   }
 
   @Override
   public <C extends ARI1PortType> C declaredPort(
-    final ARI1PortId id,
+    final ARI1PortNumber id,
     final Class<C> clazz)
   {
     return clazz.cast(this.ports.get(id));
@@ -363,11 +365,5 @@ public final class ARI1MiniInstrumentServices
   {
     final var rate = (double) this.statusCurrentSampleRate();
     return Math.round((rate * (milliseconds / 1000.0)));
-  }
-
-  @Override
-  public UUID idInstance()
-  {
-    return this.instanceID.value();
   }
 }

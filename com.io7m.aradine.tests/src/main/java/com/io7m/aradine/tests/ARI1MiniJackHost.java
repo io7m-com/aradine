@@ -27,13 +27,13 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterId;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
-import com.io7m.aradine.instrument.spi1.ARI1PortId;
-import com.io7m.aradine.instrument.spi1.ARI1PortInputNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1PortOutputAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
+import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
+import com.io7m.aradine.instrument.spi1.ARI1PortTargetAudioType;
 import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import org.jaudiolibs.jnajack.Jack;
@@ -124,51 +124,51 @@ public final class ARI1MiniJackHost
       samplers.createInstrument(services);
 
     final var samplerOutL =
-      (ARI1PortOutputAudio)
+      (ARI1PortTargetAudio)
         services.declaredPort(
-          new ARI1PortId(0),
-          ARI1PortOutputAudioType.class
+          new ARI1PortNumber(0),
+          ARI1PortTargetAudioType.class
         );
 
     final var samplerOutR =
-      (ARI1PortOutputAudio)
+      (ARI1PortTargetAudio)
         services.declaredPort(
-          new ARI1PortId(1),
-          ARI1PortOutputAudioType.class
+          new ARI1PortNumber(1),
+          ARI1PortTargetAudioType.class
         );
 
     final var samplerNoteIn =
-      (ARI1PortInputNote)
+      (ARI1PortSourceNote)
         services.declaredPort(
-          new ARI1PortId(2),
-          ARI1PortInputNoteType.class
+          new ARI1PortNumber(2),
+          ARI1PortSourceNoteType.class
         );
 
     final var parameterSampleMap =
       (ARI1ParameterSampleMap)
         services.declaredParameter(
-          new ARI1ParameterId(0),
+          new ARI1ParameterNumber(0),
           ARI1ParameterSampleMapType.class
         );
 
     final var parameterSpeed =
       (ARI1ParameterReal)
         services.declaredParameter(
-          new ARI1ParameterId(1),
+          new ARI1ParameterNumber(1),
           ARI1ParameterRealType.class
         );
 
     final var parameterGrainJitter =
       (ARI1ParameterReal)
         services.declaredParameter(
-          new ARI1ParameterId(2),
+          new ARI1ParameterNumber(2),
           ARI1ParameterRealType.class
         );
 
     final var parameterGrainLength =
       (ARI1ParameterReal)
         services.declaredParameter(
-          new ARI1ParameterId(3),
+          new ARI1ParameterNumber(3),
           ARI1ParameterRealType.class
         );
 
@@ -284,8 +284,8 @@ public final class ARI1MiniJackHost
         // parameterSpeed.valueChange(0, Math.random());
         // parameterGrainLength.valueChange(0, Math.random() * 40.0);
 
-        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterSpeed.id()));
-        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterGrainLength.id()));
+        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterSpeed.number()));
+        // messages.add(new ARI1EventConfigurationParameterChanged(0, parameterGrainLength.number()));
 
       } catch (final InterruptedException e) {
         Thread.currentThread().interrupt();

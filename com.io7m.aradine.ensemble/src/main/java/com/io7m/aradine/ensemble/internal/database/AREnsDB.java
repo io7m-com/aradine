@@ -320,6 +320,8 @@ public final class AREnsDB
     throws SQLException, ARDBException
   {
     setWALMode(connection);
+    setSynchronous(connection);
+    setSecureDelete(connection);
     connection.setAutoCommit(false);
     setTrustedSchemaOff(connection);
     createRegexpFunction(connection);
@@ -337,6 +339,8 @@ public final class AREnsDB
     throws SQLException, ARDBException
   {
     setWALMode(connection);
+    setSynchronous(connection);
+    setSecureDelete(connection);
     connection.setAutoCommit(false);
     setTrustedSchemaOff(connection);
     createRegexpFunction(connection);
@@ -363,6 +367,28 @@ public final class AREnsDB
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA mmap_size = 0;");
+    } catch (final Exception e) {
+      throw AREnsDBExceptions.wrap(e);
+    }
+  }
+
+  private static void setSecureDelete(
+    final SQLiteConnection connection)
+    throws ARDBException
+  {
+    try (var st = connection.createStatement()) {
+      st.execute("PRAGMA secure_delete = on;");
+    } catch (final Exception e) {
+      throw AREnsDBExceptions.wrap(e);
+    }
+  }
+
+  private static void setSynchronous(
+    final SQLiteConnection connection)
+    throws ARDBException
+  {
+    try (var st = connection.createStatement()) {
+      st.execute("PRAGMA synchronous = EXTRA;");
     } catch (final Exception e) {
       throw AREnsDBExceptions.wrap(e);
     }

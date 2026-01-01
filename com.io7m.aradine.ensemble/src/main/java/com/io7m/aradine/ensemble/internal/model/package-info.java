@@ -14,56 +14,11 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.api.ports;
-
-import java.util.Set;
-
 /**
- * The type of ports.
+ * Modular programmable synthesis (Ensemble [internals])
  */
 
-public sealed interface ARPortType
-  permits ARPortEnsemble, ARPortInstrument
-{
-  /**
-   * @return The port ID
-   */
+@Version("1.0.0")
+package com.io7m.aradine.ensemble.internal.model;
 
-  ARPortID id();
-
-  /**
-   * @return The port number
-   */
-
-  ARPortNumber number();
-
-  /**
-   * @return The port label
-   */
-
-  String label();
-
-  /**
-   * @return The port semantics
-   */
-
-  Set<String> semantics();
-
-  /**
-   * @return The port kind
-   */
-
-  ARPortKind kind();
-
-  /**
-   * @return The port direction
-   */
-
-  ARPortDirection direction();
-
-  /**
-   * @return The port category
-   */
-
-  ARPortCategory category();
-}
+import org.osgi.annotation.versioning.Version;

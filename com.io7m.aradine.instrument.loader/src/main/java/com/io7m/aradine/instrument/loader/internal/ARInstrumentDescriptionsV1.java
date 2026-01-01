@@ -21,7 +21,7 @@ import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.ports.ARPortInstrument;
+import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
@@ -72,7 +72,7 @@ final class ARInstrumentDescriptionsV1
     );
   }
 
-  private static Map<ARPortID, ARPortInstrument>
+  private static Map<ARPortID, ARPort>
   fromV1Ports(
     final ARInstrumentPortAssignerType portAssigner,
     final ARInstrumentInstanceID instanceID,
@@ -84,7 +84,7 @@ final class ARInstrumentDescriptionsV1
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private static Map.Entry<ARPortID, ARPortInstrument>
+  private static Map.Entry<ARPortID, ARPort>
   fromV1PortEntry(
     final ARInstrumentPortAssignerType portAssigner,
     final ARInstrumentInstanceID instanceID,
@@ -96,7 +96,7 @@ final class ARInstrumentDescriptionsV1
     );
   }
 
-  private static ARPortInstrument fromV1Port(
+  private static ARPort fromV1Port(
     final ARInstrumentPortAssignerType portAssigner,
     final ARInstrumentInstanceID instanceID,
     final ARI1PortDescription port)
@@ -104,7 +104,7 @@ final class ARInstrumentDescriptionsV1
     final var number =
       fromV1PortNumber(port.number());
 
-    return new ARPortInstrument(
+    return new ARPort(
       instanceID,
       portAssigner.assign(instanceID, number),
       fromV1PortKind(port.kind()),

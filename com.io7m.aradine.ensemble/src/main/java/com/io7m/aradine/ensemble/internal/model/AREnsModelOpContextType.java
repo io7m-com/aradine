@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,23 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.api.ports;
+package com.io7m.aradine.ensemble.internal.model;
 
 /**
- * The category of a port.
+ * The context of a model op.
  */
 
-public enum ARPortCategory
+public interface AREnsModelOpContextType
 {
-  /**
-   * The port is on an instrument.
-   */
 
-  AR_INSTRUMENT,
-
-  /**
-   * The port is on an ensemble.
-   */
-
-  AR_ENSEMBLE
 }

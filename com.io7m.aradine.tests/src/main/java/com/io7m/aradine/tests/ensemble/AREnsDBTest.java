@@ -16,20 +16,25 @@
 
 package com.io7m.aradine.tests.ensemble;
 
+import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.instrument.ARInstrumentReference;
+import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortConnection;
 import com.io7m.aradine.api.ports.ARPortDirection;
-import com.io7m.aradine.api.ports.ARPortEnsemble;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.api.ports.ARPortType;
 import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
+import com.io7m.aradine.ensemble.internal.database.AREnsQInstrumentPutType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectionListType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortDisconnectType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortListType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortPutType;
+import com.io7m.lanark.core.RDottedName;
+import com.io7m.verona.core.Version;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,40 +89,89 @@ public final class AREnsDBTest
   }
 
   @Test
-  public void testPortPutGetEnsemble()
+  public void testPortPutGet()
     throws Exception
   {
     final var file =
       this.directory.resolve("test.aens");
 
-    final var portsWritten =
-      new ArrayList<ARPortType>();
-    final var portsRead =
-      new ArrayList<ARPortType>();
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+    final ARInstrumentInstanceID targetId =
+      ARInstrumentInstanceID.random();
 
-    int number = 0;
-    for (final var kind : ARPortKind.values()) {
-      for (final var direction : ARPortDirection.values()) {
+    final var portsWritten =
+      new ArrayList<ARPort>();
+    final var portsRead =
+      new ArrayList<ARPort>();
+
+    {
+      int number = 0;
+      for (final var kind : ARPortKind.values()) {
         for (int index = 0; index < 3; ++index) {
           portsWritten.add(
-            new ARPortEnsemble(
+            new ARPort(
+              sourceId,
               new ARPortID(UUID.randomUUID()),
               kind,
-              direction,
+              ARPortDirection.AR_SOURCE,
               new ARPortNumber(number),
               "Label " + number + " " + index,
-              Set.of("x","y","z")
+              Set.of("x", "y", "z")
             )
           );
           ++number;
         }
       }
     }
+
+    {
+      int number = 0;
+      for (final var kind : ARPortKind.values()) {
+        for (int index = 0; index < 3; ++index) {
+          portsWritten.add(
+            new ARPort(
+              targetId,
+              new ARPortID(UUID.randomUUID()),
+              kind,
+              ARPortDirection.AR_TARGET,
+              new ARPortNumber(number),
+              "Label " + number + " " + index,
+              Set.of("x", "y", "z")
+            )
+          );
+          ++number;
+        }
+      }
+    }
+
     assertEquals(12, portsWritten.size());
     portsWritten.sort(Comparator.comparing(o -> o.id().toString()));
 
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
         for (final var port : portsWritten) {
           t.execute(AREnsQPortPutType.class, port);
         }
@@ -127,9 +181,9 @@ public final class AREnsDBTest
       try (var t = db.openTransaction()) {
         AREnsQPortListType.Parameters parameters =
           new AREnsQPortListType.Parameters(
-          Optional.empty(),
-          5
-        );
+            Optional.empty(),
+            5
+          );
 
         while (true) {
           final var r = t.execute(AREnsQPortListType.class, parameters);
@@ -182,8 +236,34 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+    final ARInstrumentInstanceID targetId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
     final var port0 =
-      new ARPortEnsemble(
+      new ARPort(
+        sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
@@ -193,7 +273,8 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPortEnsemble(
+      new ARPort(
+        targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
@@ -204,6 +285,8 @@ public final class AREnsDBTest
 
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
         t.execute(AREnsQPortPutType.class, port0);
         t.execute(AREnsQPortPutType.class, port1);
         t.commit();
@@ -218,11 +301,11 @@ public final class AREnsDBTest
       }
 
       try (var t = db.openTransaction()) {
-        final var conns = 
+        final var conns =
           t.execute(
-          AREnsQPortConnectionListType.class,
-          new AREnsQPortConnectionListType.Parameters(Optional.empty(), 100)
-        );
+            AREnsQPortConnectionListType.class,
+            new AREnsQPortConnectionListType.Parameters(Optional.empty(), 100)
+          );
         assertEquals(
           List.of(
             new ARPortConnection(port0.id(), port1.id())
@@ -263,8 +346,34 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+    final ARInstrumentInstanceID targetId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
     final var port0 =
-      new ARPortEnsemble(
+      new ARPort(
+        sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
@@ -274,7 +383,8 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPortEnsemble(
+      new ARPort(
+        targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
@@ -285,18 +395,21 @@ public final class AREnsDBTest
 
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
         t.execute(AREnsQPortPutType.class, port0);
         t.execute(AREnsQPortPutType.class, port1);
         t.commit();
       }
 
       try (var t = db.openTransaction()) {
-        final var ex = assertThrows(ARDBException.class, () -> {
-          t.execute(
-            AREnsQPortConnectType.class,
-            new ARPortConnection(port1.id(), port0.id())
-          );
-        });
+        final var ex = assertThrows(
+          ARDBException.class, () -> {
+            t.execute(
+              AREnsQPortConnectType.class,
+              new ARPortConnection(port1.id(), port0.id())
+            );
+          });
         assertEquals("error-target-port-target", ex.errorCode());
       }
     }
@@ -309,8 +422,34 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+    final ARInstrumentInstanceID targetId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
     final var port0 =
-      new ARPortEnsemble(
+      new ARPort(
+        sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
@@ -320,7 +459,8 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPortEnsemble(
+      new ARPort(
+        targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
@@ -331,18 +471,21 @@ public final class AREnsDBTest
 
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
         t.execute(AREnsQPortPutType.class, port0);
         t.execute(AREnsQPortPutType.class, port1);
         t.commit();
       }
 
       try (var t = db.openTransaction()) {
-        final var ex = assertThrows(ARDBException.class, () -> {
-          t.execute(
-            AREnsQPortConnectType.class,
-            new ARPortConnection(port1.id(), port0.id())
-          );
-        });
+        final var ex = assertThrows(
+          ARDBException.class, () -> {
+            t.execute(
+              AREnsQPortConnectType.class,
+              new ARPortConnection(port1.id(), port0.id())
+            );
+          });
         assertEquals("error-source-port-source", ex.errorCode());
       }
     }
@@ -355,31 +498,59 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+    final ARInstrumentInstanceID targetId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
     final var port0 =
-      new ARPortEnsemble(
+      new ARPort(
+        sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
         new ARPortNumber(0),
-        "AudioIn",
+        "AudioSource0",
         Set.of()
       );
 
     final var port1 =
-      new ARPortEnsemble(
+      new ARPort(
+        sourceId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
-        ARPortDirection.AR_TARGET,
+        ARPortDirection.AR_SOURCE,
         new ARPortNumber(1),
-        "AudioOut",
+        "AudioSource1",
         Set.of()
       );
 
     final var port2 =
-      new ARPortEnsemble(
+      new ARPort(
+        targetId,
         ARPortID.ofString("019f798d-a28b-4795-94d8-874d0d5ec069"),
         ARPortKind.AR_AUDIO,
-        ARPortDirection.AR_SOURCE,
+        ARPortDirection.AR_TARGET,
         new ARPortNumber(2),
         "AudioIn2",
         Set.of()
@@ -387,6 +558,8 @@ public final class AREnsDBTest
 
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
         t.execute(AREnsQPortPutType.class, port0);
         t.execute(AREnsQPortPutType.class, port1);
         t.execute(AREnsQPortPutType.class, port2);
@@ -396,17 +569,81 @@ public final class AREnsDBTest
       try (var t = db.openTransaction()) {
         t.execute(
           AREnsQPortConnectType.class,
-          new ARPortConnection(port0.id(), port1.id())
+          new ARPortConnection(port0.id(), port2.id())
         );
         t.commit();
 
-        final var ex = assertThrows(ARDBException.class, () -> {
-          t.execute(
-            AREnsQPortConnectType.class,
-            new ARPortConnection(port2.id(), port1.id())
-          );
-        });
+        final var ex = assertThrows(
+          ARDBException.class, () -> {
+            t.execute(
+              AREnsQPortConnectType.class,
+              new ARPortConnection(port1.id(), port2.id())
+            );
+          });
         assertEquals("error-target-port-connected", ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testPortConnectSelfInstrument()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final ARInstrumentInstanceID sourceId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var port0 =
+      new ARPort(
+        sourceId,
+        ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0),
+        "AudioSource0",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        sourceId,
+        ARPortID.ofString("019f798d-a28b-4795-94d8-874d0d5ec069"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(1),
+        "AudioTarget1",
+        Set.of()
+      );
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQPortPutType.class, port0);
+        t.execute(AREnsQPortPutType.class, port1);
+        t.commit();
+      }
+
+      try (var t = db.openTransaction()) {
+        final var ex = assertThrows(
+          ARDBException.class, () -> {
+            t.execute(
+              AREnsQPortConnectType.class,
+              new ARPortConnection(port0.id(), port1.id())
+            );
+          });
+        assertEquals("error-source-target-port-instrument-self", ex.errorCode());
       }
     }
   }

@@ -66,14 +66,13 @@ CREATE TABLE instruments (
 ]]></Statement>
 
     <Comment>
-      The ports table stores set of ports on the ensemble and all loaded instrument instances.
+      The ports table stores set of ports on all loaded instrument instances.
     </Comment>
 
     <Statement><![CDATA[
 CREATE TABLE ports (
   port_id                     TEXT    NOT NULL PRIMARY KEY,
-  port_category               TEXT    NOT NULL,
-  port_instrument_instance    TEXT,
+  port_instrument_instance    TEXT    NOT NULL,
   port_kind                   TEXT    NOT NULL,
   port_direction              TEXT    NOT NULL,
   port_number                 INTEGER NOT NULL,
@@ -82,12 +81,6 @@ CREATE TABLE ports (
 
   CONSTRAINT port_id_valid
     CHECK (port_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
-
-  CONSTRAINT port_category_valid
-    CHECK (
-         (port_category = 'AR_ENSEMBLE')
-      OR (port_category = 'AR_INSTRUMENT')
-    ),
 
   CONSTRAINT port_kind_valid
     CHECK (
@@ -109,24 +102,7 @@ CREATE TABLE ports (
     CHECK ((port_number >= 0) AND (port_number <= 4294967295)),
 
   CONSTRAINT port_unique
-    UNIQUE (port_instrument_instance, port_number),
-
-  CONSTRAINT port_instrument_valid
-    CHECK (
-         (port_instrument_instance IS NULL)
-      OR (port_instrument_instance REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-    ),
-
-  CONSTRAINT port_category_invariant
-    CHECK (
-      CASE port_category
-        WHEN 'AR_INSTRUMENT' THEN
-          (port_instrument_instance IS NOT NULL)
-        WHEN 'AR_ENSEMBLE' THEN
-          (port_instrument_instance IS NULL)
-        ELSE 0
-      END
-    )
+    UNIQUE (port_instrument_instance, port_number)
 
 ) STRICT
 ]]></Statement>
@@ -208,6 +184,34 @@ BEGIN
       1
     ELSE
       RAISE(ABORT, 'Target port must have AR_TARGET direction.')
+  END;
+END;
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_instrument_insert_self
+  BEFORE INSERT ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_instrument_instance FROM ports WHERE ports.port_id = NEW.port_connection_source)
+      <> (SELECT ports.port_instrument_instance FROM ports WHERE ports.port_id = NEW.port_connection_target) THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Source and target ports must belong to different instruments.')
+  END;
+END;
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TRIGGER port_connections_check_instrument_update_self
+  BEFORE UPDATE ON port_connections
+BEGIN
+  SELECT CASE
+    WHEN (SELECT ports.port_instrument_instance FROM ports WHERE ports.port_id = NEW.port_connection_source)
+      <> (SELECT ports.port_instrument_instance FROM ports WHERE ports.port_id = NEW.port_connection_target) THEN
+      1
+    ELSE
+      RAISE(ABORT, 'Source and target ports must belong to different instruments.')
   END;
 END;
 ]]></Statement>

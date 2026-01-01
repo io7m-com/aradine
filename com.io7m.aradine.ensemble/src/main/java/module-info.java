@@ -27,6 +27,7 @@ module com.io7m.aradine.ensemble
   requires com.io7m.aradine.database.api;
 
   requires com.io7m.anethum.api;
+  requires com.io7m.jaffirm.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.jxe.core;
   requires com.io7m.lanark.core;
@@ -34,9 +35,12 @@ module com.io7m.aradine.ensemble
   requires com.io7m.trasco.vanilla;
   requires com.io7m.verona.core;
   requires java.sql;
+  requires org.jgrapht.core;
   requires org.slf4j;
   requires org.xerial.sqlitejdbc;
 
   exports com.io7m.aradine.ensemble.internal.database
+    to com.io7m.aradine.tests;
+  exports com.io7m.aradine.ensemble.internal.model
     to com.io7m.aradine.tests;
 }

@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.api.ports.ARPortType;
+import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -38,7 +38,6 @@ public enum AREnsQPortPut
   private static final String QUERY_TEXT = """
     INSERT INTO ports (
       port_id,
-      port_category,
       port_instrument_instance,
       port_kind,
       port_direction,
@@ -52,8 +51,7 @@ public enum AREnsQPortPut
       $4,
       $5,
       $6,
-      $7,
-      $8
+      $7
     )
     """;
 
@@ -72,7 +70,7 @@ public enum AREnsQPortPut
   @Override
   public ARDBUnit execute(
     final ARDBTransactionType transaction,
-    final ARPortType port)
+    final ARPort port)
     throws ARDBException
   {
     final var connection =
@@ -81,10 +79,8 @@ public enum AREnsQPortPut
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       final var portId =
         port.id().toString();
-      final var portCategory =
-        port.category().name();
       final var portInstrumentInstance =
-        AREnsPorts.portInstrumentInstance(port);
+        port.instrumentInstance().toString();
       final var portKind =
         port.kind().name();
       final var portDirection =
@@ -97,13 +93,12 @@ public enum AREnsQPortPut
         String.join(",", port.semantics());
 
       st.setString(1, portId);
-      st.setString(2, portCategory);
-      st.setString(3, portInstrumentInstance);
-      st.setString(4, portKind);
-      st.setString(5, portDirection);
-      st.setLong(6, portNumber);
-      st.setString(7, portLabel);
-      st.setString(8, portSemantics);
+      st.setString(2, portInstrumentInstance);
+      st.setString(3, portKind);
+      st.setString(4, portDirection);
+      st.setLong(5, portNumber);
+      st.setString(6, portLabel);
+      st.setString(7, portSemantics);
       st.execute();
       return ARDBUnit.UNIT;
     } catch (final Exception e) {

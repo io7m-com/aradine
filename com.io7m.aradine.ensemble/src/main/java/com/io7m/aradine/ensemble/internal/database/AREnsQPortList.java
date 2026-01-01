@@ -17,14 +17,11 @@
 package com.io7m.aradine.ensemble.internal.database;
 
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.ports.ARPortCategory;
+import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortDirection;
-import com.io7m.aradine.api.ports.ARPortEnsemble;
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.ports.ARPortInstrument;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.api.ports.ARPortType;
 import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -55,7 +52,6 @@ public enum AREnsQPortList
   private static final String QUERY_TEXT = """
     SELECT
       ports.port_id,
-      ports.port_category,
       ports.port_instrument_instance,
       ports.port_kind,
       ports.port_direction,
@@ -70,7 +66,6 @@ public enum AREnsQPortList
   private static final String QUERY_TEXT_WITH_START = """
     SELECT
       ports.port_id,
-      ports.port_category,
       ports.port_instrument_instance,
       ports.port_kind,
       ports.port_direction,
@@ -83,15 +78,13 @@ public enum AREnsQPortList
     LIMIT $2
     """;
 
-  private static List<ARPortType> readResults(
+  private static List<ARPort> readResults(
     final PreparedStatement st)
     throws SQLException
   {
-    final var results = new ArrayList<ARPortType>();
+    final var results = new ArrayList<ARPort>();
     try (var rs = st.executeQuery()) {
       while (rs.next()) {
-        final var category =
-          ARPortCategory.valueOf(rs.getString("port_category"));
         final var portId =
           new ARPortID(UUID.fromString(rs.getString("port_id")));
         final var kind =
@@ -106,31 +99,17 @@ public enum AREnsQPortList
           semanticsOf(rs.getString("port_semantics"));
 
         results.add(
-          switch (category) {
-            case AR_INSTRUMENT -> {
-              yield new ARPortInstrument(
-                new ARInstrumentInstanceID(
-                  UUID.fromString(rs.getString("port_instrument_instance"))
-                ),
-                portId,
-                kind,
-                direction,
-                number,
-                label,
-                semantics
-              );
-            }
-            case AR_ENSEMBLE -> {
-              yield new ARPortEnsemble(
-                portId,
-                kind,
-                direction,
-                number,
-                label,
-                semantics
-              );
-            }
-          }
+          new ARPort(
+            new ARInstrumentInstanceID(
+              UUID.fromString(rs.getString("port_instrument_instance"))
+            ),
+            portId,
+            kind,
+            direction,
+            number,
+            label,
+            semantics
+          )
         );
       }
     }
@@ -145,7 +124,7 @@ public enum AREnsQPortList
       .collect(Collectors.toSet());
   }
 
-  private static List<ARPortType> executeWithoutStart(
+  private static List<ARPort> executeWithoutStart(
     final Connection connection,
     final AREnsQPortListType.Parameters parameters)
     throws ARDBException
@@ -158,10 +137,10 @@ public enum AREnsQPortList
     }
   }
 
-  private static List<ARPortType> executeWithStart(
+  private static List<ARPort> executeWithStart(
     final Connection connection,
     final AREnsQPortListType.Parameters parameters,
-    final ARPortType portStart)
+    final ARPort portStart)
     throws ARDBException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT_WITH_START)) {
@@ -186,7 +165,7 @@ public enum AREnsQPortList
   }
 
   @Override
-  public List<ARPortType> execute(
+  public List<ARPort> execute(
     final ARDBTransactionType transaction,
     final AREnsQPortListType.Parameters parameters)
     throws ARDBException

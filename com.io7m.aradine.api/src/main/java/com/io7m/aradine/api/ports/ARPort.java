@@ -33,7 +33,7 @@ import java.util.Set;
  * @param semantics          The port semantics
  */
 
-public record ARPortInstrument(
+public record ARPort(
   ARInstrumentInstanceID instrumentInstance,
   ARPortID id,
   ARPortKind kind,
@@ -41,7 +41,6 @@ public record ARPortInstrument(
   ARPortNumber number,
   String label,
   Set<String> semantics)
-  implements ARPortType
 {
   /**
    * An instrument port.
@@ -55,7 +54,7 @@ public record ARPortInstrument(
    * @param semantics          The port semantics
    */
 
-  public ARPortInstrument
+  public ARPort
   {
     Objects.requireNonNull(instrumentInstance, "Instrument");
     Objects.requireNonNull(id, "ID");
@@ -64,11 +63,5 @@ public record ARPortInstrument(
     Objects.requireNonNull(number, "Number");
     Objects.requireNonNull(label, "Label");
     semantics = Set.copyOf(semantics);
-  }
-
-  @Override
-  public ARPortCategory category()
-  {
-    return ARPortCategory.AR_INSTRUMENT;
   }
 }

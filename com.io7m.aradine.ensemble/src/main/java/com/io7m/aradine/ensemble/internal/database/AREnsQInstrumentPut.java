@@ -55,7 +55,7 @@ public enum AREnsQInstrumentPut
       $6,
       $7
     ) ON CONFLICT DO UPDATE SET
-      instrument_group              = $2
+      instrument_group              = $2,
       instrument_name               = $3,
       instrument_version_major      = $4,
       instrument_version_minor      = $5,

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,25 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.ensemble.internal.database;
+package com.io7m.aradine.ensemble.internal.model;
 
-import com.io7m.aradine.api.ports.ARPortEnsemble;
-import com.io7m.aradine.api.ports.ARPortInstrument;
-import com.io7m.aradine.api.ports.ARPortType;
+import com.io7m.aradine.api.ARException;
 
-final class AREnsPorts
+import java.util.List;
+
+/**
+ * A model command.
+ */
+
+public interface AREnsModelCommandType
 {
-  private AREnsPorts()
-  {
+  /**
+   * Produce a list of model ops to be executed.
+   *
+   * @param context The command context
+   *
+   * @return A list of model ops
+   *
+   * @throws ARException On errors
+   */
 
-  }
-
-  static String portInstrumentInstance(
-    final ARPortType port)
-  {
-    return switch (port) {
-      case ARPortEnsemble _ -> null;
-      case final ARPortInstrument i -> i.instrumentInstance().toString();
-    };
-  }
+  List<AREnsModelOpType> compile(
+    AREnsModelCommandContextType context)
+    throws ARException;
 }

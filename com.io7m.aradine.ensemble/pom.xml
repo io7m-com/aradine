@@ -67,6 +67,14 @@
       <groupId>com.io7m.lanark</groupId>
       <artifactId>com.io7m.lanark.core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jaffirm</groupId>
+      <artifactId>com.io7m.jaffirm.core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>

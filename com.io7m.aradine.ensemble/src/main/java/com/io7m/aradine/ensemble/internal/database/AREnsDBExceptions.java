@@ -115,6 +115,16 @@ public final class AREnsDBExceptions
       );
     }
 
+    if (message.contains("Source and target ports must belong to different instruments.")) {
+      return new ARDBException(
+        "Source and target port must belong to different instruments.",
+        x,
+        "error-source-target-port-instrument-self",
+        Map.of(),
+        Optional.empty()
+      );
+    }
+
     return new ARDBException(
       message,
       x,

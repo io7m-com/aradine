@@ -17,7 +17,7 @@
 package com.io7m.aradine.api.instrument;
 
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.ports.ARPortInstrument;
+import com.io7m.aradine.api.ports.ARPort;
 
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +33,7 @@ import java.util.Objects;
 public record ARInstrumentDescription(
   ARInstrumentInstanceID instanceId,
   ARInstrumentID identifier,
-  Map<ARPortID, ARPortInstrument> ports)
+  Map<ARPortID, ARPort> ports)
 {
   /**
    * A description of a loaded instrument.
@@ -56,7 +56,7 @@ public record ARInstrumentDescription(
 
   private void checkEntry(
     final ARInstrumentInstanceID expectedInstanceId,
-    final Map.Entry<ARPortID, ARPortInstrument> entry)
+    final Map.Entry<ARPortID, ARPort> entry)
   {
     final var portId = entry.getKey();
     final var port = entry.getValue();

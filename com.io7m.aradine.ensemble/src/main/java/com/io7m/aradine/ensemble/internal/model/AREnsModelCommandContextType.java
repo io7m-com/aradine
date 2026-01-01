@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,18 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.ensemble.internal.database;
-
-import com.io7m.aradine.api.ports.ARPort;
-import com.io7m.aradine.database.api.ARDBQueryType;
-import com.io7m.aradine.database.api.ARDBUnit;
+package com.io7m.aradine.ensemble.internal.model;
 
 /**
- * Put/update a port.
+ * The context of a model command.
  */
 
-public interface AREnsQPortPutType
-  extends ARDBQueryType<ARPort, ARDBUnit>
+public interface AREnsModelCommandContextType
 {
 
 }

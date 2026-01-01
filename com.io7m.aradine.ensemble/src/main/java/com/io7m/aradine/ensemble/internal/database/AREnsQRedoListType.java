@@ -14,23 +14,43 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.ensemble.internal.database;
+
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 /**
- * Modular programmable synthesis (Database API)
+ * List redo stack.
  */
 
-module com.io7m.aradine.database.api
+public interface AREnsQRedoListType
+  extends ARDBQueryType<AREnsQRedoListType.Parameters, List<AREnsModelCommandRecord>>
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  /**
+   * The parameters.
+   *
+   * @param start The starting value
+   * @param limit The limit value
+   */
 
-  requires com.io7m.aradine.api;
+  record Parameters(
+    Optional<Long> start,
+    int limit)
+  {
+    /**
+     * The parameters.
+     *
+     * @param start The starting value
+     * @param limit The limit value
+     */
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
-
-  exports com.io7m.aradine.database.api;
+    public Parameters
+    {
+      Objects.requireNonNull(start, "Start");
+    }
+  }
 }

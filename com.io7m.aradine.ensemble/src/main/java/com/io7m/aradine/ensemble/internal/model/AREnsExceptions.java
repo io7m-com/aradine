@@ -14,23 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Modular programmable synthesis (Database API)
- */
+package com.io7m.aradine.ensemble.internal.model;
 
-module com.io7m.aradine.database.api
+import com.io7m.aradine.api.ARException;
+
+import java.util.Map;
+import java.util.Optional;
+
+final class AREnsExceptions
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  private AREnsExceptions()
+  {
 
-  requires com.io7m.aradine.api;
+  }
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
-
-  exports com.io7m.aradine.database.api;
+  public static ARException wrap(
+    final Exception e)
+  {
+    return new ARException(
+      e.getMessage(),
+      e,
+      "error-exception",
+      Map.of(),
+      Optional.empty()
+    );
+  }
 }

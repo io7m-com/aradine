@@ -25,8 +25,11 @@ module com.io7m.aradine.ensemble
 
   requires com.io7m.aradine.api;
   requires com.io7m.aradine.database.api;
+  requires com.io7m.aradine.inventory.api;
 
+  requires com.fasterxml.jackson.annotation;
   requires com.io7m.anethum.api;
+  requires com.io7m.dixmont.core;
   requires com.io7m.jaffirm.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.jxe.core;
@@ -38,9 +41,21 @@ module com.io7m.aradine.ensemble
   requires org.jgrapht.core;
   requires org.slf4j;
   requires org.xerial.sqlitejdbc;
+  requires tools.jackson.core;
+  requires tools.jackson.databind;
+  requires com.io7m.jattribute.core;
+
+  opens com.io7m.aradine.ensemble.internal.model
+    to tools.jackson.databind;
 
   exports com.io7m.aradine.ensemble.internal.database
     to com.io7m.aradine.tests;
+  exports com.io7m.aradine.ensemble.internal.graph
+    to com.io7m.aradine.tests;
+  exports com.io7m.aradine.ensemble.internal.json_v1
+    to com.io7m.aradine.tests;
   exports com.io7m.aradine.ensemble.internal.model
+    to com.io7m.aradine.tests;
+  exports com.io7m.aradine.ensemble.internal.ops_v1
     to com.io7m.aradine.tests;
 }

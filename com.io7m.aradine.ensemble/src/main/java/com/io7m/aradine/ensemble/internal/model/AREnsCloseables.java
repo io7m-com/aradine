@@ -14,23 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.ensemble.internal.model;
+
+import com.io7m.aradine.api.ARException;
+import com.io7m.jmulticlose.core.CloseableCollection;
+import com.io7m.jmulticlose.core.CloseableCollectionType;
+
+import java.util.Map;
+import java.util.Optional;
+
 /**
- * Modular programmable synthesis (Database API)
+ * Closeable collections.
  */
 
-module com.io7m.aradine.database.api
+public final class AREnsCloseables
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  private AREnsCloseables()
+  {
 
-  requires com.io7m.aradine.api;
+  }
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
+  /**
+   * @return A new collection
+   */
 
-  exports com.io7m.aradine.database.api;
+  public static CloseableCollectionType<ARException> create()
+  {
+    return CloseableCollection.create(() -> {
+      return new ARException(
+        "Closing a resource failed.",
+        "error-resource-close",
+        Map.of(),
+        Optional.empty()
+      );
+    });
+  }
 }

@@ -16,12 +16,22 @@
 
 package com.io7m.aradine.ensemble.internal.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.io7m.aradine.api.ARException;
 
 /**
  * A model op.
+ *
+ * <p>Model ops are required to be <i>statelessly reversible</i>. That is,
+ * an op can be executed and then undone without the op implementation
+ * having to know anything about the prior state of the model.</p>
  */
 
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = "@Type"
+)
 public interface AREnsModelOpType
 {
   /**

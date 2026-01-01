@@ -16,40 +16,40 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
+import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 final class AREnsDBQueries
 {
   static {
-    final Map<Class<?>, ARDBQueryType<?, ?>> q = new HashMap<>();
-    q.put(
-      AREnsQInstrumentPutType.class,
-      AREnsQInstrumentPut.INSTANCE
-    );
-    q.put(
-      AREnsQPortConnectType.class,
-      AREnsQPortConnect.INSTANCE
-    );
-    q.put(
-      AREnsQPortConnectionListType.class,
-      AREnsQPortConnectionList.INSTANCE
-    );
-    q.put(
-      AREnsQPortDisconnectType.class,
-      AREnsQPortDisconnect.INSTANCE
-    );
-    q.put(
-      AREnsQPortListType.class,
-      AREnsQPortList.INSTANCE
-    );
-    q.put(
-      AREnsQPortPutType.class,
-      AREnsQPortPut.INSTANCE
-    );
-    QUERIES = Map.copyOf(q);
+    QUERIES =
+      Map.copyOf(
+        Stream.of(
+          AREnsQInstrumentPut.INSTANCE,
+          AREnsQPortConnect.INSTANCE,
+          AREnsQPortConnectionList.INSTANCE,
+          AREnsQPortDisconnect.INSTANCE,
+          AREnsQPortList.INSTANCE,
+          AREnsQPortPut.INSTANCE,
+          AREnsQRedoClear.INSTANCE,
+          AREnsQRedoList.INSTANCE,
+          AREnsQRedoPeek.INSTANCE,
+          AREnsQRedoPop.INSTANCE,
+          AREnsQRedoPush.INSTANCE,
+          AREnsQUndoClear.INSTANCE,
+          AREnsQUndoList.INSTANCE,
+          AREnsQUndoPeek.INSTANCE,
+          AREnsQUndoPop.INSTANCE,
+          AREnsQUndoPush.INSTANCE
+        ).collect(Collectors.toMap(
+          ARDBQueryProviderType::queryInterface,
+          ARDBQueryProviderType::queryInstance
+        ))
+      );
   }
 
   private static final Map<Class<?>, ARDBQueryType<?, ?>> QUERIES;

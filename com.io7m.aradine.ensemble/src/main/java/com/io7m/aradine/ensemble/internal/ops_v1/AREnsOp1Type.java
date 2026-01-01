@@ -14,35 +14,34 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.ensemble.internal.model;
+package com.io7m.aradine.ensemble.internal.ops_v1;
 
-import com.io7m.aradine.api.ARException;
-
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.io7m.aradine.ensemble.internal.model.AREnsModelOpType;
 
 /**
- * A model command.
+ * A model op.
+ *
+ * <p>Model ops are required to be <i>statelessly reversible</i>. That is,
+ * an op can be executed and then undone without the op implementation
+ * having to know anything about the prior state of the model.</p>
  */
 
-public interface AREnsModelCommandType
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = "@Type"
+)
+@JsonSubTypes({
+  @JsonSubTypes.Type(
+    value = AREnsOP1InstrumentLoad.class,
+    name = "AREnsOP1InstrumentLoad"
+  )
+})
+public sealed interface AREnsOp1Type
+  extends AREnsModelOpType
+  permits AREnsOP1InstrumentLoad
 {
-  /**
-   * @return A humanly-readable description of the command
-   */
 
-  String description();
-
-  /**
-   * Produce a list of model ops to be executed.
-   *
-   * @param context The command context
-   *
-   * @return A list of model ops
-   *
-   * @throws ARException On errors
-   */
-
-  List<AREnsModelOpType> compile(
-    AREnsModelCommandContextType context)
-    throws ARException;
 }

@@ -25,7 +25,7 @@ import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.ensemble.internal.model.AREnsGraph;
+import com.io7m.aradine.ensemble.internal.graph.AREnsGraph;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
 import org.junit.jupiter.api.Assertions;

@@ -14,23 +14,37 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.ensemble.internal.json_v1;
+
+import com.io7m.verona.core.Version;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+
 /**
- * Modular programmable synthesis (Database API)
+ * A version serializer.
  */
 
-module com.io7m.aradine.database.api
+public final class AREnsJVersionSerializer
+  extends ValueSerializer<Version>
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  /**
+   * A version serializer.
+   */
 
-  requires com.io7m.aradine.api;
+  public AREnsJVersionSerializer()
+  {
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
+  }
 
-  exports com.io7m.aradine.database.api;
+  @Override
+  public void serialize(
+    final Version value,
+    final JsonGenerator gen,
+    final SerializationContext ctxt)
+    throws JacksonException
+  {
+    gen.writeString(value.toString());
+  }
 }

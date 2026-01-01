@@ -26,6 +26,7 @@ import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
 import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.database.api.ARDBUnit;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
 import com.io7m.aradine.ensemble.internal.database.AREnsQInstrumentPutType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectType;
@@ -33,6 +34,17 @@ import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectionListType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortDisconnectType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortListType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortPutType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQRedoClearType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQRedoListType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQRedoPeekType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQRedoPopType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQRedoPushType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQUndoClearType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQUndoListType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPeekType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPopType;
+import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPushType;
+import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -207,7 +220,7 @@ public final class AREnsDBTest
       final var portRead =
         portsRead.get(index);
 
-      LOG.debug("[{}] {} ?= {}", index, portWrote, portRead);
+      LOG.debug("[{}] {} ?= {}", Integer.valueOf(index), portWrote, portRead);
     }
 
     for (int index = 0; index < portsWritten.size(); ++index) {
@@ -221,7 +234,8 @@ public final class AREnsDBTest
         portWrote,
         portRead,
         () -> {
-          return String.format("[%d] %s = %s", finalIndex, portWrote, portRead);
+          return String.format("[%d] %s = %s",
+                               Integer.valueOf(finalIndex), portWrote, portRead);
         }
       );
     }
@@ -644,6 +658,286 @@ public final class AREnsDBTest
             );
           });
         assertEquals("error-source-target-port-instrument-self", ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testUndoPushPop()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var cmd0 =
+      new AREnsModelCommandRecord(
+        0L,
+        OffsetDateTime.parse("2000-01-01T00:00:00+00:00"),
+        "Command 0",
+        List.of()
+      );
+
+    final var cmd1 =
+      new AREnsModelCommandRecord(
+        1L,
+        OffsetDateTime.parse("2000-01-01T00:00:01+00:00"),
+        "Command 1",
+        List.of()
+      );
+
+    final var cmd2 =
+      new AREnsModelCommandRecord(
+        2L,
+        OffsetDateTime.parse("2000-01-01T00:00:02+00:00"),
+        "Command 2",
+        List.of()
+      );
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        t.execute(AREnsQUndoPushType.class, cmd0);
+        assertEquals(
+          Optional.of(cmd0),
+          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+        );
+        t.execute(AREnsQUndoPushType.class, cmd1);
+        assertEquals(
+          Optional.of(cmd1),
+          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+        );
+        t.execute(AREnsQUndoPushType.class, cmd2);
+        assertEquals(
+          Optional.of(cmd2),
+          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+        );
+
+        assertEquals(
+          Optional.of(cmd2),
+          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.of(cmd1),
+          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.of(cmd0),
+          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.empty(),
+          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testRedoPushPop()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var cmd0 =
+      new AREnsModelCommandRecord(
+        0L,
+        OffsetDateTime.parse("2000-01-01T00:00:00+00:00"),
+        "Command 0",
+        List.of()
+      );
+
+    final var cmd1 =
+      new AREnsModelCommandRecord(
+        1L,
+        OffsetDateTime.parse("2000-01-01T00:00:01+00:00"),
+        "Command 1",
+        List.of()
+      );
+
+    final var cmd2 =
+      new AREnsModelCommandRecord(
+        2L,
+        OffsetDateTime.parse("2000-01-01T00:00:02+00:00"),
+        "Command 2",
+        List.of()
+      );
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        t.execute(AREnsQRedoPushType.class, cmd0);
+        assertEquals(
+          Optional.of(cmd0),
+          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+        );
+        t.execute(AREnsQRedoPushType.class, cmd1);
+        assertEquals(
+          Optional.of(cmd1),
+          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+        );
+        t.execute(AREnsQRedoPushType.class, cmd2);
+        assertEquals(
+          Optional.of(cmd2),
+          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+        );
+
+        assertEquals(
+          Optional.of(cmd2),
+          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.of(cmd1),
+          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.of(cmd0),
+          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+        );
+        assertEquals(
+          Optional.empty(),
+          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testUndoList()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var commandsRead =
+      new ArrayList<AREnsModelCommandRecord>();
+    final var commandsWritten =
+      new ArrayList<AREnsModelCommandRecord>();
+
+    for (int index = 0; index < 13; ++index) {
+      commandsWritten.add(
+        new AREnsModelCommandRecord(
+          index,
+          OffsetDateTime.parse("2000-01-01T00:00:00+00:00").plusSeconds(index),
+          "Command " + index,
+          List.of()
+        )
+      );
+    }
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        for (final var cmd : commandsWritten) {
+          t.execute(AREnsQUndoPushType.class, cmd);
+        }
+        t.commit();
+
+        var parameters =
+          new AREnsQUndoListType.Parameters(Optional.empty(), 5);
+
+        while (true) {
+          final var r = t.execute(AREnsQUndoListType.class, parameters);
+          if (r.isEmpty()) {
+            break;
+          }
+          commandsRead.addAll(r);
+          parameters =
+            new AREnsQUndoListType.Parameters(
+              Optional.of(Long.valueOf(r.getLast().id())),
+              5
+            );
+        }
+        assertEquals(commandsWritten, commandsRead);
+      }
+
+      try (var t = db.openTransaction()) {
+        assertEquals(
+          13,
+          t.execute(
+            AREnsQUndoListType.class,
+            new AREnsQUndoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+          ).size()
+        );
+
+        t.execute(AREnsQUndoClearType.class, ARDBUnit.UNIT);
+        t.commit();
+
+        assertEquals(
+          0,
+          t.execute(
+            AREnsQUndoListType.class,
+            new AREnsQUndoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+          ).size()
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testRedoList()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var commandsRead =
+      new ArrayList<AREnsModelCommandRecord>();
+    final var commandsWritten =
+      new ArrayList<AREnsModelCommandRecord>();
+
+    for (int index = 0; index < 13; ++index) {
+      commandsWritten.add(
+        new AREnsModelCommandRecord(
+          index,
+          OffsetDateTime.parse("2000-01-01T00:00:00+00:00").plusSeconds(index),
+          "Command " + index,
+          List.of()
+        )
+      );
+    }
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        for (final var cmd : commandsWritten) {
+          t.execute(AREnsQRedoPushType.class, cmd);
+        }
+        t.commit();
+
+        var parameters =
+          new AREnsQRedoListType.Parameters(Optional.empty(), 5);
+
+        while (true) {
+          final var r = t.execute(AREnsQRedoListType.class, parameters);
+          if (r.isEmpty()) {
+            break;
+          }
+          commandsRead.addAll(r);
+          parameters =
+            new AREnsQRedoListType.Parameters(
+              Optional.of(Long.valueOf(r.getLast().id())),
+              5
+            );
+        }
+        assertEquals(commandsWritten, commandsRead);
+      }
+
+      try (var t = db.openTransaction()) {
+        assertEquals(
+          13,
+          t.execute(
+            AREnsQRedoListType.class,
+            new AREnsQRedoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+          ).size()
+        );
+
+        t.execute(AREnsQRedoClearType.class, ARDBUnit.UNIT);
+        t.commit();
+
+        assertEquals(
+          0,
+          t.execute(
+            AREnsQRedoListType.class,
+            new AREnsQRedoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+          ).size()
+        );
       }
     }
   }

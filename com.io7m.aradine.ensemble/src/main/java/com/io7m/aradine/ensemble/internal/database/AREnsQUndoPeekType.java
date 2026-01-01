@@ -14,23 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.ensemble.internal.database;
+
+import com.io7m.aradine.database.api.ARDBQueryType;
+import com.io7m.aradine.database.api.ARDBUnit;
+import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
+
+import java.util.Optional;
+
 /**
- * Modular programmable synthesis (Database API)
+ * Peek a record from the undo stack.
  */
 
-module com.io7m.aradine.database.api
+public interface AREnsQUndoPeekType
+  extends ARDBQueryType<ARDBUnit, Optional<AREnsModelCommandRecord>>
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
 
-  requires com.io7m.aradine.api;
-
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
-
-  exports com.io7m.aradine.database.api;
 }

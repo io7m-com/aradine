@@ -225,7 +225,11 @@ CREATE TABLE undo (
   undo_id             INTEGER PRIMARY KEY NOT NULL,
   undo_description    TEXT                NOT NULL,
   undo_time           INTEGER             NOT NULL,
-  undo_data           BLOB                NOT NULL
+  undo_data_type      TEXT                NOT NULL,
+  undo_data           BLOB                NOT NULL,
+
+  CONSTRAINT undo_id_range
+    CHECK ((undo_id >= 0) AND (undo_id <= 9223372036854775807))
 ) STRICT
 ]]></Statement>
 
@@ -238,7 +242,11 @@ CREATE TABLE redo (
   redo_id             INTEGER PRIMARY KEY NOT NULL,
   redo_description    TEXT                NOT NULL,
   redo_time           INTEGER             NOT NULL,
-  redo_data           BLOB                NOT NULL
+  redo_data_type      TEXT                NOT NULL,
+  redo_data           BLOB                NOT NULL,
+
+  CONSTRAINT redo_id_range
+    CHECK ((redo_id >= 0) AND (redo_id <= 9223372036854775807))
 ) STRICT
 ]]></Statement>
   </Schema>

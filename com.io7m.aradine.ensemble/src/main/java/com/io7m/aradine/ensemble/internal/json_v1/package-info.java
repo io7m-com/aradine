@@ -15,22 +15,10 @@
  */
 
 /**
- * Modular programmable synthesis (Database API)
+ * Modular programmable synthesis (Ensemble [internals])
  */
 
-module com.io7m.aradine.database.api
-{
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+@Version("1.0.0")
+package com.io7m.aradine.ensemble.internal.json_v1;
 
-  requires com.io7m.aradine.api;
-
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
-
-  exports com.io7m.aradine.database.api;
-}
+import org.osgi.annotation.versioning.Version;

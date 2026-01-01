@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,23 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.ensemble.internal.model;
+
+import com.io7m.aradine.api.ARException;
+import com.io7m.jmulticlose.core.CloseableType;
+
+import java.util.concurrent.CompletableFuture;
+
 /**
- * Modular programmable synthesis (Database API)
+ * The model type.
  */
 
-module com.io7m.aradine.database.api
+public interface AREnsModelType
+  extends CloseableType
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  /**
+   * @return The loading operation in progress
+   */
 
-  requires com.io7m.aradine.api;
+  CompletableFuture<?> loading();
 
-  requires com.io7m.jmulticlose.core;
-  requires com.io7m.lanark.core;
-  requires com.io7m.seltzer.api;
-  requires java.sql;
+  /**
+   * Execute a model command.
+   *
+   * @param command The command
+   *
+   * @return The operation in progress
+   */
 
-  exports com.io7m.aradine.database.api;
+  CompletableFuture<?> executeCommand(
+    AREnsModelCommandType command);
+
+  @Override
+  void close()
+    throws ARException;
 }

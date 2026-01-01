@@ -31,12 +31,17 @@ final class AREnsExceptions
   public static ARException wrap(
     final Exception e)
   {
-    return new ARException(
-      e.getMessage(),
-      e,
-      "error-exception",
-      Map.of(),
-      Optional.empty()
-    );
+    return switch (e) {
+      case final ARException x -> x;
+      case final Exception x -> {
+        yield new ARException(
+          x.getMessage(),
+          x,
+          "error-exception",
+          Map.of(),
+          Optional.empty()
+        );
+      }
+    };
   }
 }

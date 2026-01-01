@@ -56,6 +56,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.verona.core;
   requires it.unimi.dsi.fastutil.core;
   requires java.desktop;
+  requires java.sql;
   requires jnajack;
   requires net.bytebuddy.agent;
   requires net.bytebuddy;

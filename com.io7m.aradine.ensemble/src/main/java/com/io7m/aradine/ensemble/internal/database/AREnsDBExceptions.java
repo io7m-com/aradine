@@ -18,6 +18,7 @@ package com.io7m.aradine.ensemble.internal.database;
 
 import com.io7m.aradine.database.api.ARDBException;
 import org.sqlite.SQLiteException;
+import tools.jackson.core.exc.StreamReadException;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -66,6 +67,18 @@ public final class AREnsDBExceptions
     final Exception e)
   {
     return switch (e) {
+      case final StreamReadException x -> {
+        yield new ARDBException(
+          x.getMessage(),
+          x,
+          "error-json-parse-exception",
+          Map.of(),
+          Optional.empty()
+        );
+      }
+      case final ARDBException x -> {
+        yield x;
+      }
       case final SQLiteException x -> {
         yield wrapSQLiteException(x);
       }

@@ -234,8 +234,9 @@ public final class AREnsDBTest
         portWrote,
         portRead,
         () -> {
-          return String.format("[%d] %s = %s",
-                               Integer.valueOf(finalIndex), portWrote, portRead);
+          return String.format(
+            "[%d] %s = %s",
+            Integer.valueOf(finalIndex), portWrote, portRead);
         }
       );
     }
@@ -657,7 +658,9 @@ public final class AREnsDBTest
               new ARPortConnection(port0.id(), port1.id())
             );
           });
-        assertEquals("error-source-target-port-instrument-self", ex.errorCode());
+        assertEquals(
+          "error-source-target-port-instrument-self",
+          ex.errorCode());
       }
     }
   }
@@ -853,7 +856,9 @@ public final class AREnsDBTest
           13,
           t.execute(
             AREnsQUndoListType.class,
-            new AREnsQUndoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+            new AREnsQUndoListType.Parameters(
+              Optional.empty(),
+              Integer.MAX_VALUE)
           ).size()
         );
 
@@ -864,7 +869,9 @@ public final class AREnsDBTest
           0,
           t.execute(
             AREnsQUndoListType.class,
-            new AREnsQUndoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+            new AREnsQUndoListType.Parameters(
+              Optional.empty(),
+              Integer.MAX_VALUE)
           ).size()
         );
       }
@@ -924,7 +931,9 @@ public final class AREnsDBTest
           13,
           t.execute(
             AREnsQRedoListType.class,
-            new AREnsQRedoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+            new AREnsQRedoListType.Parameters(
+              Optional.empty(),
+              Integer.MAX_VALUE)
           ).size()
         );
 
@@ -935,9 +944,143 @@ public final class AREnsDBTest
           0,
           t.execute(
             AREnsQRedoListType.class,
-            new AREnsQRedoListType.Parameters(Optional.empty(), Integer.MAX_VALUE)
+            new AREnsQRedoListType.Parameters(
+              Optional.empty(),
+              Integer.MAX_VALUE)
           ).size()
         );
+      }
+    }
+  }
+
+  @Test
+  public void testUndoPeekCorrupt0()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var corrupt = """
+        INSERT INTO undo VALUES ($1,$2,$3,$4,$5)
+      """;
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        final var c = t.connection().connection();
+        try (var st = c.prepareStatement(corrupt)) {
+          st.setLong(1, 0L);
+          st.setString(2, "Corrupted!");
+          st.setLong(3, 0L);
+          st.setString(4, "Unrecognized");
+          st.setBytes(5, new byte[3]);
+          st.execute();
+        }
+
+        final var ex =
+          assertThrows(
+            ARDBException.class, () -> {
+              t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT);
+            });
+        assertEquals("error-undo-record-unsupported", ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testUndoPeekCorrupt1()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var corrupt = """
+        INSERT INTO undo VALUES ($1,$2,$3,$4,$5)
+      """;
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        final var c = t.connection().connection();
+        try (var st = c.prepareStatement(corrupt)) {
+          st.setLong(1, 0L);
+          st.setString(2, "Corrupted!");
+          st.setLong(3, 0L);
+          st.setString(4, "AREnsModelCommandRecord");
+          st.setBytes(5, new byte[3]);
+          st.execute();
+        }
+
+        final var ex =
+          assertThrows(
+            ARDBException.class, () -> {
+              t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT);
+            });
+        assertEquals("error-json-parse-exception", ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testRedoPeekCorrupt0()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var corrupt = """
+        INSERT INTO redo VALUES ($1,$2,$3,$4,$5)
+      """;
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        final var c = t.connection().connection();
+        try (var st = c.prepareStatement(corrupt)) {
+          st.setLong(1, 0L);
+          st.setString(2, "Corrupted!");
+          st.setLong(3, 0L);
+          st.setString(4, "Unrecognized");
+          st.setBytes(5, new byte[3]);
+          st.execute();
+        }
+
+        final var ex =
+          assertThrows(
+            ARDBException.class, () -> {
+              t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT);
+            });
+        assertEquals("error-redo-record-unsupported", ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testRedoPeekCorrupt1()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var corrupt = """
+        INSERT INTO redo VALUES ($1,$2,$3,$4,$5)
+      """;
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        final var c = t.connection().connection();
+        try (var st = c.prepareStatement(corrupt)) {
+          st.setLong(1, 0L);
+          st.setString(2, "Corrupted!");
+          st.setLong(3, 0L);
+          st.setString(4, "AREnsModelCommandRecord");
+          st.setBytes(5, new byte[3]);
+          st.execute();
+        }
+
+        final var ex =
+          assertThrows(
+            ARDBException.class, () -> {
+              t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT);
+            });
+        assertEquals("error-json-parse-exception", ex.errorCode());
       }
     }
   }

@@ -17,6 +17,7 @@
 package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
 import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortID;
@@ -38,6 +39,17 @@ public interface AREnsGraphType
   void instrumentRegister(
     ARInstrumentReference instrument)
     throws ARException;
+
+  /**
+   * Check if an instrument is registered.
+   *
+   * @param instrument The instrument ID
+   *
+   * @return {@code true} if the instrument is registered
+   */
+
+  boolean instrumentIsRegistered(
+    ARInstrumentInstanceID instrument);
 
   /**
    * Connect two ports.

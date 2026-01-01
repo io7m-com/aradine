@@ -120,6 +120,14 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   @Override
+  public boolean instrumentIsRegistered(
+    final ARInstrumentInstanceID instrument)
+  {
+    Objects.requireNonNull(instrument, "Instrument");
+    return this.instruments.containsKey(instrument);
+  }
+
+  @Override
   public void portConnect(
     final ARPortID portSourceID,
     final ARPortID portTargetID)

@@ -117,7 +117,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
     graph.portConnect(port0.id(), port1.id());
@@ -152,7 +155,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
 
@@ -192,7 +198,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
 
@@ -232,7 +241,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
 
     final var ex =
@@ -271,7 +283,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
 
@@ -300,6 +315,7 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.portRegister(port0);
 
     final var ex =
@@ -338,7 +354,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
     graph.portConnect(port0.id(), port1.id());
@@ -368,6 +387,8 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
+
     graph.portRegister(port0);
     assertTrue(graph.portIsRegistered(port0.id()));
     graph.portDeregister(port0);
@@ -418,7 +439,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
     graph.portRegister(port2);
@@ -461,7 +485,10 @@ public final class AREnsGraphTest
       );
 
     graph.instrumentRegister(INSTRUMENT_0);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_0.instanceID()));
     graph.instrumentRegister(INSTRUMENT_1);
+    assertTrue(graph.instrumentIsRegistered(INSTRUMENT_1.instanceID()));
+
     graph.portRegister(port0);
     graph.portRegister(port1);
 

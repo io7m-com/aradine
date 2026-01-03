@@ -26,7 +26,6 @@ import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.database.api.ARDBUnit;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
 import com.io7m.aradine.ensemble.internal.database.AREnsQCommandIDNextType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQInstrumentPutType;
@@ -46,6 +45,7 @@ import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPeekType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPopType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQUndoPushType;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
 import org.apache.commons.io.FileUtils;
@@ -57,15 +57,18 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.io7m.aradine.database.api.ARDBUnit.*;
+import static com.io7m.aradine.database.api.ARDBUnit.UNIT;
 import static com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandStateUnused.UNUSED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,15 +108,34 @@ public final class AREnsDBTest
   }
 
   @Test
+  public void testOpenGarbage()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var rng = SecureRandom.getInstanceStrong();
+    final var data = new byte[65536];
+    rng.nextBytes(data);
+    Files.write(file, data);
+
+    final var ex = assertThrows(
+      ARException.class, () -> {
+        AREnsDB.createDatabase(file);
+      });
+    assertEquals("error-file-not-database", ex.errorCode());
+  }
+
+  @Test
   public void testPortPutGet()
     throws Exception
   {
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
-    final ARInstrumentInstanceID targetId =
+    final var targetId =
       ARInstrumentInstanceID.random();
 
     final var portsWritten =
@@ -122,9 +144,9 @@ public final class AREnsDBTest
       new ArrayList<ARPort>();
 
     {
-      int number = 0;
+      var number = 0;
       for (final var kind : ARPortKind.values()) {
-        for (int index = 0; index < 3; ++index) {
+        for (var index = 0; index < 3; ++index) {
           portsWritten.add(
             new ARPort(
               sourceId,
@@ -142,9 +164,9 @@ public final class AREnsDBTest
     }
 
     {
-      int number = 0;
+      var number = 0;
       for (final var kind : ARPortKind.values()) {
-        for (int index = 0; index < 3; ++index) {
+        for (var index = 0; index < 3; ++index) {
           portsWritten.add(
             new ARPort(
               targetId,
@@ -195,7 +217,7 @@ public final class AREnsDBTest
       }
 
       try (var t = db.openTransaction()) {
-        AREnsQPortListType.Parameters parameters =
+        var parameters =
           new AREnsQPortListType.Parameters(
             Optional.empty(),
             5
@@ -217,7 +239,7 @@ public final class AREnsDBTest
 
     assertEquals(portsWritten.size(), portsRead.size());
 
-    for (int index = 0; index < portsWritten.size(); ++index) {
+    for (var index = 0; index < portsWritten.size(); ++index) {
       final var portWrote =
         portsWritten.get(index);
       final var portRead =
@@ -226,13 +248,13 @@ public final class AREnsDBTest
       LOG.debug("[{}] {} ?= {}", Integer.valueOf(index), portWrote, portRead);
     }
 
-    for (int index = 0; index < portsWritten.size(); ++index) {
+    for (var index = 0; index < portsWritten.size(); ++index) {
       final var portWrote =
         portsWritten.get(index);
       final var portRead =
         portsRead.get(index);
 
-      final int finalIndex = index;
+      final var finalIndex = index;
       assertEquals(
         portWrote,
         portRead,
@@ -254,9 +276,9 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
-    final ARInstrumentInstanceID targetId =
+    final var targetId =
       ARInstrumentInstanceID.random();
 
     final var instrument0 =
@@ -364,9 +386,9 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
-    final ARInstrumentInstanceID targetId =
+    final var targetId =
       ARInstrumentInstanceID.random();
 
     final var instrument0 =
@@ -440,9 +462,9 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
-    final ARInstrumentInstanceID targetId =
+    final var targetId =
       ARInstrumentInstanceID.random();
 
     final var instrument0 =
@@ -516,9 +538,9 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
-    final ARInstrumentInstanceID targetId =
+    final var targetId =
       ARInstrumentInstanceID.random();
 
     final var instrument0 =
@@ -610,7 +632,7 @@ public final class AREnsDBTest
     final var file =
       this.directory.resolve("test.aens");
 
-    final ARInstrumentInstanceID sourceId =
+    final var sourceId =
       ARInstrumentInstanceID.random();
 
     final var instrument0 =
@@ -664,6 +686,124 @@ public final class AREnsDBTest
         assertEquals(
           "error-source-target-port-instrument-self",
           ex.errorCode());
+      }
+    }
+  }
+
+  @Test
+  public void testPortConnectListLarge()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var sourceId =
+      ARInstrumentInstanceID.random();
+    final var targetId =
+      ARInstrumentInstanceID.random();
+
+    final var instrument0 =
+      new ARInstrumentReference(
+        sourceId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_source"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var instrument1 =
+      new ARInstrumentReference(
+        targetId,
+        new ARInstrumentID(
+          new RDottedName("com.io7m.aradine"),
+          new RDottedName("com.io7m.aradine.ensemble_target"),
+          Version.of(1, 0, 0)
+        )
+      );
+
+    final var portSources = new ArrayList<ARPort>();
+    for (var index = 0; index < 100; ++index) {
+      final var p = new ARPort(
+        sourceId,
+        new ARPortID(UUID.randomUUID()),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(index),
+        "AudioSource" + index,
+        Set.of()
+      );
+      portSources.add(p);
+    }
+
+    final var portTargets = new ArrayList<ARPort>();
+    for (var index = 0; index < 100; ++index) {
+      final var p = new ARPort(
+        targetId,
+        new ARPortID(UUID.randomUUID()),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(index),
+        "AudioTarget" + index,
+        Set.of()
+      );
+      portTargets.add(p);
+    }
+
+    final var connectionsWritten =
+      new HashSet<ARPortConnection>();
+    final var connectionsRead =
+      new HashSet<ARPortConnection>();
+
+    try (var db = AREnsDB.createDatabase(file)) {
+      try (var t = db.openTransaction()) {
+        t.execute(AREnsQInstrumentPutType.class, instrument0);
+        t.execute(AREnsQInstrumentPutType.class, instrument1);
+        for (final var p : portSources) {
+          t.execute(AREnsQPortPutType.class, p);
+        }
+        for (final var p : portTargets) {
+          t.execute(AREnsQPortPutType.class, p);
+        }
+        t.commit();
+      }
+
+      try (var t = db.openTransaction()) {
+        for (var index = 0; index < portSources.size(); ++index) {
+          final var pSource =
+            portSources.get(index);
+          final var pTarget =
+            portTargets.get(index);
+          final var connection =
+            new ARPortConnection(pSource.id(), pTarget.id());
+
+          connectionsWritten.add(connection);
+          t.execute(AREnsQPortConnectType.class, connection);
+        }
+        t.commit();
+      }
+
+      try (var t = db.openTransaction()) {
+        var parameters =
+          new AREnsQPortConnectionListType.Parameters(
+            Optional.empty(),
+            17
+          );
+
+        while (true) {
+          final var conns =
+            t.execute(AREnsQPortConnectionListType.class, parameters);
+          if (conns.isEmpty()) {
+            break;
+          }
+          parameters = new AREnsQPortConnectionListType.Parameters(
+            Optional.of(conns.getLast()),
+            17
+          );
+          connectionsRead.addAll(conns);
+        }
+
+        assertEquals(connectionsWritten, connectionsRead);
       }
     }
   }
@@ -824,7 +964,7 @@ public final class AREnsDBTest
     final var commandsWritten =
       new ArrayList<AREnsModelCommandRecord>();
 
-    for (int index = 1; index <= 13; ++index) {
+    for (var index = 1; index <= 13; ++index) {
       commandsWritten.add(
         new AREnsModelCommandRecord(
           index,
@@ -902,7 +1042,7 @@ public final class AREnsDBTest
     final var commandsWritten =
       new ArrayList<AREnsModelCommandRecord>();
 
-    for (int index = 1; index <= 13; ++index) {
+    for (var index = 1; index <= 13; ++index) {
       commandsWritten.add(
         new AREnsModelCommandRecord(
           index,

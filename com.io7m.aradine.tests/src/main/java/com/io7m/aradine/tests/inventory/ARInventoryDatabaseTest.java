@@ -18,6 +18,7 @@ package com.io7m.aradine.tests.inventory;
 
 import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
@@ -25,6 +26,7 @@ import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBConfiguration;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.database.sqlite3.ARDBFactory;
+import com.io7m.aradine.ensemble.internal.database.AREnsDB;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
@@ -46,6 +48,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +57,7 @@ import java.util.concurrent.Executors;
 import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
 import static com.io7m.aradine.inventory.api.queries.ARInventoryUnit.UNIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class ARInventoryDatabaseTest
 {
@@ -105,6 +109,33 @@ public final class ARInventoryDatabaseTest
       // Don't care
     }
     this.databaseExecutor.close();
+  }
+
+  @Test
+  public void testOpenGarbage()
+    throws Exception
+  {
+    final var file =
+      this.directory.resolve("test.aens");
+
+    final var rng = SecureRandom.getInstanceStrong();
+    final var data = new byte[65536];
+    rng.nextBytes(data);
+    Files.write(file, data);
+
+    final var ex = assertThrows(
+      ARException.class, () -> {
+        new ARDBFactory()
+          .open(
+            ARDBConfiguration.builder()
+              .addAllQueries(ARInventories.queries())
+              .setApplicationId(0x10203040)
+              .setApplicationIdText(new RDottedName("com.io7m.aradine.example"))
+              .setDatabaseFile(file)
+              .build()
+          );
+      });
+    assertEquals("error-file-not-database", ex.errorCode());
   }
 
   @Test

@@ -44,26 +44,6 @@ public final class AREnsDBExceptions
    */
 
   public static ARException wrap(
-    final SQLException e)
-  {
-    return new ARException(
-      e.getMessage(),
-      e,
-      "error-sql",
-      Map.of(),
-      Optional.empty()
-    );
-  }
-
-  /**
-   * Wrap an exception.
-   *
-   * @param e The source
-   *
-   * @return The wrapped exception
-   */
-
-  public static ARException wrap(
     final Exception e)
   {
     return switch (e) {
@@ -82,6 +62,15 @@ public final class AREnsDBExceptions
       case final SQLiteException x -> {
         yield wrapSQLiteException(x);
       }
+      case final SQLException x -> {
+        yield new ARException(
+          e.getMessage(),
+          e,
+          "error-sql",
+          Map.of(),
+          Optional.empty()
+        );
+      }
       case Exception _ -> {
         yield new ARException(
           e.getMessage(),
@@ -98,6 +87,16 @@ public final class AREnsDBExceptions
     final SQLiteException x)
   {
     final var message = x.getMessage();
+    if (message.contains("[SQLITE_NOTADB] File opened that is not a database file")) {
+      return new ARException(
+        "File opened that is not a database file.",
+        x,
+        "error-file-not-database",
+        Map.of(),
+        Optional.empty()
+      );
+    }
+
     if (message.contains("Source port must have AR_SOURCE direction.")) {
       return new ARException(
         "Source port must have AR_SOURCE direction.",
@@ -118,7 +117,8 @@ public final class AREnsDBExceptions
       );
     }
 
-    if (message.contains("UNIQUE constraint failed: port_connections.port_connection_target")) {
+    if (message.contains(
+      "UNIQUE constraint failed: port_connections.port_connection_target")) {
       return new ARException(
         "Target port is already connected.",
         x,
@@ -128,7 +128,8 @@ public final class AREnsDBExceptions
       );
     }
 
-    if (message.contains("Source and target ports must belong to different instruments.")) {
+    if (message.contains(
+      "Source and target ports must belong to different instruments.")) {
       return new ARException(
         "Source and target port must belong to different instruments.",
         x,
@@ -141,7 +142,7 @@ public final class AREnsDBExceptions
     return new ARException(
       message,
       x,
-      "error-exception",
+      "error-sqlite-exception",
       Map.of(),
       Optional.empty()
     );

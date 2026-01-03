@@ -19,16 +19,12 @@ package com.io7m.aradine.tests.inventory;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
-import com.io7m.aradine.database.api.ARDBConfiguration;
-import com.io7m.aradine.database.api.ARDBType;
-import com.io7m.aradine.database.sqlite3.ARDBFactory;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
-import com.io7m.lanark.core.RDottedName;
 import com.io7m.mime2045.core.MimeType;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -43,8 +39,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,8 +55,6 @@ public final class ARInventoryTest
   private Path dataDirectory;
   private ARInventoryConfiguration inventoryConfiguration;
   private Path directory;
-  private ARDBType database;
-  private ExecutorService databaseExecutor;
 
   private static ARException runFailure(
     final ARInventoryType inventory,
@@ -97,24 +89,11 @@ public final class ARInventoryTest
       this.directory.resolve("database.db");
     this.dataDirectory =
       this.directory.resolve("data");
-    this.database =
-      new ARDBFactory()
-        .open(
-          ARDBConfiguration.builder()
-            .addAllQueries(ARInventories.queries())
-            .setApplicationId(0x10203040)
-            .setApplicationIdText(new RDottedName("com.io7m.aradine.example"))
-            .setDatabaseFile(this.databaseFile)
-            .build()
-        );
-    this.databaseExecutor =
-      Executors.newSingleThreadExecutor();
 
     this.inventoryConfiguration =
       ARInventoryConfiguration.builder()
-        .setDatabase(this.database)
         .setDataDirectory(this.dataDirectory)
-        .setDatabaseExecutor(this.databaseExecutor)
+        .setDatabaseFile(this.databaseFile)
         .setReaders(new ARInstrumentReaders())
         .build();
 
@@ -136,8 +115,6 @@ public final class ARInventoryTest
     } catch (final Throwable e) {
       // Don't care
     }
-
-    this.databaseExecutor.close();
   }
 
   @Test

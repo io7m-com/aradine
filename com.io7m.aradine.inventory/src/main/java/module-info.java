@@ -29,15 +29,22 @@ module com.io7m.aradine.inventory
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.aradine.inventory.api;
 
+  requires com.io7m.anethum.api;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.junreachable.core;
+  requires com.io7m.jxe.core;
   requires com.io7m.lanark.core;
   requires com.io7m.mime2045.parser;
   requires com.io7m.seltzer.api;
   requires com.io7m.streamtime.core;
+  requires com.io7m.trasco.api;
+  requires com.io7m.trasco.vanilla;
   requires com.io7m.verona.core;
   requires java.sql;
   requires org.apache.commons.io;
+  requires org.slf4j;
+  requires org.xerial.sqlitejdbc;
+  requires tools.jackson.core;
 
   exports com.io7m.aradine.inventory;
   exports com.io7m.aradine.inventory.internal

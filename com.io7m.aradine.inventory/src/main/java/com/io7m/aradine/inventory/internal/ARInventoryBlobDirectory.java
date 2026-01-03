@@ -105,6 +105,18 @@ public final class ARInventoryBlobDirectory
     }
   }
 
+  private static STTransferStatistics doneStats(
+    final Path file)
+    throws IOException
+  {
+    final var size = Files.size(file);
+    return new STTransferStatistics(
+      OptionalLong.of(size),
+      size,
+      size
+    );
+  }
+
   /**
    * Copy a file into the directory.
    *
@@ -222,18 +234,6 @@ public final class ARInventoryBlobDirectory
     return outputFile;
   }
 
-  private static STTransferStatistics doneStats(
-    final Path file)
-    throws IOException
-  {
-    final var size = Files.size(file);
-    return new STTransferStatistics(
-      OptionalLong.of(size),
-      size,
-      size
-    );
-  }
-
   private FileLock obtainLock(
     final CloseableCollectionType<ARException> resources,
     final Path outputFileLock)
@@ -243,5 +243,47 @@ public final class ARInventoryBlobDirectory
       resources.add(FileChannel.open(outputFileLock, LOCK_OPEN_OPTIONS));
 
     return lockChannel.lock();
+  }
+
+  /**
+   * Delete a file from the directory.
+   *
+   * @param hash The hash
+   *
+   * @throws ARException On errors
+   * @throws IOException On errors
+   */
+
+  public void delete(
+    final ARHash hash)
+    throws ARException, IOException
+  {
+    synchronized (this.writeLock) {
+      this.deleteLocked(hash);
+    }
+  }
+
+  private void deleteLocked(
+    final ARHash hash)
+    throws ARException, IOException
+  {
+    final var hashBase =
+      this.baseDirectory.resolve(hash.algorithm().name())
+        .normalize();
+    final var outputFile =
+      hashBase.resolve(hash.value() + ".blob")
+        .normalize();
+    final var outputFileTemp =
+      hashBase.resolve(hash.value() + ".blob.tmp")
+        .normalize();
+    final var outputFileLock =
+      hashBase.resolve(hash.value() + ".blob.lock")
+        .normalize();
+
+    try (var resources = ARCloseables.create()) {
+      this.obtainLock(resources, outputFileLock);
+      Files.deleteIfExists(outputFileTemp);
+      Files.deleteIfExists(outputFile);
+    }
   }
 }

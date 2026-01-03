@@ -198,8 +198,8 @@ enum ARQueryInstrumentList
       } else {
         return executeWithoutOffset(transaction, parameters);
       }
-    } catch (final SQLException | VersionException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

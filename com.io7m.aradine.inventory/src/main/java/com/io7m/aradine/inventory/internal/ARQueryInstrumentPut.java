@@ -25,8 +25,6 @@ import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
 import com.io7m.verona.core.VersionQualifier;
 
-import java.sql.SQLException;
-
 enum ARQueryInstrumentPut
   implements ARQueryInstrumentPutType, ARDBQueryProviderType
 {
@@ -111,8 +109,8 @@ enum ARQueryInstrumentPut
       st.setString(12, hash.value());
       st.execute();
       return ARInventoryUnit.UNIT;
-    } catch (final SQLException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

@@ -16,13 +16,11 @@
 
 package com.io7m.aradine.inventory.api;
 
-import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
 
 /**
  * The inventory configuration.
@@ -39,16 +37,10 @@ public interface ARInventoryConfigurationType
   ARInstrumentReaderFactoryType readers();
 
   /**
-   * @return The database
+   * @return The database file
    */
 
-  ARDBType database();
-
-  /**
-   * @return The executor used for database queries
-   */
-
-  ExecutorService databaseExecutor();
+  Path databaseFile();
 
   /**
    * @return The data directory

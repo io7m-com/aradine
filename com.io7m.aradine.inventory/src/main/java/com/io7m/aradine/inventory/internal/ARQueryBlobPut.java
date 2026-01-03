@@ -24,8 +24,6 @@ import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
 
-import java.sql.SQLException;
-
 enum ARQueryBlobPut
   implements ARQueryBlobPutType, ARDBQueryProviderType
 {
@@ -63,8 +61,8 @@ enum ARQueryBlobPut
       st.setString(4, blob.type().toString());
       st.execute();
       return ARInventoryUnit.UNIT;
-    } catch (final SQLException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

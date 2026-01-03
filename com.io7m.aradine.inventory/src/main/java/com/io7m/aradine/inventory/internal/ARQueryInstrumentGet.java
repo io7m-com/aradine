@@ -29,10 +29,8 @@ import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.mime2045.parser.MimeParsers;
-import com.io7m.mime2045.parser.api.MimeParseException;
 import com.io7m.verona.core.VersionQualifier;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 enum ARQueryInstrumentGet
@@ -123,8 +121,8 @@ enum ARQueryInstrumentGet
         }
       }
       return Optional.empty();
-    } catch (final SQLException | MimeParseException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

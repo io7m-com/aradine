@@ -23,15 +23,13 @@ import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.inventory.api.queries.ARInventoryUnit;
 import com.io7m.aradine.inventory.api.queries.ARQuerySchemaVersionType;
 
-import java.sql.SQLException;
-
 enum ARQuerySchemaVersion
   implements ARQuerySchemaVersionType, ARDBQueryProviderType
 {
   INSTANCE;
 
   private static final String QUERY_TEXT = """
-      SELECT schema_version.version_number
+      SELECT schema_version.sv_version
         FROM schema_version
           LIMIT 1
     """;
@@ -52,8 +50,8 @@ enum ARQuerySchemaVersion
         }
       }
       throw new IllegalStateException("No schema version.");
-    } catch (final SQLException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

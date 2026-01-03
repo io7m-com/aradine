@@ -23,19 +23,19 @@ import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
-import com.io7m.aradine.database.api.ARDBConfiguration;
-import com.io7m.aradine.database.api.ARDBType;
-import com.io7m.aradine.database.sqlite3.ARDBFactory;
-import com.io7m.aradine.ensemble.internal.database.AREnsDB;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
+import com.io7m.aradine.inventory.api.queries.ARQueryBlobDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
+import com.io7m.aradine.inventory.api.queries.ARQueryBlobReferencesType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
 import com.io7m.aradine.inventory.api.queries.ARQuerySchemaVersionType;
+import com.io7m.aradine.inventory.internal.ARInventory;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.mime2045.core.MimeType;
 import com.io7m.verona.core.Version;
@@ -51,8 +51,7 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Set;
 
 import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
 import static com.io7m.aradine.inventory.api.queries.ARInventoryUnit.UNIT;
@@ -65,8 +64,6 @@ public final class ARInventoryDatabaseTest
   private Path databaseFile;
   private Path dataDirectory;
   private ARInventoryConfiguration inventoryConfiguration;
-  private ARDBType database;
-  private ExecutorService databaseExecutor;
 
   @BeforeEach
   public void setup()
@@ -78,24 +75,11 @@ public final class ARInventoryDatabaseTest
       this.directory.resolve("database.db");
     this.dataDirectory =
       this.directory.resolve("data");
-    this.database =
-      new ARDBFactory()
-        .open(
-          ARDBConfiguration.builder()
-            .addAllQueries(ARInventories.queries())
-            .setApplicationId(0x10203040)
-            .setApplicationIdText(new RDottedName("com.io7m.aradine.example"))
-            .setDatabaseFile(this.databaseFile)
-            .build()
-        );
-    this.databaseExecutor =
-      Executors.newSingleThreadExecutor();
 
     this.inventoryConfiguration =
       ARInventoryConfiguration.builder()
         .setDataDirectory(this.dataDirectory)
-        .setDatabase(this.database)
-        .setDatabaseExecutor(this.databaseExecutor)
+        .setDatabaseFile(this.databaseFile)
         .setReaders(new ARInstrumentReaders())
         .build();
   }
@@ -108,7 +92,6 @@ public final class ARInventoryDatabaseTest
     } catch (final IOException e) {
       // Don't care
     }
-    this.databaseExecutor.close();
   }
 
   @Test
@@ -125,15 +108,13 @@ public final class ARInventoryDatabaseTest
 
     final var ex = assertThrows(
       ARException.class, () -> {
-        new ARDBFactory()
-          .open(
-            ARDBConfiguration.builder()
-              .addAllQueries(ARInventories.queries())
-              .setApplicationId(0x10203040)
-              .setApplicationIdText(new RDottedName("com.io7m.aradine.example"))
-              .setDatabaseFile(file)
-              .build()
-          );
+        ARInventory.open(
+          ARInventoryConfiguration.builder()
+            .setDataDirectory(this.dataDirectory)
+            .setDatabaseFile(file)
+            .setReaders(new ARInstrumentReaders())
+            .build()
+        );
       });
     assertEquals("error-file-not-database", ex.errorCode());
   }
@@ -189,6 +170,53 @@ public final class ARInventoryDatabaseTest
   }
 
   @Test
+  public void testBlobPutGetDelete()
+    throws Exception
+  {
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      try (var transaction = database.openTransaction()) {
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(
+            ARQueryBlobGetType.class,
+            new ARHash(SHA_256, "abcd")
+          )
+        );
+
+        final var blob =
+          new ARBlob(
+            100L,
+            new ARHash(SHA_256, "abcd"),
+            MimeType.of("text", "plain")
+          );
+
+        transaction.execute(ARQueryBlobPutType.class, blob);
+
+        assertEquals(
+          Optional.of(blob),
+          transaction.execute(
+            ARQueryBlobGetType.class,
+            new ARHash(SHA_256, "abcd")
+          )
+        );
+
+        transaction.execute(ARQueryBlobDeleteType.class, blob.hash());
+
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(
+            ARQueryBlobGetType.class,
+            new ARHash(SHA_256, "abcd")
+          )
+        );
+
+        transaction.execute(ARQueryBlobDeleteType.class, blob.hash());
+      }
+    }
+  }
+
+  @Test
   public void testInstrumentPutGet()
     throws Exception
   {
@@ -228,7 +256,94 @@ public final class ARInventoryDatabaseTest
         transaction.commit();
 
         assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(identifier),
+            Set.of()
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            instrument.blob().hash()
+          )
+        );
+
+        assertEquals(
           Optional.of(instrument),
+          transaction.execute(ARQueryInstrumentGetType.class, identifier)
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testInstrumentPutGetDelete()
+    throws Exception
+  {
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      try (var transaction = database.openTransaction()) {
+        final var blob =
+          new ARBlob(
+            100L,
+            new ARHash(SHA_256, "abcd"),
+            MimeType.of("text", "plain")
+          );
+
+        final var identifier =
+          new ARInstrumentID(
+            new RDottedName("com.io7m.example"),
+            new RDottedName("com.io7m.example"),
+            Version.of(1, 0, 0)
+          );
+
+        final var instrument =
+          new ARInstrumentData(
+            identifier,
+            new RDottedName("com.io7m.aradine.metadata.json"),
+            new ARBytes("{}".getBytes(StandardCharsets.UTF_8)),
+            "Instrument 0",
+            "An instrument.",
+            blob
+          );
+
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(ARQueryInstrumentGetType.class, identifier)
+        );
+        transaction.execute(ARQueryBlobPutType.class, blob);
+        transaction.execute(ARQueryInstrumentPutType.class, instrument);
+        transaction.commit();
+
+        assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(identifier),
+            Set.of()
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            instrument.blob().hash()
+          )
+        );
+
+        assertEquals(
+          Optional.of(instrument),
+          transaction.execute(ARQueryInstrumentGetType.class, identifier)
+        );
+
+        transaction.execute(ARQueryInstrumentDeleteType.class, identifier);
+
+        assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(),
+            Set.of()
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            instrument.blob().hash()
+          )
+        );
+
+        assertEquals(
+          Optional.empty(),
           transaction.execute(ARQueryInstrumentGetType.class, identifier)
         );
       }

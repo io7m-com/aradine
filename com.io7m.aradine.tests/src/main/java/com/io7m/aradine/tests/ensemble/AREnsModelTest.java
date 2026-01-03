@@ -18,16 +18,13 @@ package com.io7m.aradine.tests.ensemble;
 
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.progress.ARProgress;
-import com.io7m.aradine.database.api.ARDBConfiguration;
-import com.io7m.aradine.database.api.ARDBType;
-import com.io7m.aradine.database.sqlite3.ARDBFactory;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventInstrumentClosed;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventInstrumentLoaded;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventType;
-import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandInstrumentLoad;
-import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandInstrumentLoadParameters;
 import com.io7m.aradine.ensemble.internal.model.AREnsModel;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelConfiguration;
+import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandInstrumentLoad;
+import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandInstrumentLoadParameters;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
@@ -36,10 +33,8 @@ import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.tests.ARAudioSystemAttributes;
 import com.io7m.aradine.tests.ARFunctionSubscriber;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
-import com.io7m.lanark.core.RDottedName;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -51,11 +46,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public final class AREnsModelTest
 {
@@ -65,8 +57,6 @@ public final class AREnsModelTest
   private Path directory;
   private Path dataDirectory;
   private Path databaseFile;
-  private ARDBType database;
-  private ExecutorService databaseExecutor;
   private ARInventoryConfiguration inventoryConfiguration;
   private ARInventoryType inventory;
   private ARInstrumentLoaders loaders;
@@ -93,24 +83,10 @@ public final class AREnsModelTest
     this.dataDirectory =
       this.directory.resolve("data");
 
-    this.database =
-      new ARDBFactory()
-        .open(
-          ARDBConfiguration.builder()
-            .addAllQueries(ARInventories.queries())
-            .setApplicationId(0x10203040)
-            .setApplicationIdText(new RDottedName("com.io7m.aradine.example"))
-            .setDatabaseFile(this.databaseFile)
-            .build()
-        );
-    this.databaseExecutor =
-      Executors.newSingleThreadExecutor();
-
     this.inventoryConfiguration =
       ARInventoryConfiguration.builder()
-        .setDatabase(this.database)
         .setDataDirectory(this.dataDirectory)
-        .setDatabaseExecutor(this.databaseExecutor)
+        .setDatabaseFile(this.databaseFile)
         .setReaders(new ARInstrumentReaders())
         .build();
 
@@ -144,8 +120,6 @@ public final class AREnsModelTest
     } catch (final Throwable e) {
       // Don't care
     }
-
-    this.databaseExecutor.close();
   }
 
   @Test

@@ -17,18 +17,25 @@
 package com.io7m.aradine.inventory.internal;
 
 import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
+import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
+import com.io7m.aradine.inventory.api.queries.ARQueryBlobDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
+import com.io7m.aradine.inventory.api.queries.ARQueryBlobReferencesType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
+import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.mime2045.core.MimeType;
 import com.io7m.streamtime.core.STTimedInputStream;
 import com.io7m.streamtime.core.STTransferStatistics;
@@ -39,12 +46,16 @@ import java.nio.file.Path;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+
+import static com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType.Parameters;
 
 /**
  * Inventory implementation.
@@ -53,20 +64,26 @@ import java.util.function.Consumer;
 public final class ARInventory implements ARInventoryType
 {
   private final ARDBType database;
+  private final CloseableCollectionType<ARException> resources;
   private final ARInventoryConfiguration configuration;
   private final ExecutorService databaseExecutor;
   private final ARInventoryBlobDirectory blobDirectory;
 
   private ARInventory(
+    final CloseableCollectionType<ARException> inResources,
     final ARInventoryConfiguration inConfiguration,
+    final ARInventoryDB inDatabase,
+    final ExecutorService inExecutor,
     final ARInventoryBlobDirectory inBlobDirectory)
   {
+    this.resources =
+      Objects.requireNonNull(inResources, "Resources");
     this.configuration =
       Objects.requireNonNull(inConfiguration, "configuration");
     this.database =
-      inConfiguration.database();
+      Objects.requireNonNull(inDatabase, "Database");
     this.databaseExecutor =
-      inConfiguration.databaseExecutor();
+      Objects.requireNonNull(inExecutor, "Executor");
     this.blobDirectory =
       Objects.requireNonNull(inBlobDirectory, "blobDirectory");
   }
@@ -77,15 +94,49 @@ public final class ARInventory implements ARInventoryType
    * @param configuration The inventory configuration
    *
    * @return A inventory
+   *
+   * @throws ARException On errors
    */
 
   public static ARInventoryType open(
     final ARInventoryConfiguration configuration)
+    throws ARException
   {
-    return new ARInventory(
-      configuration,
-      new ARInventoryBlobDirectory(configuration.dataDirectory())
-    );
+    final var resources =
+      ARCloseables.create();
+
+    try {
+      final var database =
+        resources.add(
+          ARInventoryDB.createDatabase(configuration.databaseFile())
+        );
+      final var executor =
+        resources.add(
+          Executors.newSingleThreadExecutor(r -> {
+            final var thread = new Thread(r);
+            thread.setName(threadNameOf(thread));
+            return thread;
+          })
+        );
+
+      return new ARInventory(
+        resources,
+        configuration,
+        database,
+        executor,
+        new ARInventoryBlobDirectory(configuration.dataDirectory())
+      );
+    } catch (final Throwable e) {
+      resources.close();
+      throw e;
+    }
+  }
+
+  private static String threadNameOf(
+    final Thread thread)
+  {
+    return "com.io7m.aradine.inventory-%s"
+      .formatted(Long.toUnsignedString(thread.threadId()));
   }
 
   private static <T> CompletableFuture<T> executeFuture(
@@ -141,10 +192,25 @@ public final class ARInventory implements ARInventoryType
   }
 
   @Override
+  public CompletableFuture<?> instrumentUninstall(
+    final ARInstrumentID instrumentID,
+    final Consumer<ARProgress> progressConsumer)
+  {
+    Objects.requireNonNull(instrumentID, "InstrumentID");
+    Objects.requireNonNull(progressConsumer, "ProgressConsumer");
+
+    return new ARInventoryInstrumentUninstallOp(
+      this, instrumentID, progressConsumer)
+      .execute();
+  }
+
+  @Override
   public Optional<Path> instrumentFile(
     final ARInstrumentID instrumentID)
     throws ARException
   {
+    Objects.requireNonNull(instrumentID, "InstrumentID");
+
     try (var t = this.database.openTransaction()) {
       final var instrumentOpt =
         t.execute(ARQueryInstrumentGetType.class, instrumentID);
@@ -154,6 +220,27 @@ public final class ARInventory implements ARInventoryType
       final var instrument = instrumentOpt.get();
       return this.blobDirectory.get(instrument.blob().hash());
     }
+  }
+
+  @Override
+  public CompletableFuture<List<ARInstrumentDataSummary>> instrumentList(
+    final Optional<ARInstrumentID> start,
+    final int limit)
+  {
+    Objects.requireNonNull(start, "Start");
+
+    final var future = new CompletableFuture<List<ARInstrumentDataSummary>>();
+    this.databaseExecutor.execute(() -> {
+      try {
+        try (var t = this.database.openTransaction()) {
+          final var p = new Parameters(start, limit);
+          future.complete(t.execute(ARQueryInstrumentListType.class, p));
+        }
+      } catch (final Throwable e) {
+        future.completeExceptionally(e);
+      }
+    });
+    return future;
   }
 
   @Override
@@ -171,6 +258,101 @@ public final class ARInventory implements ARInventoryType
   {
     T execute(CompletableFuture<T> op)
       throws Exception;
+  }
+
+  private static final class ARInventoryInstrumentUninstallOp
+    implements ARInventoryOpType<Object>
+  {
+    private final ARInventory inventory;
+    private final ARInstrumentID instrumentID;
+    private final Consumer<ARProgress> progressConsumer;
+    private String task;
+    private String subTask;
+    private double taskProgress;
+    private double subtaskProgress;
+
+    ARInventoryInstrumentUninstallOp(
+      final ARInventory inInventory,
+      final ARInstrumentID inInstrumentID,
+      final Consumer<ARProgress> inProgressConsumer)
+    {
+      this.inventory = inInventory;
+      this.instrumentID = inInstrumentID;
+      this.progressConsumer = inProgressConsumer;
+
+      this.task = "Uninstalling instrument.";
+      this.subTask = "Uninstalling instrument.";
+      this.taskProgress = 0.0;
+      this.subtaskProgress = 0.0;
+    }
+
+    @Override
+    public CompletableFuture<Object> execute()
+    {
+      final var future = new CompletableFuture<>();
+      this.inventory.databaseExecutor.execute(() -> {
+        this.publishProgressNow();
+
+        try {
+          try (var t = this.inventory.database.openTransaction()) {
+            final var instrumentOpt =
+              t.execute(ARQueryInstrumentGetType.class, this.instrumentID);
+
+            if (instrumentOpt.isPresent()) {
+              final var instrument =
+                instrumentOpt.get();
+              final var blobHash =
+                instrument.blob().hash();
+
+              t.execute(
+                ARQueryInstrumentDeleteType.class,
+                this.instrumentID
+              );
+
+              final var refs =
+                t.execute(ARQueryBlobReferencesType.class, blobHash);
+
+              if (refs.isEmpty()) {
+                this.subTask = "Deleting blob.";
+                this.publishProgressNow();
+
+                t.execute(ARQueryBlobDeleteType.class, blobHash);
+                this.inventory.blobDirectory.delete(blobHash);
+
+                this.subtaskProgress = 1.0;
+                this.publishProgressNow();
+              }
+              t.commit();
+
+              this.subTask = "Completed.";
+              this.subtaskProgress = 1.0;
+              this.taskProgress = 1.0;
+              this.publishProgressNow();
+            }
+          }
+        } catch (final Throwable e) {
+          future.completeExceptionally(e);
+        } finally {
+          future.complete(null);
+        }
+      });
+      return future;
+    }
+
+    private ARProgress progressNow()
+    {
+      return new ARProgress(
+        this.task,
+        this.taskProgress,
+        this.subTask,
+        this.subtaskProgress
+      );
+    }
+
+    private void publishProgressNow()
+    {
+      this.progressConsumer.accept(this.progressNow());
+    }
   }
 
   private static final class ARInventoryInstrumentInstallOp

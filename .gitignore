@@ -1,8 +1,9 @@
 *.iml
-.run
 .idea
-pom.xml.versionsBackup
-target
 .jqwik-database
+.run
+com.io7m.aradine
 dependency-reduced-pom.xml
 pom.xml.versionsBackup
+pom.xml.versionsBackup
+target

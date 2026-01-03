@@ -22,8 +22,8 @@ open module com.io7m.aradine.tests
 {
   requires com.io7m.aradine.annotations;
   requires com.io7m.aradine.api;
+  requires com.io7m.aradine.cmdline;
   requires com.io7m.aradine.database.api;
-  requires com.io7m.aradine.database.sqlite3;
   requires com.io7m.aradine.ensemble;
   requires com.io7m.aradine.envelope.table1;
   requires com.io7m.aradine.filter.biquad1;

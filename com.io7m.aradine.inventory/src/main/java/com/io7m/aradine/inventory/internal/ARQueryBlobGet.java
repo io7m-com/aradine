@@ -25,9 +25,7 @@ import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.mime2045.parser.MimeParsers;
-import com.io7m.mime2045.parser.api.MimeParseException;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 enum ARQueryBlobGet
@@ -77,8 +75,8 @@ enum ARQueryBlobGet
         }
       }
       return Optional.empty();
-    } catch (final SQLException | MimeParseException e) {
-      throw ARInventoryExceptions.wrapDB(e);
+    } catch (final Exception e) {
+      throw ARInventoryExceptions.wrap(e);
     }
   }
 

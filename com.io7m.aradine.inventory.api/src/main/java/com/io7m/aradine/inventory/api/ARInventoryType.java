@@ -18,12 +18,14 @@ package com.io7m.aradine.inventory.api;
 
 import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.mime2045.core.MimeType;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -77,6 +79,19 @@ public interface ARInventoryType
     Consumer<ARProgress> progressConsumer);
 
   /**
+   * Deinstall the given instrument from the inventory.
+   *
+   * @param instrumentID     The instrument ID
+   * @param progressConsumer A consumer of progress
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<?> instrumentUninstall(
+    ARInstrumentID instrumentID,
+    Consumer<ARProgress> progressConsumer);
+
+  /**
    * Get the file for the installed instrument.
    *
    * @param instrument The instrument
@@ -89,6 +104,20 @@ public interface ARInventoryType
   Optional<Path> instrumentFile(
     ARInstrumentID instrument)
     throws ARException;
+
+  /**
+   * List installed instruments.
+   *
+   * @param start The starting instrument
+   * @param limit A limit on the number of returned results
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<List<ARInstrumentDataSummary>> instrumentList(
+    Optional<ARInstrumentID> start,
+    int limit
+  );
 
   @Override
   void close()

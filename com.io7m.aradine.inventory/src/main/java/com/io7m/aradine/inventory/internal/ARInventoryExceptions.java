@@ -17,6 +17,8 @@
 package com.io7m.aradine.inventory.internal;
 
 import com.io7m.aradine.api.ARException;
+import org.sqlite.SQLiteException;
+import tools.jackson.core.exc.StreamReadException;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -29,49 +31,72 @@ final class ARInventoryExceptions
 
   }
 
-  public static ARException wrap(
-    final SQLException e)
-  {
-    return new ARException(
-      e.getMessage(),
-      e,
-      "error-sql",
-      Map.of(),
-      Optional.empty()
-    );
-  }
+  /**
+   * Wrap an exception.
+   *
+   * @param e The source
+   *
+   * @return The wrapped exception
+   */
 
   public static ARException wrap(
     final Exception e)
   {
-    return new ARException(
-      e.getMessage(),
-      e,
-      "error-exception",
-      Map.of(),
-      Optional.empty()
-    );
+    return switch (e) {
+      case final StreamReadException x -> {
+        yield new ARException(
+          x.getMessage(),
+          x,
+          "error-json-parse-exception",
+          Map.of(),
+          Optional.empty()
+        );
+      }
+      case final ARException x -> {
+        yield x;
+      }
+      case final SQLiteException x -> {
+        yield wrapSQLiteException(x);
+      }
+      case final SQLException x -> {
+        yield new ARException(
+          e.getMessage(),
+          e,
+          "error-sql",
+          Map.of(),
+          Optional.empty()
+        );
+      }
+      case Exception _ -> {
+        yield new ARException(
+          e.getMessage(),
+          e,
+          "error-exception",
+          Map.of(),
+          Optional.empty()
+        );
+      }
+    };
   }
 
-  public static ARException wrapDB(
-    final SQLException e)
+  private static ARException wrapSQLiteException(
+    final SQLiteException x)
   {
-    return new ARException(
-      e.getMessage(),
-      e,
-      "error-sql",
-      Map.of(),
-      Optional.empty()
-    );
-  }
+    final var message = x.getMessage();
+    if (message.contains("[SQLITE_NOTADB] File opened that is not a database file")) {
+      return new ARException(
+        "File opened that is not a database file.",
+        x,
+        "error-file-not-database",
+        Map.of(),
+        Optional.empty()
+      );
+    }
 
-  public static ARException wrapDB(
-    final Exception e)
-  {
     return new ARException(
-      e.getMessage(),
-      e,
-      "error-exception",
+      message,
+      x,
+      "error-sqlite-exception",
       Map.of(),
       Optional.empty()
     );

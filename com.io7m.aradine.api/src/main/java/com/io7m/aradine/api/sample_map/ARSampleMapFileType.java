@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.api.sample_map;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableType;
 
 /**
@@ -27,7 +28,7 @@ public interface ARSampleMapFileType
 {
   @Override
   void close()
-    throws ARSampleMapException;
+    throws ARException;
 
   /**
    * Load the current sample map file.
@@ -36,10 +37,10 @@ public interface ARSampleMapFileType
    *
    * @return A loaded sample map
    *
-   * @throws ARSampleMapException On errors
+   * @throws ARException On errors
    */
 
   ARSampleMapType load(
     ARSampleMapLoadConfiguration configuration)
-    throws ARSampleMapException;
+    throws ARException;
 }

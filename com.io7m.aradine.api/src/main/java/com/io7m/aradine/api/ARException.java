@@ -26,7 +26,7 @@ import java.util.Optional;
  * The base aradine exception.
  */
 
-public class ARException extends Exception
+public final class ARException extends Exception
   implements SStructuredErrorExceptionType<String>
 {
   private final String errorCode;
@@ -88,25 +88,25 @@ public class ARException extends Exception
   }
 
   @Override
-  public final String errorCode()
+  public String errorCode()
   {
     return this.errorCode;
   }
 
   @Override
-  public final Map<String, String> attributes()
+  public Map<String, String> attributes()
   {
     return this.attributes;
   }
 
   @Override
-  public final Optional<String> remediatingAction()
+  public Optional<String> remediatingAction()
   {
     return this.remediatingAction;
   }
 
   @Override
-  public final Optional<Throwable> exception()
+  public Optional<Throwable> exception()
   {
     return Optional.of(this);
   }

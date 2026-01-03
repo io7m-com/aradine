@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.model;
 
+import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
@@ -170,7 +171,7 @@ public final class AREnsModel implements AREnsModelType
     Objects.requireNonNull(configuration, "configuration");
 
     final var resources =
-      AREnsCloseables.create();
+      ARCloseables.create();
 
     try {
       final var executor =

@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.sample_map.aurantium;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.progress.ARProgress;
-import com.io7m.aradine.api.sample_map.ARSampleMapException;
 import com.io7m.aradine.api.sample_map.ARSampleMapFileFactoryType;
 import com.io7m.aradine.api.sample_map.ARSampleMapFileType;
 import com.io7m.aradine.sample_map.aurantium.internal.ARASampleMapFile;
@@ -82,7 +82,7 @@ public final class ARASampleMaps
   public ARSampleMapFileType open(
     final Path file,
     final Consumer<ARProgress> progressConsumer)
-    throws ARSampleMapException
+    throws ARException
   {
     Objects.requireNonNull(file, "File");
     Objects.requireNonNull(progressConsumer, "ProgressConsumer");

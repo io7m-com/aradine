@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader;
 
-import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
@@ -61,7 +61,7 @@ public final class ARInstrumentLoaders
   public ARInstrumentLoaderType createLoader(
     final ARInstrumentLoaderServicesConstructorType serviceConstructor,
     final Path file)
-    throws ARInstrumentException
+    throws ARException
   {
     Objects.requireNonNull(serviceConstructor, "Service Constructor");
     Objects.requireNonNull(file, "File");

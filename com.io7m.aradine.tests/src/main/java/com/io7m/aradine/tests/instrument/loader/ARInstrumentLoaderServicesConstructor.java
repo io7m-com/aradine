@@ -18,7 +18,7 @@ package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
-import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -59,7 +59,6 @@ public final class ARInstrumentLoaderServicesConstructor
   @Override
   public ARI1InstrumentContextType createServicesV1(
     final ARI1InstrumentDescription description)
-    throws ARInstrumentException
   {
     return new Services1(description);
   }

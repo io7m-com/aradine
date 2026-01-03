@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.api.instrument;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableType;
 
 /**
@@ -33,5 +34,5 @@ public interface ARInstrumentType
 
   @Override
   void close()
-    throws ARInstrumentException;
+    throws ARException;
 }

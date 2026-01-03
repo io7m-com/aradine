@@ -18,7 +18,6 @@ package com.io7m.aradine.instrument.loader.internal;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
-import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
@@ -106,14 +105,14 @@ public final class ARInstrumentLoader
    *
    * @return A loader
    *
-   * @throws ARInstrumentException On errors
+   * @throws ARException On errors
    */
 
   public static ARInstrumentLoaderType create(
     final ARInstrumentReaderFactoryType readers,
     final ARInstrumentLoaderServicesConstructorType serviceConstructor,
     final Path file)
-    throws ARInstrumentException
+    throws ARException
   {
     Objects.requireNonNull(serviceConstructor, "Service Constructor");
     Objects.requireNonNull(readers, "Readers");
@@ -240,7 +239,7 @@ public final class ARInstrumentLoader
   private static void checkModule(
     final Path file,
     final ModuleDescriptor moduleDescriptor)
-    throws ARInstrumentException
+    throws ARException
   {
     final var moduleName = moduleDescriptor.name();
     for (final var requires : moduleDescriptor.requires()) {
@@ -269,7 +268,7 @@ public final class ARInstrumentLoader
   private static ModuleReference findInstrumentModuleReference(
     final Path file,
     final ModuleFinder instrumentModuleFinder)
-    throws ARInstrumentException
+    throws ARException
   {
     final var moduleReferences = instrumentModuleFinder.findAll();
     if (moduleReferences.isEmpty()) {
@@ -281,7 +280,7 @@ public final class ARInstrumentLoader
     return moduleReferences.iterator().next();
   }
 
-  private static ARInstrumentException errorModuleTooMany(
+  private static ARException errorModuleTooMany(
     final Path file,
     final Set<ModuleReference> moduleReferences)
   {
@@ -294,7 +293,7 @@ public final class ARInstrumentLoader
     }
     names.put("File", file.toAbsolutePath().toString());
 
-    return new ARInstrumentException(
+    return new ARException(
       "Multiple modules detected.",
       "error-module-multiple",
       Map.copyOf(names),
@@ -302,12 +301,12 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException errorModuleDisallowed(
+  private static ARException errorModuleDisallowed(
     final Path file,
     final String source,
     final String target)
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Module 'requires' a disallowed module.",
       "error-module-disallowed",
       Map.ofEntries(
@@ -319,11 +318,11 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException errorModuleUses(
+  private static ARException errorModuleUses(
     final Path file,
     final String moduleName)
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Module 'uses' one or more services.",
       "error-module-uses-disallowed",
       Map.ofEntries(
@@ -334,11 +333,11 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException errorModuleProvideExactlyOnce(
+  private static ARException errorModuleProvideExactlyOnce(
     final Path file,
     final String moduleName)
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Module must 'provide' exactly one instrument service.",
       "error-module-instrument-service",
       Map.ofEntries(
@@ -353,12 +352,12 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException errorModuleProvideWrong(
+  private static ARException errorModuleProvideWrong(
     final Path file,
     final String moduleName,
     final String providesService)
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Module exports an instrument service of the wrong type.",
       "error-module-instrument-service-incorrect",
       Map.ofEntries(
@@ -377,10 +376,10 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException errorModuleNonexistent(
+  private static ARException errorModuleNonexistent(
     final Path file)
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Module does not exist.",
       "error-module-nonexistent",
       Map.ofEntries(
@@ -390,14 +389,14 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static ARInstrumentException wrap(
+  private static ARException wrap(
     final Exception e)
   {
-    if (e instanceof final ARInstrumentException ex) {
+    if (e instanceof final ARException ex) {
       return ex;
     }
 
-    return new ARInstrumentException(
+    return new ARException(
       Objects.requireNonNullElse(
         e.getMessage(),
         e.getClass().getSimpleName()
@@ -444,7 +443,7 @@ public final class ARInstrumentLoader
 
     @Override
     public void close()
-      throws ARInstrumentException
+      throws ARException
     {
       if (this.closed.compareAndSet(false, true)) {
         this.loader.close();
@@ -493,7 +492,7 @@ public final class ARInstrumentLoader
     public ARInstrumentType execute(
       final ARInstrumentPortAssignerType assigner,
       final ARInstrumentInstanceID instanceID)
-      throws ARInstrumentException
+      throws ARException
     {
       Objects.requireNonNull(assigner, "assigner");
       Objects.requireNonNull(instanceID, "InstanceID");
@@ -521,7 +520,7 @@ public final class ARInstrumentLoader
 
     @Override
     public void close()
-      throws ARInstrumentException
+      throws ARException
     {
       if (this.closed.compareAndSet(false, true)) {
         try {

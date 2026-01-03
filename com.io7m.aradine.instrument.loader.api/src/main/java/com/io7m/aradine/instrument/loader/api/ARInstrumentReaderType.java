@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.instrument.loader.api;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
-import com.io7m.aradine.api.instrument.ARInstrumentException;
 
 /**
  * An instrument reader.
@@ -31,24 +31,24 @@ public interface ARInstrumentReaderType
    *
    * @return The instrument
    *
-   * @throws ARInstrumentException On errors
+   * @throws ARException On errors
    */
 
   ARInstrumentData execute()
-    throws ARInstrumentException;
+    throws ARException;
 
   /**
    * Read the instrument and parse the received metadata.
    *
    * @return The instrument
    *
-   * @throws ARInstrumentException On errors
+   * @throws ARException On errors
    */
 
   ARInstrumentReadResultType executeAndParse()
-    throws ARInstrumentException;
+    throws ARException;
 
   @Override
   void close()
-    throws ARInstrumentException;
+    throws ARException;
 }

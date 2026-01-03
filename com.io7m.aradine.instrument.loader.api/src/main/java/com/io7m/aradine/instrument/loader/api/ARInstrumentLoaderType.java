@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.api;
 
-import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.jmulticlose.core.CloseableType;
@@ -36,15 +36,15 @@ public interface ARInstrumentLoaderType
    *
    * @return The instance
    *
-   * @throws ARInstrumentException On errors
+   * @throws ARException On errors
    */
 
   ARInstrumentType execute(
     ARInstrumentPortAssignerType assigner,
     ARInstrumentInstanceID instanceID)
-    throws ARInstrumentException;
+    throws ARException;
 
   @Override
   void close()
-    throws ARInstrumentException;
+    throws ARException;
 }

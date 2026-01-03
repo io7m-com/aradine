@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.api;
 
-import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.ARException;
 
 import java.nio.file.Path;
 
@@ -34,11 +34,11 @@ public interface ARInstrumentLoaderFactoryType
    *
    * @return A loader
    *
-   * @throws ARInstrumentException On errors
+   * @throws ARException On errors
    */
 
   ARInstrumentLoaderType createLoader(
     ARInstrumentLoaderServicesConstructorType serviceConstructor,
     Path file)
-    throws ARInstrumentException;
+    throws ARException;
 }

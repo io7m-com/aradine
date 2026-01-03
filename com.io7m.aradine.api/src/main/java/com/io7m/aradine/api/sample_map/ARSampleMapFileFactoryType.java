@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.api.sample_map;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.progress.ARProgress;
 
 import java.nio.file.Path;
@@ -35,11 +36,11 @@ public interface ARSampleMapFileFactoryType
    *
    * @return An open file
    *
-   * @throws ARSampleMapException On errors
+   * @throws ARException On errors
    */
 
   ARSampleMapFileType open(
     Path file,
     Consumer<ARProgress> progressConsumer)
-    throws ARSampleMapException;
+    throws ARException;
 }

@@ -16,13 +16,13 @@
 
 package com.io7m.aradine.database.sqlite3;
 
+import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBConfiguration;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.database.sqlite3.internal.ARDB;
-import com.io7m.aradine.database.sqlite3.internal.ARDBCloseables;
 import com.io7m.aradine.database.sqlite3.internal.ARDBExceptions;
 import com.io7m.trasco.api.TrArguments;
 import com.io7m.trasco.api.TrEventExecutingSQL;
@@ -163,7 +163,7 @@ public final class ARDBFactory
     throws ARException
   {
     final var resources =
-      ARDBCloseables.create();
+      ARCloseables.create();
     final var arguments =
       new TrArguments(Map.of());
 

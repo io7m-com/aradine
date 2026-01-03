@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.jmulticlose.core.CloseableCollectionType;

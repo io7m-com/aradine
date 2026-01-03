@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.tests.sample_map.aradine;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.progress.ARProgress;
-import com.io7m.aradine.api.sample_map.ARSampleMapException;
 import com.io7m.aradine.api.sample_map.ARSampleMapLoadConfiguration;
 import com.io7m.aradine.sample_map.aurantium.ARASampleMaps;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
@@ -73,7 +73,7 @@ public final class ARRSampleMapTest
 
     final var ex =
       assertThrows(
-        ARSampleMapException.class, () -> {
+        ARException.class, () -> {
           try (var _ = this.parsers.open(file, ARRSampleMapTest::logProgress)) {
             // Nothing.
           }
@@ -91,7 +91,7 @@ public final class ARRSampleMapTest
 
     final var ex =
       assertThrows(
-        ARSampleMapException.class, () -> {
+        ARException.class, () -> {
           try (var _ = this.parsers.open(file, ARRSampleMapTest::logProgress)) {
             // Nothing.
           }
@@ -109,7 +109,7 @@ public final class ARRSampleMapTest
 
     final var ex =
       assertThrows(
-        ARSampleMapException.class, () -> {
+        ARException.class, () -> {
           try (var _ = this.parsers.open(file, ARRSampleMapTest::logProgress)) {
             // Nothing.
           }

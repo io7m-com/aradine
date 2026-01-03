@@ -16,8 +16,9 @@
 
 package com.io7m.aradine.sample_map.aurantium.internal;
 
+import com.io7m.aradine.api.ARCloseables;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.progress.ARProgress;
-import com.io7m.aradine.api.sample_map.ARSampleMapException;
 import com.io7m.aradine.api.sample_map.ARSampleMapFileType;
 import com.io7m.aradine.api.sample_map.ARSampleMapLoadConfiguration;
 import com.io7m.aradine.api.sample_map.ARSampleMapType;
@@ -66,7 +67,7 @@ public final class ARASampleMapFile
   implements ARSampleMapFileType
 {
   private final AtomicBoolean closed;
-  private final CloseableCollectionType<ARSampleMapException> resources;
+  private final CloseableCollectionType<ARException> resources;
   private final SampleBufferRateConverterFactoryType converters;
   private final AUFileReadableType fileParsed;
   private final AUSectionReadableClipDefinitionsType clipDefinitions;
@@ -75,7 +76,7 @@ public final class ARASampleMapFile
   private final AUSectionReadableIdentifierType identifier;
 
   private ARASampleMapFile(
-    final CloseableCollectionType<ARSampleMapException> inResources,
+    final CloseableCollectionType<ARException> inResources,
     final SampleBufferRateConverterFactoryType inConverters,
     final AUFileReadableType inFileParsed,
     final AUSectionReadableClipDefinitionsType inClipDefinitions,
@@ -104,7 +105,7 @@ public final class ARASampleMapFile
    *
    * @return The map
    *
-   * @throws ARSampleMapException On errors
+   * @throws ARException On errors
    */
 
   public static ARSampleMapFileType open(
@@ -113,7 +114,7 @@ public final class ARASampleMapFile
     final AUProbeFactoryType probes,
     final Path file,
     final Consumer<ARProgress> progressConsumer)
-    throws ARSampleMapException
+    throws ARException
   {
     final var open =
       new OpOpen(
@@ -135,7 +136,7 @@ public final class ARASampleMapFile
   @Override
   public ARSampleMapType load(
     final ARSampleMapLoadConfiguration configuration)
-    throws ARSampleMapException
+    throws ARException
   {
     Objects.requireNonNull(configuration, "Configuration");
     this.checkNotClosed();
@@ -164,7 +165,7 @@ public final class ARASampleMapFile
 
   @Override
   public void close()
-    throws ARSampleMapException
+    throws ARException
   {
     if (this.closed.compareAndSet(false, true)) {
       this.resources.close();
@@ -179,7 +180,7 @@ public final class ARASampleMapFile
     private final Path file;
     private final Consumer<ARProgress> progressConsumer;
     private final String task;
-    private final CloseableCollectionType<ARSampleMapException> resources;
+    private final CloseableCollectionType<ARException> resources;
     private final SampleBufferRateConverterFactoryType converters;
     private double taskProgress;
     private String subTask;
@@ -237,7 +238,7 @@ public final class ARASampleMapFile
     }
 
     public ARSampleMapFileType execute()
-      throws ARSampleMapException
+      throws ARException
     {
       try {
         this.openFile();
@@ -251,7 +252,7 @@ public final class ARASampleMapFile
     }
 
     private void openFile()
-      throws ARSampleMapException
+      throws ARException
     {
       this.taskProgress = taskProgressOf(0);
       this.subTask = "Opening file.";
@@ -271,7 +272,7 @@ public final class ARASampleMapFile
     }
 
     private void probeVersion()
-      throws ARSampleMapException
+      throws ARException
     {
       this.taskProgress = taskProgressOf(1);
       this.subTask = "Probing sample map version.";
@@ -294,7 +295,7 @@ public final class ARASampleMapFile
     }
 
     private void findParser()
-      throws ARSampleMapException
+      throws ARException
     {
       this.taskProgress = taskProgressOf(2);
       this.subTask = "Finding parser for file version.";
@@ -326,7 +327,7 @@ public final class ARASampleMapFile
     }
 
     private void runParser()
-      throws ARSampleMapException
+      throws ARException
     {
       this.taskProgress = taskProgressOf(3);
       this.subTask = "Executing parser for file.";
@@ -349,7 +350,7 @@ public final class ARASampleMapFile
     }
 
     private ARSampleMapFileType processParsed()
-      throws IOException, ARSampleMapException
+      throws IOException, ARException
     {
       this.taskProgress = taskProgressOf(4);
       this.subTask = "Processing parsed file.";
@@ -382,10 +383,10 @@ public final class ARASampleMapFile
       );
     }
 
-    private ARSampleMapException errorMissingData(
+    private ARException errorMissingData(
       final String data)
     {
-      return new ARSampleMapException(
+      return new ARException(
         "Sample map is missing required data.",
         "error-missing-data",
         Map.ofEntries(
@@ -397,9 +398,9 @@ public final class ARASampleMapFile
       );
     }
 
-    private ARSampleMapException errorNoParserSupporting()
+    private ARException errorNoParserSupporting()
     {
-      return new ARSampleMapException(
+      return new ARException(
         "No parser available supporting the given version.",
         "error-sample-map-format-version",
         Map.ofEntries(
@@ -410,10 +411,10 @@ public final class ARASampleMapFile
       );
     }
 
-    private ARSampleMapException errorIO(
+    private ARException errorIO(
       final IOException e)
     {
-      return new ARSampleMapException(
+      return new ARException(
         Objects.requireNonNullElse(
           e.getMessage(),
           e.getClass().getSimpleName()
@@ -428,7 +429,7 @@ public final class ARASampleMapFile
     }
 
     public void close()
-      throws ARSampleMapException
+      throws ARException
     {
       this.resources.close();
     }
@@ -459,7 +460,7 @@ public final class ARASampleMapFile
     }
 
     public ARSampleMapType execute()
-      throws ARSampleMapException
+      throws ARException
     {
       try {
         this.subTask = "Converting clip data.";
@@ -526,7 +527,7 @@ public final class ARASampleMapFile
     private SampleBufferType convertClipData(
       final AUClipDescription clipDefinition,
       final SeekableByteChannel clipData)
-      throws ARSampleMapException
+      throws ARException
     {
       final var converter =
         this.converters.createConverter();
@@ -597,16 +598,16 @@ public final class ARASampleMapFile
     }
   }
 
-  private static ARSampleMapException wrap(
+  private static ARException wrap(
     final Exception e)
-    throws ARSampleMapException
+    throws ARException
   {
     return switch (e) {
-      case final ARSampleMapException ex -> {
+      case final ARException ex -> {
         throw ex;
       }
       case final SStructuredErrorExceptionType<?> es -> {
-        throw new ARSampleMapException(
+        throw new ARException(
           es.message(),
           e,
           es.errorCode().toString(),
@@ -615,7 +616,7 @@ public final class ARASampleMapFile
         );
       }
       case final Throwable et -> {
-        yield new ARSampleMapException(
+        yield new ARException(
           Objects.requireNonNullElse(
             et.getMessage(),
             et.getClass().getSimpleName()),

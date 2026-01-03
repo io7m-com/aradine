@@ -14,9 +14,8 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.ensemble.internal.database;
+package com.io7m.aradine.api;
 
-import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
@@ -27,9 +26,9 @@ import java.util.Optional;
  * Closeable collections.
  */
 
-public final class AREnsDBCloseables
+public final class ARCloseables
 {
-  private AREnsDBCloseables()
+  private ARCloseables()
   {
 
   }

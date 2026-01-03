@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.sample_map.aurantium.internal;
 
-import com.io7m.aradine.api.sample_map.ARSampleMapException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.sample_map.ARSampleMapType;
 import com.io7m.aurantium.api.AUClipID;
 import com.io7m.jsamplebuffer.api.SampleBufferType;
@@ -44,7 +44,7 @@ public final class ARASampleMap implements ARSampleMapType
 
   @Override
   public void close()
-    throws ARSampleMapException
+    throws ARException
   {
     if (this.closed.compareAndSet(false, true)) {
       // Nothing required.

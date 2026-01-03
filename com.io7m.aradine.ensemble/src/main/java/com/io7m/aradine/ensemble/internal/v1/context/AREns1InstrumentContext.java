@@ -18,10 +18,10 @@ package com.io7m.aradine.ensemble.internal.v1.context;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
+import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.sample_map.ARSampleMapURIs;
 import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
-import com.io7m.aradine.ensemble.internal.model.AREnsCloseables;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
@@ -86,7 +86,7 @@ public final class AREns1InstrumentContext
     Objects.requireNonNull(inDescription, "Description");
 
     final var closeables =
-      AREnsCloseables.create();
+      ARCloseables.create();
     final var services =
       new AREns1InstrumentContext(
         closeables,

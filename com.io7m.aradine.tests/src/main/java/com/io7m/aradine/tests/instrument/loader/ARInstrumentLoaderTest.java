@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.tests.instrument.loader;
 
-import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
@@ -82,7 +82,7 @@ public final class ARInstrumentLoaderTest
       this.directory.resolve("nonexistent.jar");
     final var ex =
       assertThrows(
-        ARInstrumentException.class,
+        ARException.class,
         () -> {
           this.loaders.createLoader(
             this.serviceConstructor,
@@ -100,7 +100,7 @@ public final class ARInstrumentLoaderTest
       this.resourceOf("bad_extradep.jar");
     final var ex =
       assertThrows(
-        ARInstrumentException.class,
+        ARException.class,
         () -> {
           this.loaders.createLoader(
             this.serviceConstructor,
@@ -118,7 +118,7 @@ public final class ARInstrumentLoaderTest
       this.resourceOf("bad_uses.jar");
     final var ex =
       assertThrows(
-        ARInstrumentException.class,
+        ARException.class,
         () -> {
           this.loaders.createLoader(
             this.serviceConstructor,
@@ -136,7 +136,7 @@ public final class ARInstrumentLoaderTest
       this.resourceOf("bad_noprovides.jar");
     final var ex =
       assertThrows(
-        ARInstrumentException.class,
+        ARException.class,
         () -> {
           this.loaders.createLoader(
             this.serviceConstructor,
@@ -154,7 +154,7 @@ public final class ARInstrumentLoaderTest
       this.resourceOf("bad_provides.jar");
     final var ex =
       assertThrows(
-        ARInstrumentException.class,
+        ARException.class,
         () -> {
           this.loaders.createLoader(
             this.serviceConstructor,

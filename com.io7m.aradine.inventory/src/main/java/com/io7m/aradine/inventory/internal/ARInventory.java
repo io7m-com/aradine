@@ -21,7 +21,6 @@ import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
-import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
@@ -304,14 +303,6 @@ public final class ARInventory implements ARInventoryType
         this.subtaskProgress = 1.0;
         this.publishProgressNow();
         return instrument;
-      } catch (final ARInstrumentException e) {
-        throw new ARException(
-          e.getMessage(),
-          e,
-          e.errorCode(),
-          e.attributes(),
-          e.remediatingAction()
-        );
       }
     }
 

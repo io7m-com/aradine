@@ -19,10 +19,11 @@ package com.io7m.aradine.instrument.loader.internal;
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.ARCloseables;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
-import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadV1;
@@ -71,7 +72,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
   private static final ARI1InstrumentParserFactoryType PARSERS1 =
     new ARI1InstrumentParsers();
 
-  private final CloseableCollectionType<ARInstrumentException> resources;
+  private final CloseableCollectionType<ARException> resources;
   private final Path file;
   private final HashMap<String, String> attributes;
   private Manifest manifest;
@@ -85,7 +86,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     this.file =
       Objects.requireNonNull(inFile, "File");
     this.resources =
-      ARInstrumentCloseables.create();
+      ARCloseables.create();
 
     this.attributes = new HashMap<>(4);
     this.attributes.put("File", this.file.toAbsolutePath().toString());
@@ -107,13 +108,13 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
 
   @Override
   public ARInstrumentData execute()
-    throws ARInstrumentException
+    throws ARException
   {
     return this.executeMain().data();
   }
 
   private ARReadResultType executeMain()
-    throws ARInstrumentException
+    throws ARException
   {
     try {
       this.size =
@@ -136,7 +137,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
 
   @Override
   public ARInstrumentReadResultType executeAndParse()
-    throws ARInstrumentException
+    throws ARException
   {
     return switch (this.executeMain()) {
       case final ARRead1 r1 -> {
@@ -145,7 +146,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     };
   }
 
-  private ARInstrumentException errorException(
+  private ARException errorException(
     final Exception e)
   {
     final var errorCode =
@@ -153,11 +154,11 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
         case IOException _ -> "error-io";
         case ParsingException _ -> "error-parsing";
         case JacksonException _ -> "error-json";
-        case final ARInstrumentException x -> x.errorCode();
+        case final ARException x -> x.errorCode();
         case Exception _ -> "error-exception";
       };
 
-    return new ARInstrumentException(
+    return new ARException(
       Objects.requireNonNullElse(e.getMessage(), e.getClass().getSimpleName()),
       e,
       errorCode,
@@ -289,7 +290,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
   }
 
   private String findManifestInstrumentFile()
-    throws ARInstrumentException
+    throws ARException
   {
     final var manifestFileName =
       this.manifest.getMainAttributes()
@@ -304,7 +305,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
   }
 
   private Manifest parseManifest()
-    throws IOException, ARInstrumentException
+    throws IOException, ARException
   {
     final var fileStream =
       this.resources.add(Files.newInputStream(this.file));
@@ -324,9 +325,9 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     }
   }
 
-  private ARInstrumentException errorUnableToFindManifest()
+  private ARException errorUnableToFindManifest()
   {
-    return new ARInstrumentException(
+    return new ARException(
       "Unable to locate a META-INF/MANIFEST.MF file.",
       "error-instrument-manifest-missing",
       this.attributes,
@@ -334,9 +335,9 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     );
   }
 
-  private ARInstrumentException errorMissingAradineInstrument()
+  private ARException errorMissingAradineInstrument()
   {
-    return new ARInstrumentException(
+    return new ARException(
       "No Aradine-Instrument entry in the given manifest.",
       "error-manifest-missing-aradine-instrument",
       this.attributes,
@@ -344,9 +345,9 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     );
   }
 
-  private ARInstrumentException errorUnableToOpenInstrument()
+  private ARException errorUnableToOpenInstrument()
   {
-    return new ARInstrumentException(
+    return new ARException(
       "The Aradine-Instrument entry in the manifest refers to a nonexistent file.",
       "error-manifest-nonexistent-instrument",
       this.attributes,
@@ -354,9 +355,9 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     );
   }
 
-  private ARInstrumentException errorUnsupportedSchema()
+  private ARException errorUnsupportedSchema()
   {
-    return new ARInstrumentException(
+    return new ARException(
       "The instrument definition uses an unsupported schema version.",
       "error-unsupported-schema-version",
       this.attributes,
@@ -364,9 +365,9 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
     );
   }
 
-  private ARInstrumentException errorInvalidInstrument()
+  private ARException errorInvalidInstrument()
   {
-    return new ARInstrumentException(
+    return new ARException(
       "The instrument definition is invalid.",
       "error-invalid-instrument",
       this.attributes,
@@ -376,7 +377,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
 
   @Override
   public void close()
-    throws ARInstrumentException
+    throws ARException
   {
     this.resources.close();
   }

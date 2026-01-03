@@ -17,6 +17,7 @@
 package com.io7m.aradine.inventory.api;
 
 import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
@@ -82,14 +83,14 @@ public interface ARInventoryType
    *
    * @return The file, if the instrument exists
    *
-   * @throws ARInventoryException On errors
+   * @throws ARException On errors
    */
 
   Optional<Path> instrumentFile(
     ARInstrumentID instrument)
-    throws ARInventoryException;
+    throws ARException;
 
   @Override
   void close()
-    throws ARInventoryException;
+    throws ARException;
 }

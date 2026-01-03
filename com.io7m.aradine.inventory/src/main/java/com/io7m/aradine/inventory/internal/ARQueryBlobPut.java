@@ -17,7 +17,7 @@
 package com.io7m.aradine.inventory.internal;
 
 import com.io7m.aradine.api.ARBlob;
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -51,7 +51,7 @@ enum ARQueryBlobPut
   public ARInventoryUnit execute(
     final ARDBTransactionType transaction,
     final ARBlob blob)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

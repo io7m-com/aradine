@@ -28,13 +28,13 @@ import com.io7m.aradine.api.ports.ARPortNumber;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraph;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class AREnsGraphTest
@@ -67,12 +67,159 @@ public final class AREnsGraphTest
   }
 
   @Test
+  public void testInstrumentRegisterDuplicate()
+    throws ARException
+  {
+    final var graph = AREnsGraph.create();
+    graph.instrumentRegister(INSTRUMENT_0);
+
+    final var ex =
+      assertThrows(
+        ARException.class, () -> graph.instrumentRegister(INSTRUMENT_0)
+      );
+    assertEquals("error-instrument-duplicate", ex.errorCode());
+  }
+
+  @Test
+  public void testInstrumentCycle()
+    throws ARException
+  {
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0),
+        "Source0",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("ef4fc254-8dc8-4386-9b48-6dbb0a9dd1d8"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(0),
+        "Target0",
+        Set.of()
+      );
+
+    final var port2 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("addacc8f-e666-47ed-be5d-8a3acc2eeb30"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(1),
+        "Source0",
+        Set.of()
+      );
+
+    final var port3 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("121814ad-c534-436d-91b4-04f6de9087b0"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(1),
+        "Target0",
+        Set.of()
+      );
+
+    final var graph = AREnsGraph.create();
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.instrumentRegister(INSTRUMENT_1);
+    graph.portRegister(port0);
+    graph.portRegister(port1);
+    graph.portRegister(port2);
+    graph.portRegister(port3);
+    graph.portConnect(port0.id(), port1.id());
+
+    final var ex =
+      assertThrows(
+        ARException.class,
+        () -> graph.portConnect(port2.id(), port3.id())
+      );
+    assertEquals("error-port-cycle", ex.errorCode());
+  }
+
+  @Test
+  public void testInstrumentDeregisterPortStillPresent()
+    throws ARException
+  {
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0),
+        "Source0",
+        Set.of()
+      );
+
+    final var graph = AREnsGraph.create();
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.portRegister(port0);
+
+    final var ex =
+      assertThrows(
+        ARException.class,
+        () -> graph.instrumentDeregister(INSTRUMENT_0.instanceID())
+      );
+    assertEquals("error-instrument-ports-registered", ex.errorCode());
+  }
+
+  @Test
+  public void testInstrumentDeregisterPortStillConnected()
+    throws ARException
+  {
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0),
+        "Source0",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("ef4fc254-8dc8-4386-9b48-6dbb0a9dd1d8"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(0),
+        "Target0",
+        Set.of()
+      );
+
+    final var graph = AREnsGraph.create();
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.instrumentRegister(INSTRUMENT_1);
+    graph.portRegister(port0);
+    graph.portRegister(port1);
+    graph.portConnect(port0.id(), port1.id());
+
+    final var ex =
+      assertThrows(
+        ARException.class,
+        () -> graph.instrumentDeregister(INSTRUMENT_0.instanceID())
+      );
+    assertEquals("error-instrument-connected", ex.errorCode());
+  }
+
+  @Test
   public void testPortRegisterNonexistentInstrument()
   {
     final var graph = AREnsGraph.create();
 
     final var ex =
-      Assertions.assertThrows(
+      assertThrows(
         ARException.class, () -> {
           graph.portRegister(new ARPort(
             ARInstrumentInstanceID.random(),
@@ -163,9 +310,10 @@ public final class AREnsGraphTest
     graph.portRegister(port1);
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portConnect(port1.id(), port0.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portConnect(port1.id(), port0.id());
+        });
     assertEquals("error-port-not-source", ex.errorCode());
   }
 
@@ -206,9 +354,10 @@ public final class AREnsGraphTest
     graph.portRegister(port1);
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portConnect(port1.id(), port0.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portConnect(port1.id(), port0.id());
+        });
     assertEquals("error-port-not-target", ex.errorCode());
   }
 
@@ -248,9 +397,10 @@ public final class AREnsGraphTest
     graph.portRegister(port0);
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portConnect(port0.id(), port1.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portConnect(port0.id(), port1.id());
+        });
     assertEquals("error-port-nonexistent", ex.errorCode());
   }
 
@@ -291,9 +441,10 @@ public final class AREnsGraphTest
     graph.portRegister(port1);
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portConnect(port0.id(), port1.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portConnect(port0.id(), port1.id());
+        });
     assertEquals("error-instruments-same", ex.errorCode());
   }
 
@@ -319,9 +470,10 @@ public final class AREnsGraphTest
     graph.portRegister(port0);
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portRegister(port0);
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portRegister(port0);
+        });
     assertEquals("error-port-duplicate", ex.errorCode());
   }
 
@@ -363,9 +515,10 @@ public final class AREnsGraphTest
     graph.portConnect(port0.id(), port1.id());
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portDeregister(port0);
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portDeregister(port0);
+        });
     assertEquals("error-port-connected", ex.errorCode());
   }
 
@@ -450,9 +603,10 @@ public final class AREnsGraphTest
     graph.portConnect(port0.id(), port2.id());
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portConnect(port1.id(), port2.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portConnect(port1.id(), port2.id());
+        });
     assertEquals("error-port-connected", ex.errorCode());
   }
 
@@ -501,9 +655,10 @@ public final class AREnsGraphTest
     assertFalse(graph.portIsConnected(port1.id(), port0.id()));
 
     final var ex =
-      Assertions.assertThrows(ARException.class, () -> {
-        graph.portDisconnect(port0.id(), port1.id());
-      });
+      assertThrows(
+        ARException.class, () -> {
+          graph.portDisconnect(port0.id(), port1.id());
+        });
     assertEquals("error-ports-not-connected", ex.errorCode());
   }
 }

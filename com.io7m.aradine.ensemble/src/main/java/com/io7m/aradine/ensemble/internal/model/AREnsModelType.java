@@ -17,9 +17,11 @@
 package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.ensemble.internal.events.AREnsEventType;
 import com.io7m.jmulticlose.core.CloseableType;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Flow;
 
 /**
  * The model type.
@@ -29,21 +31,45 @@ public interface AREnsModelType
   extends CloseableType
 {
   /**
+   * @return A stream of ensemble events
+   */
+
+  Flow.Publisher<AREnsEventType> events();
+
+  /**
    * @return The loading operation in progress
    */
 
   CompletableFuture<?> loading();
 
   /**
+   * @return Undo the operation at the tip of the undo stack
+   */
+
+  CompletableFuture<?> undo();
+
+  /**
+   * @return Redo the operation at the tip of the redo stack
+   */
+
+  CompletableFuture<?> redo();
+
+  /**
    * Execute a model command.
    *
-   * @param command The command
+   * @param command    The command
+   * @param parameters The parameters
+   * @param <P>        The type of parameters
+   * @param <S>        The type of state
    *
    * @return The operation in progress
    */
 
+  <P extends AREnsModelCommandParametersType, S extends AREnsModelCommandStateType>
   CompletableFuture<?> executeCommand(
-    AREnsModelCommandType command);
+    AREnsModelCommandType<P, S> command,
+    P parameters
+  );
 
   @Override
   void close()

@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.inventory.api.ARInventoryException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
@@ -38,10 +38,10 @@ public final class ARCloseables
    * @return A new collection
    */
 
-  public static CloseableCollectionType<ARInventoryException> create()
+  public static CloseableCollectionType<ARException> create()
   {
     return CloseableCollection.create(() -> {
-      return new ARInventoryException(
+      return new ARException(
         "Closing a resource failed.",
         "error-resource-close",
         Map.of(),

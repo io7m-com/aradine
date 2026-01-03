@@ -18,31 +18,64 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
 
-import java.util.List;
-
 /**
  * A model command.
+ *
+ * @param <P> The type of command parameters
+ * @param <S> The type of command state
  */
 
-public interface AREnsModelCommandType
+public interface AREnsModelCommandType<
+  P extends AREnsModelCommandParametersType,
+  S extends AREnsModelCommandStateType>
 {
   /**
-   * @return A humanly-readable description of the command
-   */
-
-  String description();
-
-  /**
-   * Produce a list of model ops to be executed.
+   * Execute the command.
    *
-   * @param context The command context
+   * @param context    The command context
+   * @param parameters The command parameters
    *
-   * @return A list of model ops
+   * @return The undoable value with any associated command state
    *
    * @throws ARException On errors
    */
 
-  List<AREnsModelOpType> compile(
-    AREnsModelCommandContextType context)
+  AREnsCommandUndoableType<S> execute(
+    AREnsModelCommandContextType context,
+    P parameters)
     throws ARException;
+
+  /**
+   * Undo the command from the given state.
+   *
+   * @param context The command context
+   * @param state   The command state
+   *
+   * @throws ARException On errors
+   */
+
+  void undo(
+    AREnsModelCommandContextType context,
+    S state)
+    throws ARException;
+
+  /**
+   * Redo the command from the given state.
+   *
+   * @param context The command context
+   * @param state   The command state
+   *
+   * @throws ARException On errors
+   */
+
+  void redo(
+    AREnsModelCommandContextType context,
+    S state)
+    throws ARException;
+
+  /**
+   * @return A humanly-readable description of the operation
+   */
+
+  String description();
 }

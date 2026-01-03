@@ -16,11 +16,17 @@
 
 package com.io7m.aradine.api.instrument;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
+import com.io7m.verona.core.VersionException;
+import com.io7m.verona.core.VersionParser;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The identifier of an instrument.
@@ -49,6 +55,56 @@ public record ARInstrumentID(
     Objects.requireNonNull(group, "Group");
     Objects.requireNonNull(name, "Name");
     Objects.requireNonNull(version, "Version");
+  }
+
+  /**
+   * Parse an instrument ID.
+   *
+   * @param text The text
+   *
+   * @return An instrument ID
+   *
+   * @throws ARException On errors
+   */
+
+  public static ARInstrumentID parse(
+    final String text)
+    throws ARException
+  {
+    final var segments = List.of(text.split(":"));
+    if (segments.size() == 3) {
+      try {
+        final var group =
+          new RDottedName(segments.get(0));
+        final var name =
+          new RDottedName(segments.get(1));
+        final var version =
+          VersionParser.parse(segments.get(2));
+
+        return new ARInstrumentID(group, name, version);
+      } catch (final VersionException e) {
+        throw new ARException(
+          e.getMessage(),
+          e,
+          "error-parse",
+          Map.of("Text", text),
+          Optional.empty()
+        );
+      }
+    }
+
+    throw new ARException(
+      "Unparseable instrument ID.",
+      "error-parse",
+      Map.of("Text", text),
+      Optional.empty()
+    );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "%s:%s:%s".formatted(this.group, this.name, this.version);
   }
 
   @Override

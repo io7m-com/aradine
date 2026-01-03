@@ -20,7 +20,7 @@ import com.io7m.aradine.instrument.grain_sampler_m0.internal.ARIGM0Sampler;
 import com.io7m.aradine.instrument.grain_sampler_m0.internal.Parameters;
 import com.io7m.aradine.instrument.grain_sampler_m0.internal.Ports;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public final class ARIGM0SamplerFactory
 
   @Override
   public ARI1InstrumentType createInstrument(
-    final ARI1InstrumentServicesType services)
+    final ARI1InstrumentContextType services)
   {
     return new ARIGM0Sampler(
       services.createEventBuffer(),

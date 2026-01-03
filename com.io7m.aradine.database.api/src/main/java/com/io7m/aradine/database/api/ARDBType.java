@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.database.api;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableType;
 
 import static com.io7m.aradine.database.api.ARDBTransactionCloseBehavior.ON_CLOSE_CLOSE_CONNECTION;
@@ -30,27 +31,27 @@ public interface ARDBType
   /**
    * @return A new connection
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   ARDBConnectionType openConnection()
-    throws ARDBException;
+    throws ARException;
 
   /**
    * Open a transaction.
    *
    * @return A transaction
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   default ARDBTransactionType openTransaction()
-    throws ARDBException
+    throws ARException
   {
     return this.openConnection().openTransaction(ON_CLOSE_CLOSE_CONNECTION);
   }
 
   @Override
   void close()
-    throws ARDBException;
+    throws ARException;
 }

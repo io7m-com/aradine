@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
@@ -40,7 +40,12 @@ public enum AREnsQRedoPop
   private static final String QUERY_TEXT = """
     DELETE FROM redo
       WHERE redo_id = (SELECT max(redo_id) FROM redo)
-        RETURNING redo_id, redo_data_type, redo_data
+        RETURNING
+          redo_id,
+          redo_description,
+          redo_time,
+          redo_command,
+          redo_command_state
     """;
 
   @Override
@@ -59,7 +64,7 @@ public enum AREnsQRedoPop
   public Optional<AREnsModelCommandRecord> execute(
     final ARDBTransactionType transaction,
     final ARDBUnit ignored)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

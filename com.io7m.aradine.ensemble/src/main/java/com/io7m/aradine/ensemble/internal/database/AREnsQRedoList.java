@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
@@ -43,10 +43,10 @@ public enum AREnsQRedoList
   private static final String QUERY_TEXT = """
     SELECT
       redo_id,
-      redo_time,
       redo_description,
-      redo_data_type,
-      redo_data
+      redo_time,
+      redo_command,
+      redo_command_state
     FROM redo
     ORDER BY redo_id ASC
     LIMIT $1
@@ -55,10 +55,10 @@ public enum AREnsQRedoList
   private static final String QUERY_TEXT_WITH_START = """
     SELECT
       redo_id,
-      redo_time,
       redo_description,
-      redo_data_type,
-      redo_data
+      redo_time,
+      redo_command,
+      redo_command_state
     FROM redo
     WHERE redo_id > $1
     ORDER BY redo_id ASC
@@ -68,7 +68,7 @@ public enum AREnsQRedoList
   private static List<AREnsModelCommandRecord>
   readAllResults(
     final PreparedStatement st)
-    throws SQLException, ARDBException
+    throws SQLException, ARException
   {
     try (var rs = st.executeQuery()) {
       final var r = new ArrayList<AREnsModelCommandRecord>();
@@ -84,7 +84,7 @@ public enum AREnsQRedoList
     final Connection connection,
     final Long start,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT_WITH_START)) {
       st.setLong(1, start.longValue());
@@ -111,7 +111,7 @@ public enum AREnsQRedoList
   public List<AREnsModelCommandRecord> execute(
     final ARDBTransactionType transaction,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();
@@ -127,7 +127,7 @@ public enum AREnsQRedoList
   private List<AREnsModelCommandRecord> executeWithoutStart(
     final Connection connection,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       st.setLong(1, (long) parameters.limit());

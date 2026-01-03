@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.database.sqlite3.internal;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
@@ -38,10 +38,10 @@ public final class ARDBCloseables
    * @return A new collection
    */
 
-  public static CloseableCollectionType<ARDBException> create()
+  public static CloseableCollectionType<ARException> create()
   {
     return CloseableCollection.create(() -> {
-      return new ARDBException(
+      return new ARException(
         "Closing a resource failed.",
         "error-resource-close",
         Map.of(),

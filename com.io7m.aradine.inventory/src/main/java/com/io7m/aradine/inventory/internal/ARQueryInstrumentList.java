@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -190,7 +190,7 @@ enum ARQueryInstrumentList
   public List<ARInstrumentDataSummary> execute(
     final ARDBTransactionType transaction,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     try {
       if (parameters.start().isPresent()) {

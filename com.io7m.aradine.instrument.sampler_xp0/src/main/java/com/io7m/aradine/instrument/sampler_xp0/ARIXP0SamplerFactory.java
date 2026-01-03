@@ -21,7 +21,7 @@ import com.io7m.aradine.instrument.sampler_xp0.internal.ARIXP0Sampler;
 import com.io7m.aradine.instrument.sampler_xp0.internal.Parameters;
 import com.io7m.aradine.instrument.sampler_xp0.internal.Ports;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public final class ARIXP0SamplerFactory
 
   @Override
   public ARI1InstrumentType createInstrument(
-    final ARI1InstrumentServicesType services)
+    final ARI1InstrumentContextType services)
   {
     return new ARIXP0Sampler(
       services,

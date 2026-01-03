@@ -33,6 +33,7 @@ module com.io7m.aradine.database.sqlite3
   requires java.sql;
   requires org.slf4j;
   requires org.xerial.sqlitejdbc;
+  requires com.io7m.aradine.api;
 
   exports com.io7m.aradine.database.sqlite3;
 }

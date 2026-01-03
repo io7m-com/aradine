@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
@@ -26,13 +27,14 @@ import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadV1;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
 import com.io7m.verona.core.VersionQualifier;
 
+import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
@@ -46,6 +48,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 
 /**
  * The instrument loader.
@@ -122,17 +125,17 @@ public final class ARInstrumentLoader
         instrumentDescription = instrumentReader.executeAndParse();
       }
 
-      final var instrumentModuleFinder =
-        ModuleFinder.of(file);
-      final var moduleReference =
-        findInstrumentModuleReference(file, instrumentModuleFinder);
-
-      final var moduleDescriptor =
-        moduleReference.descriptor();
-      final var moduleName =
-        moduleDescriptor.name();
+      final ModuleDescriptor moduleDescriptor =
+        readModuleDescriptorFromJar(file);
 
       checkModule(file, moduleDescriptor);
+
+      final var instrumentModuleReference =
+        new ARInstrumentModuleReference(moduleDescriptor, file);
+      final var instrumentModuleFinder =
+        new ARInstrumentModuleFinder(instrumentModuleReference);
+      final var moduleName =
+        moduleDescriptor.name();
 
       final var instrumentClassLoader =
         new URLClassLoader(
@@ -163,6 +166,34 @@ public final class ARInstrumentLoader
     } catch (final Exception e) {
       throw wrap(e);
     }
+  }
+
+  private static ModuleDescriptor readModuleDescriptorFromJar(
+    final Path file)
+    throws ARException, IOException
+  {
+    try (var jarFile = new JarFile(file.toFile())) {
+      final var moduleEntry = jarFile.getEntry("module-info.class");
+      if (moduleEntry == null) {
+        throw errorModuleMissingDescriptor(file);
+      }
+      try (var stream = jarFile.getInputStream(moduleEntry)) {
+        return ModuleDescriptor.read(stream);
+      }
+    }
+  }
+
+  private static ARException errorModuleMissingDescriptor(
+    final Path file)
+  {
+    return new ARException(
+      "Module jar file does not contain a module descriptor.",
+      "error-module-no-descriptor",
+      Map.ofEntries(
+        Map.entry("File", file.toAbsolutePath().toString())
+      ),
+      Optional.empty()
+    );
   }
 
   private static ARInstrumentLoader1 createV1(
@@ -384,12 +415,12 @@ public final class ARInstrumentLoader
     private final AtomicBoolean closed;
     private final ARInstrumentLoader1 loader;
     private final ARI1InstrumentType instrument;
-    private final ARI1InstrumentServicesType services;
+    private final ARI1InstrumentContextType services;
     private final ARInstrumentDescription description;
 
     private ARInstrument1(
       final ARInstrumentLoader1 inLoader,
-      final ARI1InstrumentServicesType inServices,
+      final ARI1InstrumentContextType inServices,
       final ARI1InstrumentType inInstrument,
       final ARInstrumentDescription inDescription)
     {

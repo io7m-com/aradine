@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
@@ -38,9 +38,15 @@ public enum AREnsQUndoPeek
   INSTANCE;
 
   private static final String QUERY_TEXT = """
-    SELECT undo_id, undo_data_type, undo_data FROM undo
-      WHERE undo_id = (SELECT max(undo_id) FROM undo)
-        LIMIT 1
+    SELECT
+      undo_id,
+      undo_description,
+      undo_time,
+      undo_command,
+      undo_command_state
+    FROM undo
+    WHERE undo_id = (SELECT max(undo_id) FROM undo)
+    LIMIT 1
     """;
 
   @Override
@@ -59,7 +65,7 @@ public enum AREnsQUndoPeek
   public Optional<AREnsModelCommandRecord> execute(
     final ARDBTransactionType transaction,
     final ARDBUnit ignored)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

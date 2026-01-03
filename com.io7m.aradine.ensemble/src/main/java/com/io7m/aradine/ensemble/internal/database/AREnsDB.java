@@ -18,8 +18,8 @@
 package com.io7m.aradine.ensemble.internal.database;
 
 import com.io7m.anethum.api.ParsingException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBConnectionType;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionCloseBehavior;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -48,6 +48,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -95,12 +96,12 @@ public final class AREnsDB
    *
    * @return An ensemble file
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   public static AREnsDB createDatabase(
     final Path file)
-    throws ARDBException
+    throws ARException
   {
     Objects.requireNonNull(file, "file");
     return createDatabase(file, AREnsDBQueries.queries());
@@ -114,13 +115,13 @@ public final class AREnsDB
    *
    * @return An ensemble file
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   public static AREnsDB createDatabase(
     final Path file,
     final Map<Class<?>, ARDBQueryType<?, ?>> queries)
-    throws ARDBException
+    throws ARException
   {
     Objects.requireNonNull(file, "file");
 
@@ -215,7 +216,7 @@ public final class AREnsDB
 
   private static void setWALMode(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA journal_mode=WAL;");
@@ -317,7 +318,7 @@ public final class AREnsDB
 
   private static void setupInitialConnection(
     final SQLiteConnection connection)
-    throws SQLException, ARDBException
+    throws SQLException, ARException
   {
     setWALMode(connection);
     setSynchronous(connection);
@@ -336,7 +337,7 @@ public final class AREnsDB
 
   private static void setupConnection(
     final SQLiteConnection connection)
-    throws SQLException, ARDBException
+    throws SQLException, ARException
   {
     setWALMode(connection);
     setSynchronous(connection);
@@ -363,7 +364,7 @@ public final class AREnsDB
 
   private static void setNoMMAP(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA mmap_size = 0;");
@@ -374,7 +375,7 @@ public final class AREnsDB
 
   private static void setSecureDelete(
     final SQLiteConnection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA secure_delete = on;");
@@ -385,7 +386,7 @@ public final class AREnsDB
 
   private static void setSynchronous(
     final SQLiteConnection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA synchronous = EXTRA;");
@@ -396,7 +397,7 @@ public final class AREnsDB
 
   private static void setCellSizeCheck(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA cell_size_check = on;");
@@ -407,7 +408,7 @@ public final class AREnsDB
 
   private static void setIntegrityCheck(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA integrity_check;");
@@ -418,7 +419,7 @@ public final class AREnsDB
 
   private static void setTrustedSchemaOff(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA trusted_schema = off;");
@@ -441,11 +442,11 @@ public final class AREnsDB
 
   private <P, R, Q extends ARDBQueryType<P, R>> Q query(
     final Class<Q> queryType)
-    throws ARDBException
+    throws ARException
   {
     final var query = this.queries.get(queryType);
     if (query == null) {
-      throw new ARDBException(
+      throw new ARException(
         "No such query.",
         "error-query-nonexistent",
         Map.ofEntries(
@@ -459,7 +460,7 @@ public final class AREnsDB
 
   @Override
   public ARDBConnectionType openConnection()
-    throws ARDBException
+    throws ARException
   {
     try {
       final var connection = (SQLiteConnection) this.dataSource.getConnection();
@@ -473,7 +474,7 @@ public final class AREnsDB
   interface CloseOpType
   {
     void execute()
-      throws ARDBException;
+      throws ARException;
   }
 
   private static final class AREnsRegexpFunction
@@ -513,6 +514,7 @@ public final class AREnsDB
     private final AREnsDBConnection connection;
     private final CloseOpType onClose;
     private final AtomicBoolean closed;
+    private final LinkedList<Runnable> commitQueue;
 
     private AREnsTransaction(
       final AREnsDBConnection inConnection,
@@ -524,6 +526,8 @@ public final class AREnsDB
         Objects.requireNonNull(inOnClose, "OnClose");
       this.closed =
         new AtomicBoolean(false);
+      this.commitQueue =
+        new LinkedList<>();
     }
 
     @Override
@@ -535,7 +539,7 @@ public final class AREnsDB
     @Override
     public <P, R, Q extends ARDBQueryType<P, R>> Q query(
       final Class<Q> queryType)
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
       return this.connection.db.query(queryType);
@@ -550,7 +554,7 @@ public final class AREnsDB
 
     @Override
     public void rollback()
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
 
@@ -563,12 +567,15 @@ public final class AREnsDB
 
     @Override
     public void commit()
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
 
       try {
         this.connection.connection.commit();
+        while (!this.commitQueue.isEmpty()) {
+          this.commitQueue.poll().run();
+        }
       } catch (final SQLException e) {
         throw AREnsDBExceptions.wrap(e);
       }
@@ -576,13 +583,21 @@ public final class AREnsDB
 
     @Override
     public void close()
-      throws ARDBException
+      throws ARException
     {
       this.rollback();
 
       if (this.closed.compareAndSet(false, true)) {
         this.onClose.execute();
       }
+    }
+
+    @Override
+    public void addRunAfterCommit(
+      final Runnable runnable)
+    {
+      Objects.requireNonNull(runnable, "Runnable");
+      this.commitQueue.offer(runnable);
     }
   }
 
@@ -625,7 +640,7 @@ public final class AREnsDB
 
     @Override
     public void close()
-      throws ARDBException
+      throws ARException
     {
       try {
         this.connection.close();

@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.database.sqlite3;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBConfiguration;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBType;
@@ -160,7 +160,7 @@ public final class ARDBFactory
   private static void createOrUpgrade(
     final ARDBConfiguration configuration,
     final Consumer<String> startupMessages)
-    throws ARDBException
+    throws ARException
   {
     final var resources =
       ARDBCloseables.create();
@@ -257,7 +257,7 @@ public final class ARDBFactory
 
   private static HashMap<Class<?>, ARDBQueryType<?, ?>> combineQueries(
     final ARDBConfiguration configuration)
-    throws ARDBException
+    throws ARException
   {
     final var queryList =
       configuration.queries();
@@ -278,11 +278,11 @@ public final class ARDBFactory
     return queryMap;
   }
 
-  private static ARDBException errorDuplicateQuery(
+  private static ARException errorDuplicateQuery(
     final ARDBQueryProviderType query,
     final ARDBQueryType<?, ?> existing)
   {
-    return new ARDBException(
+    return new ARException(
       "Multiple queries registered under the same interface type.",
       "error-query-conflict",
       Map.ofEntries(
@@ -310,12 +310,12 @@ public final class ARDBFactory
    *
    * @return A database
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   public ARDBType open(
     final ARDBConfiguration configuration)
-    throws ARDBException
+    throws ARException
   {
     Objects.requireNonNull(configuration, "configuration");
 

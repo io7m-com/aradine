@@ -16,6 +16,8 @@
 
 package com.io7m.aradine.database.api;
 
+import com.io7m.aradine.api.ARException;
+
 import java.sql.Connection;
 
 import static com.io7m.aradine.database.api.ARDBTransactionCloseBehavior.ON_CLOSE_DO_NOTHING;
@@ -40,11 +42,11 @@ public interface ARDBConnectionType
    *
    * @return The transaction
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   default ARDBTransactionType openTransaction()
-    throws ARDBException
+    throws ARException
   {
     return this.openTransaction(ON_CLOSE_DO_NOTHING);
   }
@@ -57,14 +59,14 @@ public interface ARDBConnectionType
    *
    * @return The transaction
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   ARDBTransactionType openTransaction(
     ARDBTransactionCloseBehavior closeBehavior)
-    throws ARDBException;
+    throws ARException;
 
   @Override
   void close()
-    throws ARDBException;
+    throws ARException;
 }

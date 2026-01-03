@@ -29,9 +29,12 @@ final class AREnsDBQueries
     QUERIES =
       Map.copyOf(
         Stream.of(
+          AREnsQCommandIDNext.INSTANCE,
+          AREnsQInstrumentDelete.INSTANCE,
           AREnsQInstrumentPut.INSTANCE,
           AREnsQPortConnect.INSTANCE,
           AREnsQPortConnectionList.INSTANCE,
+          AREnsQPortDelete.INSTANCE,
           AREnsQPortDisconnect.INSTANCE,
           AREnsQPortList.INSTANCE,
           AREnsQPortPut.INSTANCE,

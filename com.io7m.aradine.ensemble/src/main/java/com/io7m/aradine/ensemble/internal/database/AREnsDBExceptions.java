@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import org.sqlite.SQLiteException;
 import tools.jackson.core.exc.StreamReadException;
 
@@ -43,10 +43,10 @@ public final class AREnsDBExceptions
    * @return The wrapped exception
    */
 
-  public static ARDBException wrap(
+  public static ARException wrap(
     final SQLException e)
   {
-    return new ARDBException(
+    return new ARException(
       e.getMessage(),
       e,
       "error-sql",
@@ -63,12 +63,12 @@ public final class AREnsDBExceptions
    * @return The wrapped exception
    */
 
-  public static ARDBException wrap(
+  public static ARException wrap(
     final Exception e)
   {
     return switch (e) {
       case final StreamReadException x -> {
-        yield new ARDBException(
+        yield new ARException(
           x.getMessage(),
           x,
           "error-json-parse-exception",
@@ -76,14 +76,14 @@ public final class AREnsDBExceptions
           Optional.empty()
         );
       }
-      case final ARDBException x -> {
+      case final ARException x -> {
         yield x;
       }
       case final SQLiteException x -> {
         yield wrapSQLiteException(x);
       }
       case Exception _ -> {
-        yield new ARDBException(
+        yield new ARException(
           e.getMessage(),
           e,
           "error-exception",
@@ -94,12 +94,12 @@ public final class AREnsDBExceptions
     };
   }
 
-  private static ARDBException wrapSQLiteException(
+  private static ARException wrapSQLiteException(
     final SQLiteException x)
   {
     final var message = x.getMessage();
     if (message.contains("Source port must have AR_SOURCE direction.")) {
-      return new ARDBException(
+      return new ARException(
         "Source port must have AR_SOURCE direction.",
         x,
         "error-source-port-source",
@@ -109,7 +109,7 @@ public final class AREnsDBExceptions
     }
 
     if (message.contains("Target port must have AR_TARGET direction.")) {
-      return new ARDBException(
+      return new ARException(
         "Target port must have AR_TARGET direction.",
         x,
         "error-target-port-target",
@@ -119,7 +119,7 @@ public final class AREnsDBExceptions
     }
 
     if (message.contains("UNIQUE constraint failed: port_connections.port_connection_target")) {
-      return new ARDBException(
+      return new ARException(
         "Target port is already connected.",
         x,
         "error-target-port-connected",
@@ -129,7 +129,7 @@ public final class AREnsDBExceptions
     }
 
     if (message.contains("Source and target ports must belong to different instruments.")) {
-      return new ARDBException(
+      return new ARException(
         "Source and target port must belong to different instruments.",
         x,
         "error-source-target-port-instrument-self",
@@ -138,7 +138,7 @@ public final class AREnsDBExceptions
       );
     }
 
-    return new ARDBException(
+    return new ARException(
       message,
       x,
       "error-exception",

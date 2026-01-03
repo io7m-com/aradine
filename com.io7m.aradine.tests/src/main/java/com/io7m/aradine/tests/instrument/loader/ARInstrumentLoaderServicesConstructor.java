@@ -22,8 +22,8 @@ import com.io7m.aradine.api.instrument.ARInstrumentException;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
@@ -57,7 +57,7 @@ public final class ARInstrumentLoaderServicesConstructor
   }
 
   @Override
-  public ARI1InstrumentServicesType createServicesV1(
+  public ARI1InstrumentContextType createServicesV1(
     final ARI1InstrumentDescription description)
     throws ARInstrumentException
   {
@@ -65,7 +65,7 @@ public final class ARInstrumentLoaderServicesConstructor
   }
 
   public static final class Services1
-    implements ARI1InstrumentServicesType
+    implements ARI1InstrumentContextType
   {
     private final ARI1InstrumentDescription description;
 

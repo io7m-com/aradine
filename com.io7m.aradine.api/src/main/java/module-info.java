@@ -25,6 +25,7 @@ module com.io7m.aradine.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.jattribute.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.lanark.core;
   requires com.io7m.mime2045.core;
@@ -35,5 +36,6 @@ module com.io7m.aradine.api
   exports com.io7m.aradine.api.ports;
   exports com.io7m.aradine.api.progress;
   exports com.io7m.aradine.api.sample_map;
+  exports com.io7m.aradine.api.system;
   exports com.io7m.aradine.api;
 }

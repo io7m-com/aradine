@@ -29,6 +29,18 @@ import com.io7m.aradine.api.ports.ARPortID;
 public interface AREnsGraphType
 {
   /**
+   * Deregister an instrument.
+   *
+   * @param instrument The instrument
+   *
+   * @throws ARException On errors
+   */
+
+  void instrumentDeregister(
+    ARInstrumentInstanceID instrument)
+    throws ARException;
+
+  /**
    * Register an instrument.
    *
    * @param instrument The instrument

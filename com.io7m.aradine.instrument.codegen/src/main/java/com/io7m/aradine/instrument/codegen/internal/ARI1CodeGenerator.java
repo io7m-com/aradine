@@ -23,7 +23,7 @@ import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorParameters;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorResult;
 import com.io7m.aradine.instrument.codegen.ARI1CodeGeneratorType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
@@ -92,7 +92,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
     final var builder = MethodSpec.constructorBuilder();
     builder.addModifiers(PUBLIC);
     builder.addParameter(
-      ARI1InstrumentServicesType.class,
+      ARI1InstrumentContextType.class,
       "$services",
       FINAL
     );
@@ -180,7 +180,7 @@ public final class ARI1CodeGenerator implements ARI1CodeGeneratorType
     final var builder = MethodSpec.constructorBuilder();
     builder.addModifiers(PUBLIC);
     builder.addParameter(
-      ARI1InstrumentServicesType.class,
+      ARI1InstrumentContextType.class,
       "$services",
       FINAL
     );

@@ -17,7 +17,7 @@
 package com.io7m.aradine.instrument.bad_provides;
 
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public final class BadFactory implements ARI1InstrumentFactoryType
 
   @Override
   public ARI1InstrumentType createInstrument(
-    final ARI1InstrumentServicesType services)
+    final ARI1InstrumentContextType services)
   {
     throw new IllegalStateException();
   }

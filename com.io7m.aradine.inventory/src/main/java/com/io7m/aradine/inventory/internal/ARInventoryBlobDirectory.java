@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
-import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.streamtime.core.STTimedInputStream;
 import com.io7m.streamtime.core.STTransferStatistics;
@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
@@ -75,7 +76,7 @@ public final class ARInventoryBlobDirectory
 
   private static void doWrite(
     final BooleanSupplier cancelled,
-    final CloseableCollectionType<ARInventoryException> resources,
+    final CloseableCollectionType<ARException> resources,
     final FileChannel outChannel,
     final STTimedInputStream timedStream)
     throws IOException
@@ -114,7 +115,7 @@ public final class ARInventoryBlobDirectory
    * @return The written file path
    *
    * @throws IOException           On errors
-   * @throws ARInventoryException  On errors
+   * @throws ARException           On errors
    * @throws CancellationException On errors
    */
 
@@ -125,11 +126,40 @@ public final class ARInventoryBlobDirectory
     final BooleanSupplier cancelled)
     throws
     IOException,
-    ARInventoryException,
+    ARException,
     CancellationException
   {
     synchronized (this.writeLock) {
       return this.copyInLocked(hash, file, progress, cancelled);
+    }
+  }
+
+  /**
+   * Get a file from the directory.
+   *
+   * @param hash The hash
+   *
+   * @return The written file path
+   *
+   * @throws ARException On errors
+   */
+
+  public Optional<Path> get(
+    final ARHash hash)
+    throws ARException
+  {
+    synchronized (this.writeLock) {
+      final var hashBase =
+        this.baseDirectory.resolve(hash.algorithm().name())
+          .normalize();
+      final var fileActual =
+        hashBase.resolve(hash.value() + ".blob")
+          .normalize();
+
+      if (!Files.isRegularFile(fileActual)) {
+        return Optional.empty();
+      }
+      return Optional.of(fileActual);
     }
   }
 
@@ -138,7 +168,7 @@ public final class ARInventoryBlobDirectory
     final Path file,
     final Consumer<Double> progress,
     final BooleanSupplier cancelled)
-    throws ARInventoryException, IOException
+    throws ARException, IOException
   {
     checkCancelled(cancelled);
 
@@ -195,7 +225,7 @@ public final class ARInventoryBlobDirectory
     final Path file)
     throws IOException
   {
-    final long size = Files.size(file);
+    final var size = Files.size(file);
     return new STTransferStatistics(
       OptionalLong.of(size),
       size,
@@ -204,7 +234,7 @@ public final class ARInventoryBlobDirectory
   }
 
   private FileLock obtainLock(
-    final CloseableCollectionType<ARInventoryException> resources,
+    final CloseableCollectionType<ARException> resources,
     final Path outputFileLock)
     throws IOException
   {

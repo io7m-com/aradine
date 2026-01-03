@@ -16,13 +16,13 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 
@@ -127,7 +127,7 @@ public enum AREnsQPortList
   private static List<ARPort> executeWithoutStart(
     final Connection connection,
     final AREnsQPortListType.Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       st.setInt(1, parameters.limit());
@@ -141,7 +141,7 @@ public enum AREnsQPortList
     final Connection connection,
     final AREnsQPortListType.Parameters parameters,
     final ARPort portStart)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT_WITH_START)) {
       st.setString(1, portStart.id().toString());
@@ -168,7 +168,7 @@ public enum AREnsQPortList
   public List<ARPort> execute(
     final ARDBTransactionType transaction,
     final AREnsQPortListType.Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

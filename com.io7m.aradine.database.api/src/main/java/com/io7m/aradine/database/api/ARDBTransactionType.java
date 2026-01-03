@@ -16,6 +16,8 @@
 
 package com.io7m.aradine.database.api;
 
+import com.io7m.aradine.api.ARException;
+
 import java.util.Objects;
 
 /**
@@ -41,12 +43,12 @@ public interface ARDBTransactionType
    *
    * @return A query
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   <P, R, Q extends ARDBQueryType<P, R>> Q query(
     Class<Q> queryType)
-    throws ARDBException;
+    throws ARException;
 
   /**
    * Find a query and execute it.
@@ -59,13 +61,13 @@ public interface ARDBTransactionType
    *
    * @return The query result
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   default <P, R, Q extends ARDBQueryType<P, R>> R execute(
     final Class<Q> queryType,
     final P parameters)
-    throws ARDBException
+    throws ARException
   {
     Objects.requireNonNull(queryType, "QueryType");
     Objects.requireNonNull(parameters, "Parameters");
@@ -75,22 +77,31 @@ public interface ARDBTransactionType
   /**
    * Roll back the transaction.
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   void rollback()
-    throws ARDBException;
+    throws ARException;
 
   /**
    * Commit the transaction.
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   void commit()
-    throws ARDBException;
+    throws ARException;
 
   @Override
   void close()
-    throws ARDBException;
+    throws ARException;
+
+  /**
+   * Add a function to be executed after the transaction is committed.
+   *
+   * @param runnable The function
+   */
+
+  void addRunAfterCommit(
+    Runnable runnable);
 }

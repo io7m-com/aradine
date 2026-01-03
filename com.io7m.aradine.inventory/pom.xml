@@ -45,10 +45,6 @@
       <artifactId>com.io7m.jmulticlose.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.io7m.junreachable</groupId>
-      <artifactId>com.io7m.junreachable.core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.io7m.mime2045</groupId>
       <artifactId>com.io7m.mime2045.parser</artifactId>
     </dependency>

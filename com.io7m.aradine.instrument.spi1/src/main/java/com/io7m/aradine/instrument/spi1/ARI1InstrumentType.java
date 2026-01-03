@@ -32,7 +32,7 @@ public interface ARI1InstrumentType
    */
 
   void process(
-    ARI1InstrumentServicesType context);
+    ARI1InstrumentContextType context);
 
   /**
    * Receive and buffer an event for processing during the next processing
@@ -43,6 +43,6 @@ public interface ARI1InstrumentType
    */
 
   void receiveEvent(
-    ARI1InstrumentServicesType context,
+    ARI1InstrumentContextType context,
     ARI1EventConfigurationType event);
 }

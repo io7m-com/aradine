@@ -17,8 +17,8 @@
 package com.io7m.aradine.instrument.loader.api;
 
 import com.io7m.aradine.api.instrument.ARInstrumentException;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
 
 /**
  * A constructor of instrument services.
@@ -36,7 +36,7 @@ public interface ARInstrumentLoaderServicesConstructorType
    * @throws ARInstrumentException On errors
    */
 
-  ARI1InstrumentServicesType createServicesV1(
+  ARI1InstrumentContextType createServicesV1(
     ARI1InstrumentDescription description)
     throws ARInstrumentException;
 }

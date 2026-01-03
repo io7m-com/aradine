@@ -41,5 +41,5 @@ public interface ARI1InstrumentFactoryType
    * @return A new instrument
    */
 
-  ARI1InstrumentType createInstrument(ARI1InstrumentServicesType services);
+  ARI1InstrumentType createInstrument(ARI1InstrumentContextType services);
 }

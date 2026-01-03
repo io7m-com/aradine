@@ -17,6 +17,7 @@
 package com.io7m.aradine.inventory.internal;
 
 import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
@@ -25,11 +26,10 @@ import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
-import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
-import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.mime2045.core.MimeType;
 import com.io7m.streamtime.core.STTimedInputStream;
 import com.io7m.streamtime.core.STTransferStatistics;
@@ -143,9 +143,18 @@ public final class ARInventory implements ARInventoryType
 
   @Override
   public Optional<Path> instrumentFile(
-    final ARInstrumentID instrument)
+    final ARInstrumentID instrumentID)
+    throws ARException
   {
-    throw new UnimplementedCodeException();
+    try (var t = this.database.openTransaction()) {
+      final var instrumentOpt =
+        t.execute(ARQueryInstrumentGetType.class, instrumentID);
+      if (instrumentOpt.isEmpty()) {
+        return Optional.empty();
+      }
+      final var instrument = instrumentOpt.get();
+      return this.blobDirectory.get(instrument.blob().hash());
+    }
   }
 
   @Override
@@ -296,7 +305,7 @@ public final class ARInventory implements ARInventoryType
         this.publishProgressNow();
         return instrument;
       } catch (final ARInstrumentException e) {
-        throw new ARInventoryException(
+        throw new ARException(
           e.getMessage(),
           e,
           e.errorCode(),

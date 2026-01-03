@@ -21,6 +21,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.annotations</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.aradine.api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -32,6 +37,16 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.aradine.inventory.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.instrument.loader.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.instrument.spi1</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -98,6 +113,10 @@
     <dependency>
       <groupId>com.io7m.dixmont</groupId>
       <artifactId>com.io7m.dixmont.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>fastutil-core</artifactId>
     </dependency>
 
     <dependency>

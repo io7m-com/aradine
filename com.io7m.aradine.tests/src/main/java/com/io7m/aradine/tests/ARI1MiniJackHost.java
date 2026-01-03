@@ -100,7 +100,7 @@ public final class ARI1MiniJackHost
       new ARIGM0SamplerFactory();
 
     final var services =
-      ARI1MiniInstrumentServices.create(
+      ARI1MiniInstrumentContext.create(
         samplers,
         ARInstrumentInstanceID.ofString("9bac8eb0-f217-4e2b-89a2-8d1a02d4b196"),
         client.getSampleRate(),

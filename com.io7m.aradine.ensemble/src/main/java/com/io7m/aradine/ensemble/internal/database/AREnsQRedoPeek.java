@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
@@ -38,9 +38,15 @@ public enum AREnsQRedoPeek
   INSTANCE;
 
   private static final String QUERY_TEXT = """
-    SELECT redo_id, redo_data_type, redo_data FROM redo
-      WHERE redo_id = (SELECT max(redo_id) FROM redo)
-        LIMIT 1
+    SELECT
+      redo_id,
+      redo_description,
+      redo_time,
+      redo_command,
+      redo_command_state
+    FROM redo
+    WHERE redo_id = (SELECT max(redo_id) FROM redo)
+    LIMIT 1
     """;
 
   @Override
@@ -59,7 +65,7 @@ public enum AREnsQRedoPeek
   public Optional<AREnsModelCommandRecord> execute(
     final ARDBTransactionType transaction,
     final ARDBUnit ignored)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

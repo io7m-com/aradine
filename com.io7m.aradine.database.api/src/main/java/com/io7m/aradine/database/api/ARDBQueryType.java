@@ -16,6 +16,8 @@
 
 package com.io7m.aradine.database.api;
 
+import com.io7m.aradine.api.ARException;
+
 /**
  * A database query.
  *
@@ -33,11 +35,11 @@ public interface ARDBQueryType<P, R>
    *
    * @return The query result
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   R execute(
     ARDBTransactionType transaction,
     P parameters)
-    throws ARDBException;
+    throws ARException;
 }

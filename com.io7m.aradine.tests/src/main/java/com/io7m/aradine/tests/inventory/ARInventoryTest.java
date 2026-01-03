@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.tests.inventory;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.database.api.ARDBConfiguration;
@@ -24,7 +25,6 @@ import com.io7m.aradine.database.sqlite3.ARDBFactory;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
-import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
@@ -64,7 +64,7 @@ public final class ARInventoryTest
   private ARDBType database;
   private ExecutorService databaseExecutor;
 
-  private static ARInventoryException runFailure(
+  private static ARException runFailure(
     final ARInventoryType inventory,
     final Path file)
   {
@@ -80,7 +80,7 @@ public final class ARInventoryTest
         });
 
     final var ex =
-      assertInstanceOf(ARInventoryException.class, cex.getCause());
+      assertInstanceOf(ARException.class, cex.getCause());
     LOG.debug("", ex);
     return ex;
   }

@@ -21,16 +21,16 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonSerialize;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * A record of an executed command.
  *
- * @param id          The ID
- * @param time        The time
- * @param description The humanly-readable command description
- * @param operations  The command operations in execution order
+ * @param id           The ID
+ * @param time         The time
+ * @param description  The humanly-readable command description
+ * @param commandClass The command class name
+ * @param state        The command state
  */
 
 @JsonDeserialize
@@ -42,23 +42,27 @@ public record AREnsModelCommandRecord(
   OffsetDateTime time,
   @JsonProperty(value = "Description", required = true)
   String description,
-  @JsonProperty("Operations")
-  List<AREnsModelOpType> operations)
+  @JsonProperty(value = "Command", required = true)
+  String commandClass,
+  @JsonProperty(value = "State", required = true)
+  AREnsModelCommandStateType state)
 {
   /**
    * A record of an executed command.
    *
-   * @param id          The ID
-   * @param time        The time
-   * @param description The humanly-readable command description
-   * @param operations  The command operations in execution order
+   * @param id           The ID
+   * @param time         The time
+   * @param description  The humanly-readable command description
+   * @param commandClass The command class name
+   * @param state        The command state
    */
 
   public AREnsModelCommandRecord
   {
     Objects.requireNonNull(time, "Time");
     Objects.requireNonNull(description, "Description");
-    operations = List.copyOf(operations);
+    Objects.requireNonNull(commandClass, "CommandName");
+    Objects.requireNonNull(state, "State");
 
     if (id < 0L) {
       throw new IllegalArgumentException(

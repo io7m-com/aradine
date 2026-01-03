@@ -17,9 +17,9 @@
 package com.io7m.aradine.inventory.internal;
 
 import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.ARHashAlgorithm;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -54,7 +54,7 @@ enum ARQueryBlobGet
   public Optional<ARBlob> execute(
     final ARDBTransactionType transaction,
     final ARHash parameters)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

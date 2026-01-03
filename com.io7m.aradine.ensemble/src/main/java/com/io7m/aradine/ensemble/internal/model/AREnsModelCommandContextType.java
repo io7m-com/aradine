@@ -16,11 +16,121 @@
 
 package com.io7m.aradine.ensemble.internal.model;
 
+import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.instrument.ARInstrumentType;
+import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.database.api.ARDBTransactionType;
+import com.io7m.aradine.ensemble.internal.graph.AREnsGraphType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
+import com.io7m.aradine.inventory.api.ARInventoryType;
+
 /**
  * The context of a model command.
  */
 
 public interface AREnsModelCommandContextType
 {
+  /**
+   * @return The new graph
+   */
 
+  AREnsGraphType graph();
+
+  /**
+   * @return The database transaction
+   */
+
+  ARDBTransactionType databaseTransaction();
+
+  /**
+   * @return The inventory
+   */
+
+  ARInventoryType inventory();
+
+  /**
+   * @return The instrument loaders
+   */
+
+  ARInstrumentLoaderFactoryType instrumentLoaders();
+
+  /**
+   * @param instanceID The instrument instance ID
+   *
+   * @return The instrument loader services constructor
+   */
+
+  ARInstrumentLoaderServicesConstructorType instrumentServicesConstructor(
+    ARInstrumentInstanceID instanceID);
+
+  /**
+   * @return The instrument port assigner
+   */
+
+  ARInstrumentPortAssignerType instrumentPortAssigner();
+
+  /**
+   * Mark an instrument to be registered.
+   *
+   * @param instrument The instrument
+   *
+   * @throws ARException On errors
+   */
+
+  void instrumentRegister(
+    ARInstrumentType instrument)
+    throws ARException;
+
+  /**
+   * Mark an instrument port to be registered.
+   *
+   * @param port The port
+   *
+   * @throws ARException On errors
+   */
+
+  void instrumentPortRegister(
+    ARPort port)
+    throws ARException;
+
+  /**
+   * Mark an instrument port to be deregistered.
+   *
+   * @param port The port
+   *
+   * @throws ARException On errors
+   */
+
+  void instrumentPortDeregister(
+    ARPort port)
+    throws ARException;
+
+  /**
+   * Mark an instrument to be deregistered.
+   *
+   * @param instrument The instrument
+   *
+   * @throws ARException On errors
+   */
+
+  void instrumentDeregister(
+    ARInstrumentType instrument)
+    throws ARException;
+
+  /**
+   * Get an instrument.
+   *
+   * @param instrumentInstanceID The instance ID
+   *
+   * @return The instrument
+   *
+   * @throws ARException On errors
+   */
+
+  ARInstrumentType instrumentGet(
+    ARInstrumentInstanceID instrumentInstanceID)
+    throws ARException;
 }

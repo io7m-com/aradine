@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ports.ARPortConnection;
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 
@@ -95,7 +95,7 @@ public enum AREnsQPortConnectionList
   private static List<ARPortConnection> executeWithoutStart(
     final Connection connection,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT)) {
       st.setInt(1, parameters.limit());
@@ -109,7 +109,7 @@ public enum AREnsQPortConnectionList
     final Connection connection,
     final Parameters parameters,
     final ARPortConnection connectionStart)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT_WITH_START)) {
       st.setString(1, connectionStart.portSource().toString());
@@ -137,7 +137,7 @@ public enum AREnsQPortConnectionList
   public List<ARPortConnection> execute(
     final ARDBTransactionType transaction,
     final Parameters parameters)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

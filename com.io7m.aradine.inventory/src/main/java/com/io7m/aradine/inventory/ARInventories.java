@@ -16,9 +16,9 @@
 
 package com.io7m.aradine.inventory;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
-import com.io7m.aradine.inventory.api.ARInventoryException;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.internal.ARInventory;
 import com.io7m.aradine.inventory.internal.ARQueries;
@@ -52,12 +52,12 @@ public final class ARInventories
    *
    * @return A inventory
    *
-   * @throws ARInventoryException On errors
+   * @throws ARException On errors
    */
 
   public static ARInventoryType open(
     final ARInventoryConfiguration configuration)
-    throws ARInventoryException
+    throws ARException
   {
     return ARInventory.open(configuration);
   }

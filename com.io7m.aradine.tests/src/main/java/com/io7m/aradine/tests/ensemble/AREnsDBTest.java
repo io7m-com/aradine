@@ -16,6 +16,7 @@
 
 package com.io7m.aradine.tests.ensemble;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
@@ -25,9 +26,9 @@ import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBUnit;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
+import com.io7m.aradine.ensemble.internal.database.AREnsQCommandIDNextType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQInstrumentPutType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectType;
 import com.io7m.aradine.ensemble.internal.database.AREnsQPortConnectionListType;
@@ -64,6 +65,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.io7m.aradine.database.api.ARDBUnit.*;
+import static com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommandStateUnused.UNUSED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -419,7 +422,7 @@ public final class AREnsDBTest
 
       try (var t = db.openTransaction()) {
         final var ex = assertThrows(
-          ARDBException.class, () -> {
+          ARException.class, () -> {
             t.execute(
               AREnsQPortConnectType.class,
               new ARPortConnection(port1.id(), port0.id())
@@ -495,7 +498,7 @@ public final class AREnsDBTest
 
       try (var t = db.openTransaction()) {
         final var ex = assertThrows(
-          ARDBException.class, () -> {
+          ARException.class, () -> {
             t.execute(
               AREnsQPortConnectType.class,
               new ARPortConnection(port1.id(), port0.id())
@@ -589,7 +592,7 @@ public final class AREnsDBTest
         t.commit();
 
         final var ex = assertThrows(
-          ARDBException.class, () -> {
+          ARException.class, () -> {
             t.execute(
               AREnsQPortConnectType.class,
               new ARPortConnection(port1.id(), port2.id())
@@ -652,7 +655,7 @@ public final class AREnsDBTest
 
       try (var t = db.openTransaction()) {
         final var ex = assertThrows(
-          ARDBException.class, () -> {
+          ARException.class, () -> {
             t.execute(
               AREnsQPortConnectType.class,
               new ARPortConnection(port0.id(), port1.id())
@@ -677,7 +680,8 @@ public final class AREnsDBTest
         0L,
         OffsetDateTime.parse("2000-01-01T00:00:00+00:00"),
         "Command 0",
-        List.of()
+        "C",
+        UNUSED
       );
 
     final var cmd1 =
@@ -685,7 +689,8 @@ public final class AREnsDBTest
         1L,
         OffsetDateTime.parse("2000-01-01T00:00:01+00:00"),
         "Command 1",
-        List.of()
+        "C",
+        UNUSED
       );
 
     final var cmd2 =
@@ -693,7 +698,8 @@ public final class AREnsDBTest
         2L,
         OffsetDateTime.parse("2000-01-01T00:00:02+00:00"),
         "Command 2",
-        List.of()
+        "C",
+        UNUSED
       );
 
     try (var db = AREnsDB.createDatabase(file)) {
@@ -701,34 +707,34 @@ public final class AREnsDBTest
         t.execute(AREnsQUndoPushType.class, cmd0);
         assertEquals(
           Optional.of(cmd0),
-          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPeekType.class, UNIT)
         );
         t.execute(AREnsQUndoPushType.class, cmd1);
         assertEquals(
           Optional.of(cmd1),
-          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPeekType.class, UNIT)
         );
         t.execute(AREnsQUndoPushType.class, cmd2);
         assertEquals(
           Optional.of(cmd2),
-          t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPeekType.class, UNIT)
         );
 
         assertEquals(
           Optional.of(cmd2),
-          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPopType.class, UNIT)
         );
         assertEquals(
           Optional.of(cmd1),
-          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPopType.class, UNIT)
         );
         assertEquals(
           Optional.of(cmd0),
-          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPopType.class, UNIT)
         );
         assertEquals(
           Optional.empty(),
-          t.execute(AREnsQUndoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQUndoPopType.class, UNIT)
         );
       }
     }
@@ -746,7 +752,8 @@ public final class AREnsDBTest
         0L,
         OffsetDateTime.parse("2000-01-01T00:00:00+00:00"),
         "Command 0",
-        List.of()
+        "C",
+        UNUSED
       );
 
     final var cmd1 =
@@ -754,7 +761,8 @@ public final class AREnsDBTest
         1L,
         OffsetDateTime.parse("2000-01-01T00:00:01+00:00"),
         "Command 1",
-        List.of()
+        "C",
+        UNUSED
       );
 
     final var cmd2 =
@@ -762,7 +770,8 @@ public final class AREnsDBTest
         2L,
         OffsetDateTime.parse("2000-01-01T00:00:02+00:00"),
         "Command 2",
-        List.of()
+        "C",
+        UNUSED
       );
 
     try (var db = AREnsDB.createDatabase(file)) {
@@ -770,34 +779,34 @@ public final class AREnsDBTest
         t.execute(AREnsQRedoPushType.class, cmd0);
         assertEquals(
           Optional.of(cmd0),
-          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPeekType.class, UNIT)
         );
         t.execute(AREnsQRedoPushType.class, cmd1);
         assertEquals(
           Optional.of(cmd1),
-          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPeekType.class, UNIT)
         );
         t.execute(AREnsQRedoPushType.class, cmd2);
         assertEquals(
           Optional.of(cmd2),
-          t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPeekType.class, UNIT)
         );
 
         assertEquals(
           Optional.of(cmd2),
-          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPopType.class, UNIT)
         );
         assertEquals(
           Optional.of(cmd1),
-          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPopType.class, UNIT)
         );
         assertEquals(
           Optional.of(cmd0),
-          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPopType.class, UNIT)
         );
         assertEquals(
           Optional.empty(),
-          t.execute(AREnsQRedoPopType.class, ARDBUnit.UNIT)
+          t.execute(AREnsQRedoPopType.class, UNIT)
         );
       }
     }
@@ -815,13 +824,14 @@ public final class AREnsDBTest
     final var commandsWritten =
       new ArrayList<AREnsModelCommandRecord>();
 
-    for (int index = 0; index < 13; ++index) {
+    for (int index = 1; index <= 13; ++index) {
       commandsWritten.add(
         new AREnsModelCommandRecord(
           index,
           OffsetDateTime.parse("2000-01-01T00:00:00+00:00").plusSeconds(index),
           "Command " + index,
-          List.of()
+          "C",
+          UNUSED
         )
       );
     }
@@ -829,7 +839,9 @@ public final class AREnsDBTest
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
         for (final var cmd : commandsWritten) {
+          final var expected = t.execute(AREnsQCommandIDNextType.class, UNIT);
           t.execute(AREnsQUndoPushType.class, cmd);
+          assertEquals(expected, cmd.id());
         }
         t.commit();
 
@@ -862,7 +874,7 @@ public final class AREnsDBTest
           ).size()
         );
 
-        t.execute(AREnsQUndoClearType.class, ARDBUnit.UNIT);
+        t.execute(AREnsQUndoClearType.class, UNIT);
         t.commit();
 
         assertEquals(
@@ -890,13 +902,14 @@ public final class AREnsDBTest
     final var commandsWritten =
       new ArrayList<AREnsModelCommandRecord>();
 
-    for (int index = 0; index < 13; ++index) {
+    for (int index = 1; index <= 13; ++index) {
       commandsWritten.add(
         new AREnsModelCommandRecord(
           index,
           OffsetDateTime.parse("2000-01-01T00:00:00+00:00").plusSeconds(index),
           "Command " + index,
-          List.of()
+          "C",
+          UNUSED
         )
       );
     }
@@ -904,7 +917,9 @@ public final class AREnsDBTest
     try (var db = AREnsDB.createDatabase(file)) {
       try (var t = db.openTransaction()) {
         for (final var cmd : commandsWritten) {
+          final var expected = t.execute(AREnsQCommandIDNextType.class, UNIT);
           t.execute(AREnsQRedoPushType.class, cmd);
+          assertEquals(expected, cmd.id());
         }
         t.commit();
 
@@ -937,7 +952,7 @@ public final class AREnsDBTest
           ).size()
         );
 
-        t.execute(AREnsQRedoClearType.class, ARDBUnit.UNIT);
+        t.execute(AREnsQRedoClearType.class, UNIT);
         t.commit();
 
         assertEquals(
@@ -978,10 +993,10 @@ public final class AREnsDBTest
 
         final var ex =
           assertThrows(
-            ARDBException.class, () -> {
-              t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT);
+            ARException.class, () -> {
+              t.execute(AREnsQUndoPeekType.class, UNIT);
             });
-        assertEquals("error-undo-record-unsupported", ex.errorCode());
+        assertEquals("error-json-parse-exception", ex.errorCode());
       }
     }
   }
@@ -1011,8 +1026,8 @@ public final class AREnsDBTest
 
         final var ex =
           assertThrows(
-            ARDBException.class, () -> {
-              t.execute(AREnsQUndoPeekType.class, ARDBUnit.UNIT);
+            ARException.class, () -> {
+              t.execute(AREnsQUndoPeekType.class, UNIT);
             });
         assertEquals("error-json-parse-exception", ex.errorCode());
       }
@@ -1044,10 +1059,10 @@ public final class AREnsDBTest
 
         final var ex =
           assertThrows(
-            ARDBException.class, () -> {
-              t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT);
+            ARException.class, () -> {
+              t.execute(AREnsQRedoPeekType.class, UNIT);
             });
-        assertEquals("error-redo-record-unsupported", ex.errorCode());
+        assertEquals("error-json-parse-exception", ex.errorCode());
       }
     }
   }
@@ -1077,8 +1092,8 @@ public final class AREnsDBTest
 
         final var ex =
           assertThrows(
-            ARDBException.class, () -> {
-              t.execute(AREnsQRedoPeekType.class, ARDBUnit.UNIT);
+            ARException.class, () -> {
+              t.execute(AREnsQRedoPeekType.class, UNIT);
             });
         assertEquals("error-json-parse-exception", ex.errorCode());
       }

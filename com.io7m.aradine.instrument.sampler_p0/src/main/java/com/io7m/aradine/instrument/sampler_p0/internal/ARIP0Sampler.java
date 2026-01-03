@@ -25,7 +25,7 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1IntMapMutableType;
 
@@ -56,7 +56,7 @@ public final class ARIP0Sampler
    */
 
   public ARIP0Sampler(
-    final ARI1InstrumentServicesType services,
+    final ARI1InstrumentContextType services,
     final ARI1EventBufferType<ARI1EventConfigurationType> inEventBuffer,
     final Parameters inParameters,
     final Ports inPorts)
@@ -77,7 +77,7 @@ public final class ARIP0Sampler
 
   @Override
   public void process(
-    final ARI1InstrumentServicesType context)
+    final ARI1InstrumentContextType context)
   {
     final var frames = context.statusCurrentBufferSize();
     for (int frameIndex = 0; frameIndex < frames; ++frameIndex) {
@@ -110,7 +110,7 @@ public final class ARIP0Sampler
   }
 
   private void processEventNoteForFrame(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventNoteType event)
   {
     switch (event) {
@@ -130,7 +130,7 @@ public final class ARIP0Sampler
   }
 
   private void processEventConfigurationForFrame(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationType event)
   {
     switch (event) {
@@ -144,7 +144,7 @@ public final class ARIP0Sampler
   }
 
   private void processEventParameterChanged(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationParameterChanged event)
   {
     final var id = event.parameter();
@@ -168,7 +168,7 @@ public final class ARIP0Sampler
   }
 
   private void processEventNoteOn(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventNoteOn event)
   {
     final var sampleMap =
@@ -188,7 +188,7 @@ public final class ARIP0Sampler
 
   @Override
   public void receiveEvent(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);

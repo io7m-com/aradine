@@ -16,14 +16,11 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
-import com.io7m.aradine.ensemble.internal.json_v1.AREnsJMappers;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
+import com.io7m.aradine.ensemble.internal.v1.json.AREnsJMappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Optional;
 
 final class AREnsUndoRedo
 {
@@ -34,55 +31,27 @@ final class AREnsUndoRedo
 
   static AREnsModelCommandRecord readRedoRecord(
     final ResultSet rs)
-    throws SQLException, ARDBException
+    throws SQLException
   {
-    final var dataType =
-      rs.getString("redo_data_type");
-
     final var mapper =
       AREnsJMappers.mapper();
 
-    return switch (dataType) {
-      case "AREnsModelCommandRecord" -> {
-        yield mapper.readValue(
-          rs.getBytes("redo_data"),
-          AREnsModelCommandRecord.class
-        );
-      }
-      default ->
-        throw new ARDBException(
-          "Unsupported redo record type.",
-          "error-redo-record-unsupported",
-          Map.of("Type", dataType),
-          Optional.empty()
-        );
-    };
+    return mapper.readValue(
+      rs.getBytes("redo_command_state"),
+      AREnsModelCommandRecord.class
+    );
   }
 
   static AREnsModelCommandRecord readUndoRecord(
     final ResultSet rs)
-    throws SQLException, ARDBException
+    throws SQLException
   {
-    final var dataType =
-      rs.getString("undo_data_type");
-
     final var mapper =
       AREnsJMappers.mapper();
 
-    return switch (dataType) {
-      case "AREnsModelCommandRecord" -> {
-        yield mapper.readValue(
-          rs.getBytes("undo_data"),
-          AREnsModelCommandRecord.class
-        );
-      }
-      default ->
-        throw new ARDBException(
-          "Unsupported undo record type.",
-          "error-undo-record-unsupported",
-          Map.of("Type", dataType),
-          Optional.empty()
-        );
-    };
+    return mapper.readValue(
+      rs.getBytes("undo_command_state"),
+      AREnsModelCommandRecord.class
+    );
   }
 }

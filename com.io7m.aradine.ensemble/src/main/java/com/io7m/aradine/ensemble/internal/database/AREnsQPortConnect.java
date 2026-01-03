@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ports.ARPortConnection;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
@@ -61,7 +61,7 @@ public enum AREnsQPortConnect
   public ARDBUnit execute(
     final ARDBTransactionType transaction,
     final ARPortConnection portConnection)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

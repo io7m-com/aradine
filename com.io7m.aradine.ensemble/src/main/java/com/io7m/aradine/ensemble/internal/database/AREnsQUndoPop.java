@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
@@ -40,7 +40,12 @@ public enum AREnsQUndoPop
   private static final String QUERY_TEXT = """
     DELETE FROM undo
       WHERE undo_id = (SELECT max(undo_id) FROM undo)
-        RETURNING undo_id, undo_data_type, undo_data
+        RETURNING
+          undo_id,
+          undo_description,
+          undo_time,
+          undo_command,
+          undo_command_state
     """;
 
   @Override
@@ -59,7 +64,7 @@ public enum AREnsQUndoPop
   public Optional<AREnsModelCommandRecord> execute(
     final ARDBTransactionType transaction,
     final ARDBUnit ignored)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();

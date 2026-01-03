@@ -16,12 +16,12 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBQueryProviderType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.database.api.ARDBUnit;
-import com.io7m.aradine.ensemble.internal.json_v1.AREnsJMappers;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandRecord;
+import com.io7m.aradine.ensemble.internal.v1.json.AREnsJMappers;
 
 /**
  * Push a record onto the redo stack.
@@ -41,8 +41,8 @@ public enum AREnsQRedoPush
       redo_id,
       redo_description,
       redo_time,
-      redo_data_type,
-      redo_data
+      redo_command,
+      redo_command_state
     ) VALUES (
       $1,
       $2,
@@ -68,7 +68,7 @@ public enum AREnsQRedoPush
   public ARDBUnit execute(
     final ARDBTransactionType transaction,
     final AREnsModelCommandRecord rec)
-    throws ARDBException
+    throws ARException
   {
     final var connection =
       transaction.connection().connection();
@@ -82,7 +82,7 @@ public enum AREnsQRedoPush
       st.setLong(1, rec.id());
       st.setString(2, rec.description());
       st.setLong(3, rec.time().toEpochSecond());
-      st.setString(4, "AREnsModelCommandRecord");
+      st.setString(4, rec.commandClass());
       st.setBytes(5, data);
       st.execute();
       return ARDBUnit.UNIT;

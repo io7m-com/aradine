@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.database.sqlite3.internal;
 
-import com.io7m.aradine.database.api.ARDBException;
+import com.io7m.aradine.api.ARException;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -41,10 +41,10 @@ public final class ARDBExceptions
    * @return The wrapped exception
    */
 
-  public static ARDBException wrap(
+  public static ARException wrap(
     final SQLException e)
   {
-    return new ARDBException(
+    return new ARException(
       e.getMessage(),
       e,
       "error-sql",
@@ -61,10 +61,10 @@ public final class ARDBExceptions
    * @return The wrapped exception
    */
 
-  public static ARDBException wrap(
+  public static ARException wrap(
     final Exception e)
   {
-    return new ARDBException(
+    return new ARException(
       e.getMessage(),
       e,
       "error-exception",

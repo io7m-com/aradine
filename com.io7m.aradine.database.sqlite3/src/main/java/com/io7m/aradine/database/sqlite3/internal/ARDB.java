@@ -17,8 +17,8 @@
 
 package com.io7m.aradine.database.sqlite3.internal;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.database.api.ARDBConnectionType;
-import com.io7m.aradine.database.api.ARDBException;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBTransactionCloseBehavior;
 import com.io7m.aradine.database.api.ARDBTransactionType;
@@ -27,6 +27,7 @@ import org.sqlite.SQLiteDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,10 +62,10 @@ public final class ARDB implements ARDBType
       Map.copyOf(inQueries);
   }
 
-  private static ARDBException generalSQLError(
+  private static ARException generalSQLError(
     final SQLException e)
   {
-    return new ARDBException(
+    return new ARException(
       e.getMessage(),
       e,
       "error-sql",
@@ -75,7 +76,7 @@ public final class ARDB implements ARDBType
 
   private static void setWALMode(
     final Connection connection)
-    throws ARDBException
+    throws ARException
   {
     try (var st = connection.createStatement()) {
       st.execute("PRAGMA journal_mode=WAL;");
@@ -89,11 +90,11 @@ public final class ARDB implements ARDBType
    *
    * @return The connection
    *
-   * @throws ARDBException On errors
+   * @throws ARException On errors
    */
 
   public ARDBConnectionType openConnection()
-    throws ARDBException
+    throws ARException
   {
     this.checkNotClosed();
 
@@ -130,11 +131,11 @@ public final class ARDB implements ARDBType
 
   private <P, R, Q extends ARDBQueryType<P, R>> Q query(
     final Class<Q> queryType)
-    throws ARDBException
+    throws ARException
   {
     final var query = this.queries.get(queryType);
     if (query == null) {
-      throw new ARDBException(
+      throw new ARException(
         "No such query.",
         "error-inventory-query-nonexistent",
         Map.ofEntries(
@@ -149,7 +150,7 @@ public final class ARDB implements ARDBType
   interface CloseOpType
   {
     void execute()
-      throws ARDBException;
+      throws ARException;
   }
 
   static final class ARDBDBTransaction
@@ -158,6 +159,7 @@ public final class ARDB implements ARDBType
     private final ARDBDBConnection connection;
     private final CloseOpType onClose;
     private final AtomicBoolean closed;
+    private final LinkedList<Runnable> commitQueue;
 
     private ARDBDBTransaction(
       final ARDBDBConnection inConnection,
@@ -169,6 +171,8 @@ public final class ARDB implements ARDBType
         Objects.requireNonNull(inOnClose, "OnClose");
       this.closed =
         new AtomicBoolean(false);
+      this.commitQueue =
+        new LinkedList<>();
     }
 
     @Override
@@ -180,7 +184,7 @@ public final class ARDB implements ARDBType
     @Override
     public <P, R, Q extends ARDBQueryType<P, R>> Q query(
       final Class<Q> queryType)
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
       return this.connection.db.query(queryType);
@@ -195,7 +199,7 @@ public final class ARDB implements ARDBType
 
     @Override
     public void rollback()
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
 
@@ -208,12 +212,15 @@ public final class ARDB implements ARDBType
 
     @Override
     public void commit()
-      throws ARDBException
+      throws ARException
     {
       this.checkNotClosed();
 
       try {
         this.connection.connection.commit();
+        while (!this.commitQueue.isEmpty()) {
+          this.commitQueue.poll().run();
+        }
       } catch (final SQLException e) {
         throw generalSQLError(e);
       }
@@ -221,13 +228,21 @@ public final class ARDB implements ARDBType
 
     @Override
     public void close()
-      throws ARDBException
+      throws ARException
     {
       this.rollback();
 
       if (this.closed.compareAndSet(false, true)) {
         this.onClose.execute();
       }
+    }
+
+    @Override
+    public void addRunAfterCommit(
+      final Runnable runnable)
+    {
+      Objects.requireNonNull(runnable, "Runnable");
+      this.commitQueue.offer(runnable);
     }
   }
 
@@ -256,7 +271,7 @@ public final class ARDB implements ARDBType
     @Override
     public ARDBTransactionType openTransaction(
       final ARDBTransactionCloseBehavior closeBehavior)
-      throws ARDBException
+      throws ARException
     {
       return switch (closeBehavior) {
         case ON_CLOSE_CLOSE_CONNECTION -> {
@@ -273,7 +288,7 @@ public final class ARDB implements ARDBType
 
     @Override
     public void close()
-      throws ARDBException
+      throws ARException
     {
       try {
         this.connection.close();

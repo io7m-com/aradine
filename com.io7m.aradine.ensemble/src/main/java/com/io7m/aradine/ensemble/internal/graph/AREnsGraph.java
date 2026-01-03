@@ -26,11 +26,14 @@ import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.jaffirm.core.Preconditions;
 import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jgrapht.graph.GraphCycleProhibitedException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A port/instrument graph.
@@ -42,12 +45,25 @@ public final class AREnsGraph implements AREnsGraphType
   private final DirectedAcyclicGraph<ARInstrumentInstanceID, ARInstrumentConnection> instrumentGraph;
   private final HashMap<ARPortID, ARPort> ports;
   private final HashMap<ARInstrumentInstanceID, ARInstrumentReference> instruments;
+  private final HashMap<ARInstrumentInstanceID, Set<ARPort>> instrumentPorts;
+  private final long versionCode;
+
+  @Override
+  public String toString()
+  {
+    return "[AREnsGraph 0x%s %d]".formatted(
+      Integer.toUnsignedString(System.identityHashCode(this), 16),
+      this.versionCode
+    );
+  }
 
   private AREnsGraph(
     final DirectedAcyclicGraph<ARPortID, ARPortConnection> inPortGraph,
     final DirectedAcyclicGraph<ARInstrumentInstanceID, ARInstrumentConnection> inInstrumentGraph,
     final HashMap<ARPortID, ARPort> inPorts,
-    final HashMap<ARInstrumentInstanceID, ARInstrumentReference> inInstruments)
+    final HashMap<ARInstrumentInstanceID, ARInstrumentReference> inInstruments,
+    final HashMap<ARInstrumentInstanceID, Set<ARPort>> inInstrumentPorts,
+    final long inVersionCode)
   {
     this.portGraph =
       Objects.requireNonNull(inPortGraph, "PortGraph");
@@ -57,6 +73,10 @@ public final class AREnsGraph implements AREnsGraphType
       Objects.requireNonNull(inPorts, "Ports");
     this.instruments =
       Objects.requireNonNull(inInstruments, "Instruments");
+    this.instrumentPorts =
+      Objects.requireNonNull(inInstrumentPorts, "InstrumentPorts");
+    this.versionCode =
+      inVersionCode;
   }
 
   /**
@@ -78,8 +98,17 @@ public final class AREnsGraph implements AREnsGraphType
       new HashMap<ARPortID, ARPort>(4 * 16);
     final var instruments =
       new HashMap<ARInstrumentInstanceID, ARInstrumentReference>();
+    final var instrumentPorts =
+      new HashMap<ARInstrumentInstanceID, Set<ARPort>>();
 
-    return new AREnsGraph(portGraph, instrumentGraph, ports, instruments);
+    return new AREnsGraph(
+      portGraph,
+      instrumentGraph,
+      ports,
+      instruments,
+      instrumentPorts,
+      0L
+    );
   }
 
   @Override
@@ -91,7 +120,8 @@ public final class AREnsGraph implements AREnsGraphType
     return Objects.equals(this.portGraph, that.portGraph)
       && Objects.equals(this.instrumentGraph, that.instrumentGraph)
       && Objects.equals(this.ports, that.ports)
-      && Objects.equals(this.instruments, that.instruments);
+      && Objects.equals(this.instruments, that.instruments)
+      && Objects.equals(this.instrumentPorts, that.instrumentPorts);
   }
 
   @Override
@@ -101,8 +131,55 @@ public final class AREnsGraph implements AREnsGraphType
       this.portGraph,
       this.instrumentGraph,
       this.ports,
-      this.instruments
+      this.instruments,
+      this.instrumentPorts
     );
+  }
+
+  @Override
+  public void instrumentDeregister(
+    final ARInstrumentInstanceID instrument)
+    throws ARException
+  {
+    Objects.requireNonNull(instrument, "Instrument");
+
+    this.checkInstrumentExists(instrument);
+    this.checkInstrumentNotConnected(instrument);
+    this.checkInstrumentNoPorts(instrument);
+
+    this.instruments.remove(instrument);
+    this.instrumentGraph.removeVertex(instrument);
+    this.instrumentPorts.remove(instrument);
+  }
+
+  private void checkInstrumentNoPorts(
+    final ARInstrumentInstanceID instrument)
+    throws ARException
+  {
+    final var currentPorts = this.instrumentPorts.get(instrument);
+    if (currentPorts != null && !currentPorts.isEmpty()) {
+      throw new ARException(
+        "Instrument still has registered ports.",
+        "error-instrument-ports-registered",
+        Map.of("Instrument", instrument.toString()),
+        Optional.empty()
+      );
+    }
+  }
+
+  private void checkInstrumentNotConnected(
+    final ARInstrumentInstanceID instrument)
+    throws ARException
+  {
+    final var connections = this.instrumentGraph.degreeOf(instrument);
+    if (connections != 0) {
+      throw new ARException(
+        "Instrument still connected.",
+        "error-instrument-connected",
+        Map.of("Instrument", instrument.toString()),
+        Optional.empty()
+      );
+    }
   }
 
   @Override
@@ -147,21 +224,32 @@ public final class AREnsGraph implements AREnsGraphType
     this.checkPortsDifferent(portSourceID, portTargetID);
     this.checkPortInstrumentsDifferent(portSourceID, portTargetID);
 
-    this.portGraph.addEdge(
-      portSourceID,
-      portTargetID,
-      new ARPortConnection(portSourceID, portTargetID)
-    );
-    this.instrumentGraph.addEdge(
-      portSource.instrumentInstance(),
-      portTarget.instrumentInstance(),
-      new ARInstrumentConnection(
-        portSource.instrumentInstance(),
+    try {
+      this.portGraph.addEdge(
         portSourceID,
+        portTargetID,
+        new ARPortConnection(portSourceID, portTargetID)
+      );
+
+      this.instrumentGraph.addEdge(
+        portSource.instrumentInstance(),
         portTarget.instrumentInstance(),
-        portTargetID
-      )
-    );
+        new ARInstrumentConnection(
+          portSource.instrumentInstance(),
+          portSourceID,
+          portTarget.instrumentInstance(),
+          portTargetID
+        )
+      );
+    } catch (final GraphCycleProhibitedException e) {
+      throw new ARException(
+        e.getMessage(),
+        e,
+        "error-port-cycle",
+        Map.of(),
+        Optional.empty()
+      );
+    }
   }
 
   @Override
@@ -220,6 +308,38 @@ public final class AREnsGraph implements AREnsGraphType
 
     this.ports.put(portID, port);
     this.portGraph.addVertex(portID);
+
+    this.instrumentPortRegister(port);
+  }
+
+  private void instrumentPortRegister(
+    final ARPort port)
+  {
+    var instrumentPortSet =
+      this.instrumentPorts.get(port.instrumentInstance());
+    if (instrumentPortSet == null) {
+      instrumentPortSet = Set.of(port);
+    } else {
+      final var r = new HashSet<>(instrumentPortSet);
+      r.add(port);
+      instrumentPortSet = Set.copyOf(r);
+    }
+    this.instrumentPorts.put(port.instrumentInstance(), instrumentPortSet);
+  }
+
+  private void instrumentPortDeregister(
+    final ARPort port)
+  {
+    final var instrumentPortSet =
+      this.instrumentPorts.get(port.instrumentInstance());
+
+    if (instrumentPortSet == null) {
+      return;
+    }
+
+    final var newSet = new HashSet<>(instrumentPortSet);
+    newSet.remove(port);
+    this.instrumentPorts.put(port.instrumentInstance(), Set.copyOf(newSet));
   }
 
   @Override
@@ -236,6 +356,7 @@ public final class AREnsGraph implements AREnsGraphType
 
     this.ports.remove(portID);
     this.portGraph.removeVertex(portID);
+    this.instrumentPortDeregister(port);
   }
 
   private void checkPortNotConnected(
@@ -286,7 +407,9 @@ public final class AREnsGraph implements AREnsGraphType
       (DirectedAcyclicGraph<ARInstrumentInstanceID, ARInstrumentConnection>)
         this.instrumentGraph.clone(),
       new HashMap<>(this.ports),
-      new HashMap<>(this.instruments)
+      new HashMap<>(this.instruments),
+      new HashMap<>(this.instrumentPorts),
+      this.versionCode + 1L
     );
   }
 

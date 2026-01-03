@@ -25,7 +25,7 @@ import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1EventNotePitchBend;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentServicesType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 
 import java.util.Objects;
@@ -73,7 +73,7 @@ public final class ARIGM0Sampler
 
   @Override
   public void process(
-    final ARI1InstrumentServicesType context)
+    final ARI1InstrumentContextType context)
   {
     final var frames = context.statusCurrentBufferSize();
     for (int frameIndex = 0; frameIndex < frames; ++frameIndex) {
@@ -98,7 +98,7 @@ public final class ARIGM0Sampler
   }
 
   private void processEventsForFrame(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final int frameIndex)
   {
     final var events = this.eventBuffer.eventsTake(frameIndex);
@@ -113,7 +113,7 @@ public final class ARIGM0Sampler
   }
 
   private void processEventNoteForFrame(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventNoteType event)
   {
     switch (event) {
@@ -133,7 +133,7 @@ public final class ARIGM0Sampler
   }
 
   private void processEventConfigurationForFrame(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationType event)
   {
     switch (event) {
@@ -148,7 +148,7 @@ public final class ARIGM0Sampler
   }
 
   private void processEventParameterChanged(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationParameterChanged eventSet)
   {
     final var id = eventSet.parameter();
@@ -205,7 +205,7 @@ public final class ARIGM0Sampler
   }
 
   private void processEventNoteOn(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventNoteOn event)
   {
     final var time =
@@ -249,7 +249,7 @@ public final class ARIGM0Sampler
 
   @Override
   public void receiveEvent(
-    final ARI1InstrumentServicesType context,
+    final ARI1InstrumentContextType context,
     final ARI1EventConfigurationType event)
   {
     this.eventBuffer.eventAdd(event);

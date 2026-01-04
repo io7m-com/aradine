@@ -36,7 +36,7 @@ import static com.io7m.quarrel.core.QStringType.QConstant;
  * The inventory install command.
  */
 
-public final class ARCmdInvInstall extends ARCmdAbstract
+public final class ARCmdInvInstallInstrument extends ARCmdAbstract
 {
   private static final QParameterNamed1<Path> INSTRUMENT_FILE =
     new QParameterNamed1<>(
@@ -51,10 +51,10 @@ public final class ARCmdInvInstall extends ARCmdAbstract
    * The inventory install command.
    */
 
-  public ARCmdInvInstall()
+  public ARCmdInvInstallInstrument()
   {
     super(new QCommandMetadata(
-      "install",
+      "install-instrument",
       new QConstant("Install instruments into the local inventory."),
       Optional.empty()
     ));
@@ -63,7 +63,7 @@ public final class ARCmdInvInstall extends ARCmdAbstract
   @Override
   protected Logger logger()
   {
-    return LoggerFactory.getLogger(ARCmdInvInstall.class);
+    return LoggerFactory.getLogger(ARCmdInvInstallInstrument.class);
   }
 
   @Override

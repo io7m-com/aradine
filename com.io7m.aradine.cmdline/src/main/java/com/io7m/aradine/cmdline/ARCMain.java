@@ -19,9 +19,9 @@ package com.io7m.aradine.cmdline;
 import com.io7m.aradine.api.ARVersion;
 import com.io7m.aradine.cmdline.internal.ARCmdInfo;
 import com.io7m.aradine.cmdline.internal.ARCmdInsCheck;
-import com.io7m.aradine.cmdline.internal.ARCmdInvInstall;
-import com.io7m.aradine.cmdline.internal.ARCmdInvList;
-import com.io7m.aradine.cmdline.internal.ARCmdInvUninstall;
+import com.io7m.aradine.cmdline.internal.ARCmdInvInstallInstrument;
+import com.io7m.aradine.cmdline.internal.ARCmdInvListInstruments;
+import com.io7m.aradine.cmdline.internal.ARCmdInvUninstallInstrument;
 import com.io7m.aradine.cmdline.internal.ARInstrumentIDConverter;
 import com.io7m.quarrel.core.QApplication;
 import com.io7m.quarrel.core.QApplicationMetadata;
@@ -98,9 +98,9 @@ public final class ARCMain implements Runnable
           Optional.empty()
         )
       );
-      g.addCommand(new ARCmdInvInstall());
-      g.addCommand(new ARCmdInvList());
-      g.addCommand(new ARCmdInvUninstall());
+      g.addCommand(new ARCmdInvInstallInstrument());
+      g.addCommand(new ARCmdInvListInstruments());
+      g.addCommand(new ARCmdInvUninstallInstrument());
     }
 
     builder.addCommand(new ARCmdInfo());

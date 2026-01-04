@@ -36,16 +36,16 @@ import static com.io7m.quarrel.core.QStringType.QConstant;
  * The inventory list command.
  */
 
-public final class ARCmdInvList extends ARCmdAbstract
+public final class ARCmdInvListInstruments extends ARCmdAbstract
 {
   /**
    * The inventory list command.
    */
 
-  public ARCmdInvList()
+  public ARCmdInvListInstruments()
   {
     super(new QCommandMetadata(
-      "list",
+      "list-instruments",
       new QConstant("List instruments in the local inventory."),
       Optional.empty()
     ));
@@ -54,7 +54,7 @@ public final class ARCmdInvList extends ARCmdAbstract
   @Override
   protected Logger logger()
   {
-    return LoggerFactory.getLogger(ARCmdInvList.class);
+    return LoggerFactory.getLogger(ARCmdInvListInstruments.class);
   }
 
   @Override

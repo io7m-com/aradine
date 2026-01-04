@@ -36,11 +36,11 @@ import static com.io7m.quarrel.core.QStringType.QConstant;
  * The inventory uninstall command.
  */
 
-public final class ARCmdInvUninstall extends ARCmdAbstract
+public final class ARCmdInvUninstallInstrument extends ARCmdAbstract
 {
   private static final QParameterNamed1<ARInstrumentID> INSTRUMENT_ID =
     new QParameterNamed1<>(
-      "--instrument",
+      "--id",
       List.of(),
       new QConstant("The instrument identifier."),
       Optional.empty(),
@@ -51,10 +51,10 @@ public final class ARCmdInvUninstall extends ARCmdAbstract
    * The inventory uninstall command.
    */
 
-  public ARCmdInvUninstall()
+  public ARCmdInvUninstallInstrument()
   {
     super(new QCommandMetadata(
-      "uninstall",
+      "uninstall-instrument",
       new QConstant("Uninstall instruments from the local inventory."),
       Optional.empty()
     ));
@@ -63,7 +63,7 @@ public final class ARCmdInvUninstall extends ARCmdAbstract
   @Override
   protected Logger logger()
   {
-    return LoggerFactory.getLogger(ARCmdInvUninstall.class);
+    return LoggerFactory.getLogger(ARCmdInvUninstallInstrument.class);
   }
 
   @Override

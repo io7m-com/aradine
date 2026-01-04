@@ -20,7 +20,6 @@ import com.io7m.aradine.cmdline.ARCMain;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -110,12 +109,12 @@ public final class ARCmdlineTest
   }
 
   @Test
-  public void testInventoryList()
+  public void testInventoryListInstruments()
   {
     final int r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "list"
+        "list-instruments"
       }
     );
 
@@ -134,7 +133,7 @@ public final class ARCmdlineTest
     int r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "install",
+        "install-instrument",
         "--file",
         file.toString()
       }
@@ -144,7 +143,7 @@ public final class ARCmdlineTest
     r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "list"
+        "list-instruments"
       }
     );
     assertEquals(0, r);
@@ -152,8 +151,8 @@ public final class ARCmdlineTest
     r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "uninstall",
-        "--instrument",
+        "uninstall-instrument",
+        "--id",
         "com.io7m.aradine:com.io7m.aradine.instrument.sampler_m0:0.0.2-SNAPSHOT"
       }
     );
@@ -167,8 +166,8 @@ public final class ARCmdlineTest
     final int r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "uninstall",
-        "--instrument",
+        "uninstall-instrument",
+        "--id",
         "what?"
       }
     );
@@ -185,7 +184,7 @@ public final class ARCmdlineTest
     final int r = ARCMain.mainExitless(
       new String[]{
         "inventory",
-        "install",
+        "install-instrument",
         "--file",
         file.toAbsolutePath().toString()
       }

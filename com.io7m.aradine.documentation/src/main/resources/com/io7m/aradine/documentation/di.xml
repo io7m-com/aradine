@@ -273,11 +273,11 @@
       <Paragraph>
         Within an <Term type="term">ensemble</Term>, the
         <Link target="44cff131-9097-4843-a753-9171bc5188da">ports</Link>
-        of the instruments are connected together to form a graph. An <Term type="term">input</Term> port may be
-        connected to at most one <Term type="term">output</Term> port at any given time. An
-        <Term type="term">output</Term>
+        of the instruments are connected together to form a graph. A <Term type="term">target</Term> port may be
+        connected to at most one <Term type="term">source</Term> port at any given time. An
+        <Term type="term">source</Term>
         port may be connected to zero or more
-        <Term type="term">input</Term>
+        <Term type="term">target</Term>
         ports at any given time. The
         <Link target="7f823646-248a-473a-a3a8-8cd078d6c3e2">types</Link>
         of ports must match; it is not permitted to try to connect a port of an <Term type="term">audio</Term> type to a
@@ -289,14 +289,14 @@
       <Paragraph>
         Instruments have zero or more <Term type="term">ports</Term>. A
         <Term type="term">port</Term>
-        may either be an
-        <Term type="term">input</Term>
-        port or an <Term type="term">output</Term> port. An
-        <Term type="term">input</Term>
+        may either be a
+        <Term type="term">source</Term>
+        port or a <Term type="term">target</Term> port. A
+        <Term type="term">target</Term>
         port
         <Term type="term">consumes</Term>
-        data, while an
-        <Term type="term">output</Term>
+        data, while a
+        <Term type="term">source</Term>
         port
         <Term type="term">produces</Term>
         data.
@@ -307,18 +307,18 @@
         type or a <Term type="term">note</Term> type.
       </Paragraph>
       <Paragraph>
-        An <Term type="term">input</Term> port
+        A <Term type="term">target</Term> port
         <Term type="expression">I</Term>
         of an
         <Term type="term">audio</Term>
         type will, at
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
         time, consume a buffer of audio samples that was produced by whatever
-        <Term type="term">output</Term>
+        <Term type="term">source</Term>
         port
         <Term type="expression">O</Term>
         is connected to <Term type="expression">I</Term>. If no
-        <Term type="term">output</Term>
+        <Term type="term">source</Term>
         port is connected to
         <Term type="expression">I</Term>, then
         <Term type="expression">I</Term>
@@ -326,7 +326,7 @@
         <Term type="constant">0.0</Term>.
       </Paragraph>
       <Paragraph>
-        An <Term type="term">input</Term> port
+        A <Term type="term">target</Term> port
         <Term type="expression">I</Term>
         of a
         <Term type="term">note</Term>
@@ -334,27 +334,27 @@
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
         time, consume a buffer of
         <Link target="8e3ae382-497c-4312-aa5f-ebed6fb18c80">note events</Link>
-        that was produced by whatever <Term type="term">output</Term> port
+        that was produced by whatever <Term type="term">source</Term> port
         <Term type="expression">O</Term>
         is connected to <Term type="expression">I</Term>. If no
-        <Term type="term">output</Term>
+        <Term type="term">source</Term>
         port is connected to
         <Term type="expression">I</Term>, then
         <Term type="expression">I</Term>
         will be presented with an empty buffer.
       </Paragraph>
       <Paragraph>
-        An <Term type="term">output</Term> port
+        A <Term type="term">source</Term> port
         <Term type="expression">O</Term>
         of a
         <Term type="term">audio</Term>
         type will, at
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
-        time, produce a buffer of audio samples that is then consumed by each of the input ports connected
+        time, produce a buffer of audio samples that is then consumed by each of the target ports connected
         to <Term type="expression">O</Term>.
       </Paragraph>
       <Paragraph>
-        An <Term type="term">output</Term> port
+        A <Term type="term">source</Term> port
         <Term type="expression">O</Term>
         of a
         <Term type="term">note</Term>
@@ -362,7 +362,7 @@
         <Link target="c8c09eff-b3a6-48df-a326-dbbb4917e4c9">audio callback</Link>
         time, produce a buffer of
         <Link target="8e3ae382-497c-4312-aa5f-ebed6fb18c80">note events</Link>
-        that is then consumed by each of the input ports connected to <Term type="expression">O</Term>.
+        that is then consumed by each of the target ports connected to <Term type="expression">O</Term>.
       </Paragraph>
     </Subsection>
     <Subsection title="Events"

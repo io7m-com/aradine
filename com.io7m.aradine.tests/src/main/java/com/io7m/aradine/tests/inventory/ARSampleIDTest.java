@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,13 +14,12 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.instrument;
+package com.io7m.aradine.tests.inventory;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
@@ -29,11 +28,11 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class ARInstrumentIDTest
+public final class ARSampleIDTest
 {
   @Property
   public void testCompare(
-    final @ForAll ARInstrumentID id)
+    final @ForAll ARSampleMapID id)
   {
     assertEquals(
       0,
@@ -43,12 +42,12 @@ public final class ARInstrumentIDTest
 
   @Property
   public void testParseToString(
-    final @ForAll ARInstrumentID id)
+    final @ForAll ARSampleMapID id)
     throws ARException
   {
     assertEquals(
       id,
-      ARInstrumentID.parse(id.toString())
+      ARSampleMapID.parse(id.toString())
     );
   }
 
@@ -59,7 +58,7 @@ public final class ARInstrumentIDTest
       "",
       "com.io7m:com.io7m:x",
       "com.io7m:com.io7m:1.0.0-%"
-    ).map(ARInstrumentIDTest::testParseBadOf);
+    ).map(ARSampleIDTest::testParseBadOf);
   }
 
   private static DynamicTest testParseBadOf(
@@ -69,7 +68,7 @@ public final class ARInstrumentIDTest
       "testParseBadOf_%s".formatted(text),
       () -> {
         final var ex =
-          assertThrows(ARException.class, () -> ARInstrumentID.parse(text));
+          assertThrows(ARException.class, () -> ARSampleMapID.parse(text));
         assertEquals("error-parse", ex.errorCode());
       });
   }

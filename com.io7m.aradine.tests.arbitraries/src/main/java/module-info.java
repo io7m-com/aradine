@@ -14,8 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentID;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortNumber;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderSampleMapID;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedReal;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedRealMaps;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMap;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMapMaps;
 import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
@@ -33,19 +45,20 @@ module com.io7m.aradine.tests.arbitraries
 
   provides ArbitraryProvider
     with
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentID,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID,
+      ARI1ProviderAradineURIs,
+      ARI1ProviderEvent,
+      ARI1ProviderSampleMapID,
+      ARI1ProviderInstrumentID,
+      ARI1ProviderInstrumentInstanceID,
       ARI1ProviderParameterNumber,
       ARI1ProviderPortNumber,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedReal,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedRealMaps,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMap,
-      com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMapMaps
+      ARI1ProviderUUID,
+      ARI1ProviderValueChangedInteger,
+      ARI1ProviderValueChangedIntegerMaps,
+      ARI1ProviderValueChangedReal,
+      ARI1ProviderValueChangedRealMaps,
+      ARI1ProviderValueChangedSampleMap,
+      ARI1ProviderValueChangedSampleMapMaps
     ;
 
   exports com.io7m.aradine.tests.arbitraries;

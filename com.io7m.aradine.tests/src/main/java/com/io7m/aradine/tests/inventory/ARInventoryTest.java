@@ -122,6 +122,12 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Blobs can be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testBlobInstall()
     throws Exception
@@ -152,6 +158,12 @@ public final class ARInventoryTest
       assertTrue(blob.isPresent());
     }
   }
+
+  /**
+   * Instruments can be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testInstrumentInstall()
@@ -198,6 +210,74 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Snapshots can be replaced.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testInstrumentInstallSnapshot()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("sampler_m0.jar");
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing instrument...");
+      inventory.instrumentInstall(
+        file,
+        progress -> LOG.debug("{}", progress)
+      ).get();
+      inventory.instrumentInstall(
+        file,
+        progress -> LOG.debug("{}", progress)
+      ).get();
+    }
+  }
+
+  /**
+   * Releases cannot be replaced.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testInstrumentInstallNonSnapshot()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("sampler_m0_non-snapshot.jar");
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing instrument...");
+      inventory.instrumentInstall(
+        file,
+        progress -> LOG.debug("{}", progress)
+      ).get();
+
+      final var ex =
+        assertInstanceOf(
+          ARException.class,
+          assertThrows(
+            ExecutionException.class, () -> {
+              inventory.instrumentInstall(
+                file,
+                progress -> LOG.debug("{}", progress)
+              ).get();
+            }).getCause()
+        );
+
+      assertEquals("error-instrument-already-installed", ex.errorCode());
+    }
+  }
+
+  /**
+   * Instruments without manifests cannot be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testInstrumentInstallNoManifest()
     throws Exception
@@ -210,6 +290,12 @@ public final class ARInventoryTest
       assertEquals("error-instrument-manifest-missing", ex.errorCode());
     }
   }
+
+  /**
+   * Instruments with incorrect manifests cannot be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testInstrumentInstallNoManifestAradine()
@@ -224,6 +310,12 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Instruments with missing instruments cannot be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testInstrumentInstallInstrumentMissing()
     throws Exception
@@ -236,6 +328,12 @@ public final class ARInventoryTest
       assertEquals("error-manifest-nonexistent-instrument", ex.errorCode());
     }
   }
+
+  /**
+   * Instruments with invalid instruments cannot be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testInstrumentInstallInstrumentInvalid()
@@ -250,6 +348,12 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Instruments with unsupported instruments cannot be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testInstrumentInstallInstrumentUnsupported()
     throws Exception
@@ -262,6 +366,12 @@ public final class ARInventoryTest
       assertEquals("error-unsupported-schema-version", ex.errorCode());
     }
   }
+
+  /**
+   * Instruments with corrupt JSON manifests cannot be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testInstrumentInstallCorruptJSON()
@@ -276,6 +386,12 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Instruments with corrupt manifests cannot be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testInstrumentInstallMaliciousInstrument()
     throws Exception
@@ -288,6 +404,12 @@ public final class ARInventoryTest
       assertEquals("error-parsing", ex.errorCode());
     }
   }
+
+  /**
+   * Sample maps can be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testSampleMapInstall()
@@ -334,6 +456,12 @@ public final class ARInventoryTest
     }
   }
 
+  /**
+   * Unsupported sample maps cannot be installed.
+   *
+   * @throws Exception On errors
+   */
+
   @Test
   public void testSampleMapInstallUnsupported()
     throws Exception
@@ -345,17 +473,24 @@ public final class ARInventoryTest
       LOG.debug("Installing sample map...");
 
       final var exA =
-        assertInstanceOf(ARException.class, assertThrows(
-          ExecutionException.class, () -> {
-            inventory.sampleMapInstall(
-              file,
-              progress -> LOG.debug("{}", progress)
-            ).get();
-          }).getCause());
+        assertInstanceOf(
+          ARException.class, assertThrows(
+            ExecutionException.class, () -> {
+              inventory.sampleMapInstall(
+                file,
+                progress -> LOG.debug("{}", progress)
+              ).get();
+            }).getCause());
 
       assertEquals("error-sample-map-unsupported", exA.errorCode());
     }
   }
+
+  /**
+   * Nonexistent sample maps cannot be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testSampleMapInstallNonexistent()
@@ -370,17 +505,24 @@ public final class ARInventoryTest
       LOG.debug("Installing sample map...");
 
       final var exA =
-        assertInstanceOf(ARException.class, assertThrows(
-          ExecutionException.class, () -> {
-            inventory.sampleMapInstall(
-              file,
-              progress -> LOG.debug("{}", progress)
-            ).get();
-          }).getCause());
+        assertInstanceOf(
+          ARException.class, assertThrows(
+            ExecutionException.class, () -> {
+              inventory.sampleMapInstall(
+                file,
+                progress -> LOG.debug("{}", progress)
+              ).get();
+            }).getCause());
 
       assertEquals("error-sample-map-unsupported", exA.errorCode());
     }
   }
+
+  /**
+   * Corrupt sample maps cannot be installed.
+   *
+   * @throws Exception On errors
+   */
 
   @Test
   public void testSampleMapInstallCorrupt()
@@ -393,13 +535,14 @@ public final class ARInventoryTest
       LOG.debug("Installing sample map...");
 
       final var exA =
-        assertInstanceOf(ARException.class, assertThrows(
-          ExecutionException.class, () -> {
-            inventory.sampleMapInstall(
-              file,
-              progress -> LOG.debug("{}", progress)
-            ).get();
-          }).getCause());
+        assertInstanceOf(
+          ARException.class, assertThrows(
+            ExecutionException.class, () -> {
+              inventory.sampleMapInstall(
+                file,
+                progress -> LOG.debug("{}", progress)
+              ).get();
+            }).getCause());
 
       assertEquals("error-sample-map-unsupported", exA.errorCode());
     }

@@ -79,6 +79,8 @@ public final class ARCmdInsCheck extends ARCmdAbstract
     try (var _ = loaders.createNoOpLoader(file)) {
       // Nothing required.
     }
+
+    this.logger().info("Instrument passed all checks.");
     return QCommandStatus.SUCCESS;
   }
 

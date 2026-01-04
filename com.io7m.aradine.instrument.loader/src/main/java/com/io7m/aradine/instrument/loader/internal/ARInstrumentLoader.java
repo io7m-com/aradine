@@ -115,9 +115,8 @@ public final class ARInstrumentLoader
     return createInternal(
       readers,
       file,
-      (_, _, _) -> {
-        throw new UnsupportedOperationException();
-      });
+      (_, _, _) -> new UnsupportedLoader()
+    );
   }
 
   private static ARInstrumentLoaderType createInternal(
@@ -586,6 +585,35 @@ public final class ARInstrumentLoader
     public boolean isClosed()
     {
       return this.closed.get();
+    }
+  }
+
+  private static final class UnsupportedLoader
+    implements ARInstrumentLoaderType
+  {
+    UnsupportedLoader()
+    {
+
+    }
+
+    @Override
+    public ARInstrumentType execute(
+      final ARInstrumentPortAssignerType assigner,
+      final ARInstrumentInstanceID instanceID)
+    {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close()
+    {
+      // Nothing required.
+    }
+
+    @Override
+    public boolean isClosed()
+    {
+      return false;
     }
   }
 }

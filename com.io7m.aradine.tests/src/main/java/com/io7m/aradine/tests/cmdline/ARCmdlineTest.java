@@ -230,6 +230,63 @@ public final class ARCmdlineTest
     assertNotEquals(0, r);
   }
 
+  @Test
+  public void testInventoryCheckInstrument0()
+    throws IOException
+  {
+    final var file =
+      this.resourceOf("sampler_m0_non-snapshot.jar");
+
+    final int r = ARCMain.mainExitless(
+      new String[]{
+        "instrument",
+        "check",
+        "--file",
+        file.toString()
+      }
+    );
+
+    assertEquals(0, r);
+  }
+
+  @Test
+  public void testInventoryCheckInstrument1()
+    throws IOException
+  {
+    final var file =
+      this.resourceOf("sampler_m0.jar");
+
+    final int r = ARCMain.mainExitless(
+      new String[]{
+        "instrument",
+        "check",
+        "--file",
+        file.toString()
+      }
+    );
+
+    assertEquals(0, r);
+  }
+
+  @Test
+  public void testInventoryCheckInstrument2()
+    throws IOException
+  {
+    final var file =
+      this.resourceOf("sampler_m0-corrupt_json.jar");
+
+    final int r = ARCMain.mainExitless(
+      new String[]{
+        "instrument",
+        "check",
+        "--file",
+        file.toString()
+      }
+    );
+
+    assertEquals(1, r);
+  }
+
   private Path resourceOf(
     final String name)
     throws IOException

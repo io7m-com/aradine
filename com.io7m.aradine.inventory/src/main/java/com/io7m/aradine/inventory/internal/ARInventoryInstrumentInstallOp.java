@@ -16,21 +16,31 @@
 
 package com.io7m.aradine.inventory.internal;
 
+import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
+import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
 import com.io7m.mime2045.core.MimeType;
 
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
 final class ARInventoryInstrumentInstallOp
   implements ARInventoryOpType<ARInstrumentData>
 {
-  private static final int SUBTASK_COUNT = 3;
+  private static final int SUBTASK_COUNT = 4;
+  private static final int INDEX_PARSE = 0;
+  private static final int INDEX_CHECK_INSTALLED = 1;
+  private static final int INDEX_COPY = 2;
+  private static final int INDEX_SAVE_BLOB = 3;
   private final ARInventory inventory;
   private final Path file;
   private final MimeType type;
@@ -71,8 +81,59 @@ final class ARInventoryInstrumentInstallOp
   public CompletableFuture<ARInstrumentData> execute()
   {
     return this.parseFile()
+      .thenCompose(this::checkInstalled)
       .thenCompose(this::copyFile)
       .thenComposeAsync(this::saveBlob, this.inventory.databaseExecutor());
+  }
+
+  private CompletionStage<ARInstrumentData> checkInstalled(
+    final ARInstrumentData data)
+  {
+    return ARInventory.executeFuture(op -> this.checkInstalledOp(data, op));
+  }
+
+  private ARInstrumentData checkInstalledOp(
+    final ARInstrumentData data,
+    final CompletableFuture<ARInstrumentData> future)
+    throws ARException
+  {
+    this.taskProgress = taskProgressOf(INDEX_CHECK_INSTALLED);
+    this.subTask = "Checking instrument can be updated.";
+    this.subtaskProgress = 0.0;
+    this.publishProgressNow();
+
+    final var identifier = data.identifier();
+    if (!identifier.version().isSnapshot()) {
+      checkCancelled(future);
+      try (var transaction = this.inventory.database().openTransaction()) {
+        final var instrumentOpt =
+          transaction.execute(ARQueryInstrumentGetType.class, identifier);
+
+        if (instrumentOpt.isPresent()) {
+          throw this.errorInstrumentAlreadyInstalled(identifier);
+        }
+      } finally {
+        this.subtaskProgress = 1.0;
+        this.publishProgressNow();
+      }
+    }
+    return data;
+  }
+
+  private ARException errorInstrumentAlreadyInstalled(
+    final ARInstrumentID identifier)
+  {
+    return new ARException(
+      "Instrument is already installed.",
+      "error-instrument-already-installed",
+      Map.ofEntries(
+        Map.entry("File", this.file.toString()),
+        Map.entry("Instrument", identifier.toString())
+      ),
+      Optional.of(
+        "Publish a new instrument version or use a -SNAPSHOT."
+      )
+    );
   }
 
   private CompletableFuture<ARInstrumentData> saveBlob(
@@ -86,7 +147,7 @@ final class ARInventoryInstrumentInstallOp
     final CompletableFuture<ARInstrumentData> future)
     throws Exception
   {
-    this.taskProgress = taskProgressOf(2);
+    this.taskProgress = taskProgressOf(INDEX_SAVE_BLOB);
     this.subTask = "Saving instrument to database.";
     this.subtaskProgress = 0.0;
     this.publishProgressNow();
@@ -115,7 +176,7 @@ final class ARInventoryInstrumentInstallOp
     final CompletableFuture<ARInstrumentData> future)
     throws Exception
   {
-    this.taskProgress = taskProgressOf(1);
+    this.taskProgress = taskProgressOf(INDEX_COPY);
     this.subTask = "Copying file to blob directory.";
     this.subtaskProgress = 0.0;
     this.publishProgressNow();
@@ -145,7 +206,7 @@ final class ARInventoryInstrumentInstallOp
     final CompletableFuture<ARInstrumentData> future)
     throws Exception
   {
-    this.taskProgress = taskProgressOf(0);
+    this.taskProgress = taskProgressOf(INDEX_PARSE);
     this.subTask = "Parsing instrument file.";
     this.subtaskProgress = 0.0;
     this.publishProgressNow();

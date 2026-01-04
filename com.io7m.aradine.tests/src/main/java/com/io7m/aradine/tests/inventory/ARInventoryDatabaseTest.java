@@ -23,6 +23,8 @@ import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.sample_map.ARSampleMapDataSummary;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
@@ -34,6 +36,10 @@ import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapDeleteType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapGetType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapListType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapPutType;
 import com.io7m.aradine.inventory.api.queries.ARQuerySchemaVersionType;
 import com.io7m.aradine.inventory.internal.ARInventory;
 import com.io7m.lanark.core.RDottedName;
@@ -80,7 +86,7 @@ public final class ARInventoryDatabaseTest
       ARInventoryConfiguration.builder()
         .setDataDirectory(this.dataDirectory)
         .setDatabaseFile(this.databaseFile)
-        .setReaders(new ARInstrumentReaders())
+        .setInstrumentReaders(new ARInstrumentReaders())
         .build();
   }
 
@@ -112,7 +118,7 @@ public final class ARInventoryDatabaseTest
           ARInventoryConfiguration.builder()
             .setDataDirectory(this.dataDirectory)
             .setDatabaseFile(file)
-            .setReaders(new ARInstrumentReaders())
+            .setInstrumentReaders(new ARInstrumentReaders())
             .build()
         );
       });
@@ -429,6 +435,240 @@ public final class ARInventoryDatabaseTest
       assertEquals(
         instrumentsSummaries.get(index),
         instrumentsResults.get(index)
+      );
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Test
+  public void testSampleMapPutGet()
+    throws Exception
+  {
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      try (var transaction = database.openTransaction()) {
+        final var blob =
+          new ARBlob(
+            100L,
+            new ARHash(SHA_256, "abcd"),
+            MimeType.of("text", "plain")
+          );
+
+        final var identifier =
+          new ARSampleMapID(
+            new RDottedName("com.io7m.example"),
+            new RDottedName("com.io7m.example"),
+            Version.of(1, 0, 0)
+          );
+
+        final var sampleMap =
+          new ARSampleMapDataSummary(
+            identifier,
+            "SampleMap 0",
+            "A sample map.",
+            blob
+          );
+
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(ARQuerySampleMapGetType.class, identifier)
+        );
+        transaction.execute(ARQueryBlobPutType.class, blob);
+        transaction.execute(ARQuerySampleMapPutType.class, sampleMap);
+        transaction.commit();
+
+        assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(),
+            Set.of(identifier)
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            sampleMap.blob().hash()
+          )
+        );
+
+        assertEquals(
+          Optional.of(sampleMap),
+          transaction.execute(ARQuerySampleMapGetType.class, identifier)
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testSampleMapPutGetDelete()
+    throws Exception
+  {
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      try (var transaction = database.openTransaction()) {
+        final var blob =
+          new ARBlob(
+            100L,
+            new ARHash(SHA_256, "abcd"),
+            MimeType.of("text", "plain")
+          );
+
+        final var sampleMap =
+          new ARSampleMapID(
+            new RDottedName("com.io7m.example"),
+            new RDottedName("com.io7m.example"),
+            Version.of(1, 0, 0)
+          );
+
+        final var sampleMapDataSummary =
+          new ARSampleMapDataSummary(
+            sampleMap,
+            "SampleMap 0",
+            "A sample map.",
+            blob
+          );
+
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(ARQuerySampleMapGetType.class, sampleMap)
+        );
+        transaction.execute(ARQueryBlobPutType.class, blob);
+        transaction.execute(ARQuerySampleMapPutType.class, sampleMapDataSummary);
+        transaction.commit();
+
+        assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(),
+            Set.of(sampleMap)
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            sampleMapDataSummary.blob().hash()
+          )
+        );
+
+        assertEquals(
+          Optional.of(sampleMapDataSummary),
+          transaction.execute(ARQuerySampleMapGetType.class, sampleMap)
+        );
+
+        transaction.execute(ARQuerySampleMapDeleteType.class, sampleMap);
+
+        assertEquals(
+          new ARQueryBlobReferencesType.References(
+            Set.of(),
+            Set.of()
+          ),
+          transaction.execute(
+            ARQueryBlobReferencesType.class,
+            sampleMapDataSummary.blob().hash()
+          )
+        );
+
+        assertEquals(
+          Optional.empty(),
+          transaction.execute(ARQuerySampleMapGetType.class, sampleMap)
+        );
+      }
+    }
+  }
+
+  @Test
+  public void testSampleMapList()
+    throws Exception
+  {
+    final var blob =
+      new ARBlob(
+        100L,
+        new ARHash(SHA_256, "abcd"),
+        MimeType.of("text", "plain")
+      );
+
+    final var sampleMapsSummaries =
+      new ArrayList<ARSampleMapDataSummary>(10000);
+    final var sampleMapsResults =
+      new ArrayList<ARSampleMapDataSummary>(10000);
+
+    for (int index = 0; index < 10000; ++index) {
+      final var identifier =
+        new ARSampleMapID(
+          new RDottedName("com.io7m.example"),
+          new RDottedName("com.io7m.example"),
+          Version.of(index, 0, 0)
+        );
+
+      sampleMapsSummaries.add(
+        new ARSampleMapDataSummary(
+          identifier,
+          "SampleMap " + index,
+          "A sample map.",
+          blob
+        )
+      );
+    }
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      try (var transaction = database.openTransaction()) {
+        transaction.execute(ARQueryBlobPutType.class, blob);
+        for (final var sampleMap : sampleMapsSummaries) {
+          transaction.execute(ARQuerySampleMapPutType.class, sampleMap);
+        }
+        transaction.commit();
+      }
+
+      try (var transaction = database.openTransaction()) {
+        Optional<ARSampleMapID> start = Optional.empty();
+        while (true) {
+          final var r =
+            transaction.execute(
+              ARQuerySampleMapListType.class,
+              new ARQuerySampleMapListType.Parameters(start, 1000)
+            );
+
+          if (r.isEmpty()) {
+            break;
+          }
+
+          start = Optional.of(r.getLast().identifier());
+          sampleMapsResults.addAll(r);
+        }
+      }
+    }
+
+    for (int index = 0; index < 10000; ++index) {
+      assertEquals(
+        sampleMapsSummaries.get(index),
+        sampleMapsResults.get(index)
       );
     }
   }

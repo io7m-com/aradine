@@ -42,6 +42,9 @@ CREATE TABLE inventory_blobs (
   blob_hash_value       TEXT    NOT NULL,
   blob_type             TEXT    NOT NULL,
 
+  CONSTRAINT blob_hash_value_valid
+    CHECK (blob_hash_value REGEXP '^[a-f0-9]{1,256}$'),
+
   CONSTRAINT blob_hash_unique
     UNIQUE (blob_hash_algorithm, blob_hash_value)
 )
@@ -65,6 +68,24 @@ CREATE TABLE inventory_instruments (
   instrument_title              TEXT     NOT NULL,
   instrument_description        TEXT     NOT NULL,
   instrument_blob               INTEGER  NOT NULL,
+
+  CONSTRAINT instrument_group_valid
+    CHECK (instrument_group REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
+
+  CONSTRAINT instrument_name_valid
+    CHECK (instrument_name REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
+
+  CONSTRAINT instrument_version_major_range
+    CHECK ((instrument_version_major >= 0) AND (instrument_version_major <= 4294967295)),
+
+  CONSTRAINT instrument_version_minor_range
+    CHECK ((instrument_version_minor >= 0) AND (instrument_version_minor <= 4294967295)),
+
+  CONSTRAINT instrument_version_patch_range
+    CHECK ((instrument_version_patch >= 0) AND (instrument_version_patch <= 4294967295)),
+
+  CONSTRAINT instrument_meta_format_valid
+    CHECK (instrument_meta_format REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
 
   CONSTRAINT instrument_blob_exists
     FOREIGN KEY (instrument_blob)
@@ -95,11 +116,24 @@ CREATE TABLE inventory_sample_maps (
   sample_map_version_minor      INTEGER  NOT NULL,
   sample_map_version_patch      INTEGER  NOT NULL,
   sample_map_version_qualifier  TEXT     NOT NULL,
-  sample_map_meta_format        TEXT     NOT NULL,
-  sample_map_meta               BLOB     NOT NULL,
   sample_map_title              TEXT     NOT NULL,
   sample_map_description        TEXT     NOT NULL,
   sample_map_blob               INTEGER  NOT NULL,
+
+  CONSTRAINT sample_map_group_valid
+    CHECK (sample_map_group REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
+
+  CONSTRAINT sample_map_name_valid
+    CHECK (sample_map_name REGEXP '^([a-z][a-z0-9_-]{0,63})(\.[a-z][a-z0-9_-]{0,62}){0,15}$'),
+
+  CONSTRAINT sample_map_version_major_range
+    CHECK ((sample_map_version_major >= 0) AND (sample_map_version_major <= 4294967295)),
+
+  CONSTRAINT sample_map_version_minor_range
+    CHECK ((sample_map_version_minor >= 0) AND (sample_map_version_minor <= 4294967295)),
+
+  CONSTRAINT sample_map_version_patch_range
+    CHECK ((sample_map_version_patch >= 0) AND (sample_map_version_patch <= 4294967295)),
 
   CONSTRAINT inventory_sample_map_blob_exists
     FOREIGN KEY (sample_map_blob)

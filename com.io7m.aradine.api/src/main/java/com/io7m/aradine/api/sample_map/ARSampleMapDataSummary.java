@@ -14,45 +14,41 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.inventory.api;
+package com.io7m.aradine.api.sample_map;
 
-import com.io7m.aradine.api.sample_map.ARSampleMapProbeType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
-import com.io7m.immutables.styles.ImmutablesStyleType;
-import org.immutables.value.Value;
+import com.io7m.aradine.api.ARBlob;
 
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Objects;
 
 /**
- * The inventory configuration.
+ * A sample map summary.
+ *
+ * @param identifier  The identifier
+ * @param title       The title
+ * @param description The description
+ * @param blob        The sample map blob
  */
 
-@Value.Immutable
-@ImmutablesStyleType
-public interface ARInventoryConfigurationType
+public record ARSampleMapDataSummary(
+  ARSampleMapID identifier,
+  String title,
+  String description,
+  ARBlob blob)
 {
   /**
-   * @return The available sample map probes
+   * A sample map summary.
+   *
+   * @param identifier  The identifier
+   * @param title       The title
+   * @param description The description
+   * @param blob        The sample map blob
    */
 
-  List<ARSampleMapProbeType> sampleMapProbes();
-
-  /**
-   * @return The instrument reader factory
-   */
-
-  ARInstrumentReaderFactoryType instrumentReaders();
-
-  /**
-   * @return The database file
-   */
-
-  Path databaseFile();
-
-  /**
-   * @return The data directory
-   */
-
-  Path dataDirectory();
+  public ARSampleMapDataSummary
+  {
+    Objects.requireNonNull(identifier, "identifier");
+    Objects.requireNonNull(title, "Title");
+    Objects.requireNonNull(description, "Description");
+    Objects.requireNonNull(blob, "Blob");
+  }
 }

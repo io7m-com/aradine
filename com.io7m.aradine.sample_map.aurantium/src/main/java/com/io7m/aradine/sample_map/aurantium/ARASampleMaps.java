@@ -18,9 +18,12 @@ package com.io7m.aradine.sample_map.aurantium;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.progress.ARProgress;
+import com.io7m.aradine.api.sample_map.ARSampleMapDataSummary;
 import com.io7m.aradine.api.sample_map.ARSampleMapFileFactoryType;
 import com.io7m.aradine.api.sample_map.ARSampleMapFileType;
+import com.io7m.aradine.api.sample_map.ARSampleMapProbeType;
 import com.io7m.aradine.sample_map.aurantium.internal.ARASampleMapFile;
+import com.io7m.aradine.sample_map.aurantium.internal.ARASampleMapProbe;
 import com.io7m.aurantium.parser.api.AUParserFactoryType;
 import com.io7m.aurantium.parser.api.AUProbeFactoryType;
 import com.io7m.aurantium.parser.api.AUProbes;
@@ -31,6 +34,7 @@ import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -38,7 +42,7 @@ import java.util.function.Consumer;
  */
 
 public final class ARASampleMaps
-  implements ARSampleMapFileFactoryType
+  implements ARSampleMapFileFactoryType, ARSampleMapProbeType
 {
   private final List<AUParserFactoryType> parsers;
   private final AUProbeFactoryType probes;
@@ -93,6 +97,18 @@ public final class ARASampleMaps
       this.probes,
       file,
       progressConsumer
+    );
+  }
+
+  @Override
+  public Optional<ARSampleMapDataSummary> probe(
+    final Path file)
+    throws ARException
+  {
+    return ARASampleMapProbe.probe(
+      this.parsers,
+      this.probes,
+      file
     );
   }
 }

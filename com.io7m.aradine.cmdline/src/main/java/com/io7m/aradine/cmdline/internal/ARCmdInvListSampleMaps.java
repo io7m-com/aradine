@@ -18,7 +18,7 @@ package com.io7m.aradine.cmdline.internal;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.directories.ARApplicationDirectories;
-import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.quarrel.core.QCommandContextType;
 import com.io7m.quarrel.core.QCommandMetadata;
 import com.io7m.quarrel.core.QCommandStatus;
@@ -36,17 +36,17 @@ import static com.io7m.quarrel.core.QStringType.QConstant;
  * The inventory list command.
  */
 
-public final class ARCmdInvListInstruments extends ARCmdAbstract
+public final class ARCmdInvListSampleMaps extends ARCmdAbstract
 {
   /**
    * The inventory list command.
    */
 
-  public ARCmdInvListInstruments()
+  public ARCmdInvListSampleMaps()
   {
     super(new QCommandMetadata(
-      "list-instruments",
-      new QConstant("List instruments in the local inventory."),
+      "list-sample-maps",
+      new QConstant("List sample maps in the local inventory."),
       Optional.empty()
     ));
   }
@@ -54,7 +54,7 @@ public final class ARCmdInvListInstruments extends ARCmdAbstract
   @Override
   protected Logger logger()
   {
-    return LoggerFactory.getLogger(ARCmdInvListInstruments.class);
+    return LoggerFactory.getLogger(ARCmdInvListSampleMaps.class);
   }
 
   @Override
@@ -70,22 +70,24 @@ public final class ARCmdInvListInstruments extends ARCmdAbstract
       final var mapper = JsonMapper.shared();
       final var output = mapper.createArrayNode();
 
-      Optional<ARInstrumentID> start = Optional.empty();
+      Optional<ARSampleMapID> start = Optional.empty();
       while (true) {
-        final var r = inventory.instrumentList(start, 1000).get();
+        final var r = inventory.sampleMapList(start, 1000).get();
         if (r.isEmpty()) {
           break;
         }
         for (final var summary : r) {
           final var o = mapper.createObjectNode();
           final var identifier = summary.identifier();
-          o.put("Type", "Instrument");
+          o.put("Type", "SampleMap");
           o.put("Group", identifier.group().value());
           o.put("Name", identifier.name().value());
           o.put("Version", identifier.version().toString());
           o.put("Identifier", summary.identifier().toString());
           o.put("Title", summary.title());
           o.put("Description", summary.description());
+          o.put("MIMEType", summary.blob().type().toString());
+          o.put("Size", Long.toUnsignedString(summary.blob().size()));
           output.add(o);
         }
         start = Optional.of(r.getLast().identifier());

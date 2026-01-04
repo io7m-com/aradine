@@ -87,7 +87,7 @@ public final class AREnsModelTest
       ARInventoryConfiguration.builder()
         .setDataDirectory(this.dataDirectory)
         .setDatabaseFile(this.databaseFile)
-        .setReaders(new ARInstrumentReaders())
+        .setInstrumentReaders(new ARInstrumentReaders())
         .build();
 
     Files.createDirectories(this.directory);

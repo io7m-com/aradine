@@ -21,6 +21,8 @@ import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
+import com.io7m.aradine.api.sample_map.ARSampleMapDataSummary;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.mime2045.core.MimeType;
 
@@ -118,6 +120,61 @@ public interface ARInventoryType
     Optional<ARInstrumentID> start,
     int limit
   );
+
+  /**
+   * Install the given sample map into the inventory.
+   *
+   * @param file             The source file
+   * @param progressConsumer A consumer of progress
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<ARSampleMapID> sampleMapInstall(
+    Path file,
+    Consumer<ARProgress> progressConsumer);
+
+  /**
+   * Deinstall the given sample map from the inventory.
+   *
+   * @param sampleMap        The sample map ID
+   * @param progressConsumer A consumer of progress
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<?> sampleMapUninstall(
+    ARSampleMapID sampleMap,
+    Consumer<ARProgress> progressConsumer);
+
+  /**
+   * Get the file for the installed sample map.
+   *
+   * @param sampleMap The sample map
+   *
+   * @return The file, if the sample map exists
+   *
+   * @throws ARException On errors
+   */
+
+  Optional<Path> sampleMapFile(
+    ARSampleMapID sampleMap)
+    throws ARException;
+
+  /**
+   * List installed sample maps.
+   *
+   * @param start The starting sample map
+   * @param limit A limit on the number of returned results
+   *
+   * @return The operation in progress
+   */
+
+  CompletableFuture<List<ARSampleMapDataSummary>> sampleMapList(
+    Optional<ARSampleMapID> start,
+    int limit
+  );
+
 
   @Override
   void close()

@@ -20,9 +20,13 @@ import com.io7m.aradine.api.ARVersion;
 import com.io7m.aradine.cmdline.internal.ARCmdInfo;
 import com.io7m.aradine.cmdline.internal.ARCmdInsCheck;
 import com.io7m.aradine.cmdline.internal.ARCmdInvInstallInstrument;
+import com.io7m.aradine.cmdline.internal.ARCmdInvInstallSampleMap;
 import com.io7m.aradine.cmdline.internal.ARCmdInvListInstruments;
+import com.io7m.aradine.cmdline.internal.ARCmdInvListSampleMaps;
 import com.io7m.aradine.cmdline.internal.ARCmdInvUninstallInstrument;
+import com.io7m.aradine.cmdline.internal.ARCmdInvUninstallSampleMap;
 import com.io7m.aradine.cmdline.internal.ARInstrumentIDConverter;
+import com.io7m.aradine.cmdline.internal.ARSampleMapIDConverter;
 import com.io7m.quarrel.core.QApplication;
 import com.io7m.quarrel.core.QApplicationMetadata;
 import com.io7m.quarrel.core.QApplicationType;
@@ -75,7 +79,8 @@ public final class ARCMain implements Runnable
 
     final var converters =
       QValueConverterDirectory.core()
-        .with(new ARInstrumentIDConverter());
+        .with(new ARInstrumentIDConverter())
+        .with(new ARSampleMapIDConverter());
 
     final var builder = QApplication.builder(metadata);
 
@@ -99,8 +104,11 @@ public final class ARCMain implements Runnable
         )
       );
       g.addCommand(new ARCmdInvInstallInstrument());
+      g.addCommand(new ARCmdInvInstallSampleMap());
       g.addCommand(new ARCmdInvListInstruments());
+      g.addCommand(new ARCmdInvListSampleMaps());
       g.addCommand(new ARCmdInvUninstallInstrument());
+      g.addCommand(new ARCmdInvUninstallSampleMap());
     }
 
     builder.addCommand(new ARCmdInfo());

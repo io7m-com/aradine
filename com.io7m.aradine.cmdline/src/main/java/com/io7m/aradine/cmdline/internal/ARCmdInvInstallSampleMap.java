@@ -18,35 +18,44 @@ package com.io7m.aradine.cmdline.internal;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.directories.ARApplicationDirectories;
-import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.quarrel.core.QCommandContextType;
 import com.io7m.quarrel.core.QCommandMetadata;
 import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QParameterNamed1;
 import com.io7m.quarrel.core.QParameterNamedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.json.JsonMapper;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
 import static com.io7m.quarrel.core.QStringType.QConstant;
 
 /**
- * The inventory list command.
+ * The inventory install command.
  */
 
-public final class ARCmdInvListInstruments extends ARCmdAbstract
+public final class ARCmdInvInstallSampleMap extends ARCmdAbstract
 {
+  private static final QParameterNamed1<Path> SAMPLE_MAP_FILE =
+    new QParameterNamed1<>(
+      "--file",
+      List.of(),
+      new QConstant("The sample map file."),
+      Optional.empty(),
+      Path.class
+    );
+
   /**
-   * The inventory list command.
+   * The inventory install command.
    */
 
-  public ARCmdInvListInstruments()
+  public ARCmdInvInstallSampleMap()
   {
     super(new QCommandMetadata(
-      "list-instruments",
-      new QConstant("List instruments in the local inventory."),
+      "install-sample-map",
+      new QConstant("Install sample maps into the local inventory."),
       Optional.empty()
     ));
   }
@@ -54,7 +63,7 @@ public final class ARCmdInvListInstruments extends ARCmdAbstract
   @Override
   protected Logger logger()
   {
-    return LoggerFactory.getLogger(ARCmdInvListInstruments.class);
+    return LoggerFactory.getLogger(ARCmdInvInstallSampleMap.class);
   }
 
   @Override
@@ -62,39 +71,25 @@ public final class ARCmdInvListInstruments extends ARCmdAbstract
     final QCommandContextType context)
     throws Exception
   {
+    final var logger = this.logger();
     final var directories = ARApplicationDirectories.directories();
     try (var resources = ARCloseables.create()) {
       final var inventory =
         ARCInventories.openInventory(directories, resources);
 
-      final var mapper = JsonMapper.shared();
-      final var output = mapper.createArrayNode();
-
-      Optional<ARInstrumentID> start = Optional.empty();
-      while (true) {
-        final var r = inventory.instrumentList(start, 1000).get();
-        if (r.isEmpty()) {
-          break;
+      inventory.sampleMapInstall(
+        context.parameterValue(SAMPLE_MAP_FILE),
+        progress -> {
+          logger.info(
+            "{} ({}%): {} ({}%)",
+            progress.task(),
+            Integer.valueOf((int) (progress.taskProgress() * 100.0)),
+            progress.subTask(),
+            Integer.valueOf((int) (progress.subTaskProgress() * 100.0))
+          );
         }
-        for (final var summary : r) {
-          final var o = mapper.createObjectNode();
-          final var identifier = summary.identifier();
-          o.put("Type", "Instrument");
-          o.put("Group", identifier.group().value());
-          o.put("Name", identifier.name().value());
-          o.put("Version", identifier.version().toString());
-          o.put("Identifier", summary.identifier().toString());
-          o.put("Title", summary.title());
-          o.put("Description", summary.description());
-          output.add(o);
-        }
-        start = Optional.of(r.getLast().identifier());
-      }
+      ).get();
 
-      System.out.println(
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output)
-      );
-      System.out.flush();
       return QCommandStatus.SUCCESS;
     }
   }
@@ -102,6 +97,6 @@ public final class ARCmdInvListInstruments extends ARCmdAbstract
   @Override
   protected List<QParameterNamedType<?>> onListNamedParametersActual()
   {
-    return List.of();
+    return List.of(SAMPLE_MAP_FILE);
   }
 }

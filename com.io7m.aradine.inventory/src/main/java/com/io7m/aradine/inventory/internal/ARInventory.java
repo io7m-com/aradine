@@ -19,37 +19,26 @@ package com.io7m.aradine.inventory.internal;
 import com.io7m.aradine.api.ARBlob;
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.ARHash;
-import com.io7m.aradine.api.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.progress.ARProgress;
+import com.io7m.aradine.api.sample_map.ARSampleMapDataSummary;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.database.api.ARDBType;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
-import com.io7m.aradine.inventory.api.queries.ARQueryBlobDeleteType;
-import com.io7m.aradine.inventory.api.queries.ARQueryBlobPutType;
-import com.io7m.aradine.inventory.api.queries.ARQueryBlobReferencesType;
-import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentDeleteType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentListType;
-import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentPutType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapGetType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapListType;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 import com.io7m.mime2045.core.MimeType;
-import com.io7m.streamtime.core.STTimedInputStream;
-import com.io7m.streamtime.core.STTransferStatistics;
-import org.apache.commons.io.output.NullOutputStream;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.DigestOutputStream;
-import java.security.MessageDigest;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -139,7 +128,7 @@ public final class ARInventory implements ARInventoryType
       .formatted(Long.toUnsignedString(thread.threadId()));
   }
 
-  private static <T> CompletableFuture<T> executeFuture(
+  static <T> CompletableFuture<T> executeFuture(
     final ARFutureOpType<T> op)
   {
     final var future = new CompletableFuture<T>();
@@ -152,6 +141,21 @@ public final class ARInventory implements ARInventoryType
         }
       });
     return future;
+  }
+
+  ARInventoryConfiguration configuration()
+  {
+    return this.configuration;
+  }
+
+  ARInventoryBlobDirectory blobDirectory()
+  {
+    return this.blobDirectory;
+  }
+
+  ExecutorService databaseExecutor()
+  {
+    return this.databaseExecutor;
   }
 
   @Override
@@ -244,437 +248,65 @@ public final class ARInventory implements ARInventoryType
   }
 
   @Override
+  public CompletableFuture<ARSampleMapID> sampleMapInstall(
+    final Path file,
+    final Consumer<ARProgress> progressConsumer)
+  {
+    return new ARInventorySampleMapInstallOp(this, file, progressConsumer)
+      .execute()
+      .thenApply(ARSampleMapDataSummary::identifier);
+  }
+
+  @Override
+  public CompletableFuture<?> sampleMapUninstall(
+    final ARSampleMapID sampleMap,
+    final Consumer<ARProgress> progressConsumer)
+  {
+    return new ARInventorySampleMapUninstallOp(
+      this, sampleMap, progressConsumer)
+      .execute();
+  }
+
+  @Override
+  public Optional<Path> sampleMapFile(
+    final ARSampleMapID sampleMap)
+    throws ARException
+  {
+    try (var t = this.database.openTransaction()) {
+      final var sampleMapOpt =
+        t.execute(ARQuerySampleMapGetType.class, sampleMap);
+      if (sampleMapOpt.isEmpty()) {
+        return Optional.empty();
+      }
+      final var instrument = sampleMapOpt.get();
+      return this.blobDirectory.get(instrument.blob().hash());
+    }
+  }
+
+  @Override
+  public CompletableFuture<List<ARSampleMapDataSummary>> sampleMapList(
+    final Optional<ARSampleMapID> start,
+    final int limit)
+  {
+    Objects.requireNonNull(start, "Start");
+
+    final var future = new CompletableFuture<List<ARSampleMapDataSummary>>();
+    this.databaseExecutor.execute(() -> {
+      try {
+        try (var t = this.database.openTransaction()) {
+          final var p = new ARQuerySampleMapListType.Parameters(start, limit);
+          future.complete(t.execute(ARQuerySampleMapListType.class, p));
+        }
+      } catch (final Throwable e) {
+        future.completeExceptionally(e);
+      }
+    });
+    return future;
+  }
+
+  @Override
   public void close()
   {
 
-  }
-
-  interface ARInventoryOpType<T>
-  {
-    CompletableFuture<T> execute();
-  }
-
-  interface ARFutureOpType<T>
-  {
-    T execute(CompletableFuture<T> op)
-      throws Exception;
-  }
-
-  private static final class ARInventoryInstrumentUninstallOp
-    implements ARInventoryOpType<Object>
-  {
-    private final ARInventory inventory;
-    private final ARInstrumentID instrumentID;
-    private final Consumer<ARProgress> progressConsumer;
-    private String task;
-    private String subTask;
-    private double taskProgress;
-    private double subtaskProgress;
-
-    ARInventoryInstrumentUninstallOp(
-      final ARInventory inInventory,
-      final ARInstrumentID inInstrumentID,
-      final Consumer<ARProgress> inProgressConsumer)
-    {
-      this.inventory = inInventory;
-      this.instrumentID = inInstrumentID;
-      this.progressConsumer = inProgressConsumer;
-
-      this.task = "Uninstalling instrument.";
-      this.subTask = "Uninstalling instrument.";
-      this.taskProgress = 0.0;
-      this.subtaskProgress = 0.0;
-    }
-
-    @Override
-    public CompletableFuture<Object> execute()
-    {
-      final var future = new CompletableFuture<>();
-      this.inventory.databaseExecutor.execute(() -> {
-        this.publishProgressNow();
-
-        try {
-          try (var t = this.inventory.database.openTransaction()) {
-            final var instrumentOpt =
-              t.execute(ARQueryInstrumentGetType.class, this.instrumentID);
-
-            if (instrumentOpt.isPresent()) {
-              final var instrument =
-                instrumentOpt.get();
-              final var blobHash =
-                instrument.blob().hash();
-
-              t.execute(
-                ARQueryInstrumentDeleteType.class,
-                this.instrumentID
-              );
-
-              final var refs =
-                t.execute(ARQueryBlobReferencesType.class, blobHash);
-
-              if (refs.isEmpty()) {
-                this.subTask = "Deleting blob.";
-                this.publishProgressNow();
-
-                t.execute(ARQueryBlobDeleteType.class, blobHash);
-                this.inventory.blobDirectory.delete(blobHash);
-
-                this.subtaskProgress = 1.0;
-                this.publishProgressNow();
-              }
-              t.commit();
-
-              this.subTask = "Completed.";
-              this.subtaskProgress = 1.0;
-              this.taskProgress = 1.0;
-              this.publishProgressNow();
-            }
-          }
-        } catch (final Throwable e) {
-          future.completeExceptionally(e);
-        } finally {
-          future.complete(null);
-        }
-      });
-      return future;
-    }
-
-    private ARProgress progressNow()
-    {
-      return new ARProgress(
-        this.task,
-        this.taskProgress,
-        this.subTask,
-        this.subtaskProgress
-      );
-    }
-
-    private void publishProgressNow()
-    {
-      this.progressConsumer.accept(this.progressNow());
-    }
-  }
-
-  private static final class ARInventoryInstrumentInstallOp
-    implements ARInventoryOpType<ARInstrumentData>
-  {
-    private static final int SUBTASK_COUNT = 3;
-    private final ARInventory inventory;
-    private final Path file;
-    private final MimeType type;
-    private final Consumer<ARProgress> progressConsumer;
-    private final String task;
-    private volatile double taskProgress;
-    private volatile String subTask;
-    private volatile double subtaskProgress;
-
-    private static double taskProgressOf(
-      final int subTaskIndex)
-    {
-      return (double) (subTaskIndex + 1) / (double) SUBTASK_COUNT;
-    }
-
-    private ARInventoryInstrumentInstallOp(
-      final ARInventory inInventory,
-      final Path inFile,
-      final MimeType inType,
-      final Consumer<ARProgress> inProgressConsumer)
-    {
-      this.inventory = inInventory;
-      this.file = inFile;
-      this.type = inType;
-      this.progressConsumer = inProgressConsumer;
-      this.task = "Installing instrument.";
-    }
-
-    private static void checkCancelled(
-      final CompletableFuture<?> future)
-    {
-      if (future.isCancelled()) {
-        throw new CancellationException();
-      }
-    }
-
-    @Override
-    public CompletableFuture<ARInstrumentData> execute()
-    {
-      return this.parseFile()
-        .thenCompose(this::copyFile)
-        .thenComposeAsync(this::saveBlob, this.inventory.databaseExecutor);
-    }
-
-    private CompletableFuture<ARInstrumentData> saveBlob(
-      final ARInstrumentData instrument)
-    {
-      return executeFuture(op -> this.saveBlobOp(instrument, op));
-    }
-
-    private ARInstrumentData saveBlobOp(
-      final ARInstrumentData instrument,
-      final CompletableFuture<ARInstrumentData> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(2);
-      this.subTask = "Saving instrument to database.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-
-      checkCancelled(future);
-      try (var transaction = this.inventory.database.openTransaction()) {
-        final var blob = instrument.blob();
-        transaction.execute(ARQueryBlobPutType.class, blob);
-        transaction.execute(ARQueryInstrumentPutType.class, instrument);
-        transaction.commit();
-        return instrument;
-      } finally {
-        this.subtaskProgress = 1.0;
-        this.publishProgressNow();
-      }
-    }
-
-    private CompletableFuture<ARInstrumentData> copyFile(
-      final ARInstrumentData instrument)
-    {
-      return executeFuture(op -> this.copyFileOp(instrument, op));
-    }
-
-    private ARInstrumentData copyFileOp(
-      final ARInstrumentData instrument,
-      final CompletableFuture<ARInstrumentData> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(1);
-      this.subTask = "Copying file to blob directory.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-
-      checkCancelled(future);
-      this.inventory.blobDirectory.copyIn(
-        instrument.blob().hash(),
-        this.file,
-        progress -> {
-          this.subtaskProgress = progress.doubleValue();
-          this.publishProgressNow();
-        },
-        future::isCancelled
-      );
-
-      this.subtaskProgress = 1.0;
-      this.publishProgressNow();
-      return instrument;
-    }
-
-    private CompletableFuture<ARInstrumentData> parseFile()
-    {
-      return executeFuture(this::parseFileOp);
-    }
-
-    private ARInstrumentData parseFileOp(
-      final CompletableFuture<ARInstrumentData> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(0);
-      this.subTask = "Parsing instrument file.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-
-      checkCancelled(future);
-      final var readers = this.inventory.configuration.readers();
-      try (var reader = readers.create(this.file)) {
-        final var instrument = reader.execute();
-        this.subtaskProgress = 1.0;
-        this.publishProgressNow();
-        return instrument;
-      }
-    }
-
-    private ARProgress progressNow()
-    {
-      return new ARProgress(
-        this.task,
-        this.taskProgress,
-        this.subTask,
-        this.subtaskProgress
-      );
-    }
-
-    private void publishProgressNow()
-    {
-      this.progressConsumer.accept(this.progressNow());
-    }
-  }
-
-  private static final class ARInventoryBlobInstallOp
-    implements ARInventoryOpType<ARBlob>
-  {
-    private static final int SUBTASK_COUNT = 3;
-
-    private final ARInventory inventory;
-    private final Path file;
-    private final MimeType type;
-    private final Consumer<ARProgress> progressConsumer;
-    private final String task;
-    private volatile double taskProgress;
-    private volatile String subTask;
-    private volatile double subtaskProgress;
-    private long fileSize;
-
-    private static double taskProgressOf(
-      final int subTaskIndex)
-    {
-      return (double) (subTaskIndex + 1) / (double) SUBTASK_COUNT;
-    }
-
-    private ARInventoryBlobInstallOp(
-      final ARInventory inInventory,
-      final Path inFile,
-      final MimeType inType,
-      final Consumer<ARProgress> inProgressConsumer)
-    {
-      this.inventory = inInventory;
-      this.file = inFile;
-      this.type = inType;
-      this.progressConsumer = inProgressConsumer;
-      this.task = "Installing blob.";
-    }
-
-    private static void checkCancelled(
-      final CompletableFuture<?> future)
-    {
-      if (future.isCancelled()) {
-        throw new CancellationException();
-      }
-    }
-
-    @Override
-    public CompletableFuture<ARBlob> execute()
-    {
-      return this.hashFile()
-        .thenCompose(this::copyFile)
-        .thenComposeAsync(this::saveBlob, this.inventory.databaseExecutor);
-    }
-
-    private CompletableFuture<ARBlob> saveBlob(
-      final ARHash hash)
-    {
-      return executeFuture(op -> this.saveBlobOp(hash, op));
-    }
-
-    private ARBlob saveBlobOp(
-      final ARHash hash,
-      final CompletableFuture<ARBlob> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(2);
-      this.subTask = "Saving blob to database.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-
-      try (var transaction = this.inventory.database.openTransaction()) {
-        final var blob = new ARBlob(this.fileSize, hash, this.type);
-        transaction.execute(ARQueryBlobPutType.class, blob);
-        transaction.commit();
-        return blob;
-      } finally {
-        this.subtaskProgress = 1.0;
-        this.publishProgressNow();
-      }
-    }
-
-    private CompletableFuture<ARHash> copyFile(
-      final ARHash hash)
-    {
-      return executeFuture(op -> this.copyFileOp(hash, op));
-    }
-
-    private ARHash copyFileOp(
-      final ARHash hash,
-      final CompletableFuture<ARHash> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(1);
-      this.subTask = "Copying file to blob directory.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-
-      this.inventory.blobDirectory.copyIn(
-        hash,
-        this.file,
-        progress -> {
-          this.subtaskProgress = progress.doubleValue();
-          this.publishProgressNow();
-        },
-        future::isCancelled
-      );
-
-      this.subtaskProgress = 1.0;
-      this.publishProgressNow();
-      return hash;
-    }
-
-    private CompletableFuture<ARHash> hashFile()
-    {
-      return executeFuture(this::hashFileOp);
-    }
-
-    private ARHash hashFileOp(
-      final CompletableFuture<ARHash> future)
-      throws Exception
-    {
-      this.taskProgress = taskProgressOf(0);
-      this.subTask = "Computing hash of file.";
-      this.subtaskProgress = 0.0;
-      this.publishProgressNow();
-      this.fileSize = Files.size(this.file);
-
-      final var digest =
-        MessageDigest.getInstance("SHA-256");
-
-      final Consumer<STTransferStatistics> statConsumer = stats -> {
-        this.subtaskProgress = stats.percentNormalized().orElse(0.0);
-        this.publishProgressNow();
-      };
-
-      try (var stream = Files.newInputStream(this.file)) {
-        try (var timedStream = new STTimedInputStream(statConsumer, stream)) {
-          final var nullOut =
-            NullOutputStream.nullOutputStream();
-
-          try (var outStream = new DigestOutputStream(nullOut, digest)) {
-            final var buffer = new byte[4096];
-            while (true) {
-              checkCancelled(future);
-              final var r = timedStream.read(buffer);
-              if (r == -1) {
-                break;
-              }
-              outStream.write(buffer, 0, r);
-            }
-          }
-        }
-      }
-
-      this.subtaskProgress = 1.0;
-      this.publishProgressNow();
-      return new ARHash(
-        ARHashAlgorithm.SHA_256,
-        HexFormat.of().formatHex(digest.digest())
-      );
-    }
-
-    private ARProgress progressNow()
-    {
-      return new ARProgress(
-        this.task,
-        this.taskProgress,
-        this.subTask,
-        this.subtaskProgress
-      );
-    }
-
-    private void publishProgressNow()
-    {
-      this.progressConsumer.accept(this.progressNow());
-    }
   }
 }

@@ -37,6 +37,10 @@ final class ARInventoryDBQueries
           ARQueryInstrumentGet.INSTANCE,
           ARQueryInstrumentList.INSTANCE,
           ARQueryInstrumentPut.INSTANCE,
+          ARQuerySampleMapDelete.INSTANCE,
+          ARQuerySampleMapGet.INSTANCE,
+          ARQuerySampleMapList.INSTANCE,
+          ARQuerySampleMapPut.INSTANCE,
           ARQuerySchemaVersion.INSTANCE
         ).collect(Collectors.toMap(
           ARDBQueryProviderType::queryInterface,

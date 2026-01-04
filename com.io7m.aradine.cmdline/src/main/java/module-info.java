@@ -29,10 +29,12 @@ module com.io7m.aradine.cmdline
   requires com.io7m.aradine.instrument.loader;
   requires com.io7m.aradine.inventory.api;
   requires com.io7m.aradine.inventory;
+  requires com.io7m.aradine.sample_map.aurantium;
 
   requires com.io7m.jade.api;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.lanark.core;
+  requires com.io7m.mime2045.core;
   requires com.io7m.quarrel.core;
   requires com.io7m.quarrel.ext.logback;
   requires com.io7m.seltzer.api;

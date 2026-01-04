@@ -22,6 +22,7 @@ import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
+import com.io7m.aradine.sample_map.aurantium.ARASampleMaps;
 import com.io7m.jade.api.ApplicationDirectoriesType;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
@@ -71,7 +72,8 @@ public final class ARCInventories
       ARInventoryConfiguration.builder()
         .setDataDirectory(blobDirectory)
         .setDatabaseFile(inventoryDatabase)
-        .setReaders(instrumentReaders)
+        .setInstrumentReaders(instrumentReaders)
+        .addSampleMapProbes(new ARASampleMaps())
         .build();
 
     return resources.add(ARInventories.open(inventoryConfiguration));

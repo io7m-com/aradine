@@ -124,7 +124,7 @@ public final class ARCmdlineTest
   }
 
   @Test
-  public void testInventoryInstallUninstall()
+  public void testInventoryInstrumentInstallUninstall()
     throws Exception
   {
     final var file =
@@ -158,6 +158,44 @@ public final class ARCmdlineTest
     );
     assertEquals(0, r);
   }
+
+
+  @Test
+  public void testInventorySampleMapInstallUninstall()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("sample.aam");
+
+    int r = ARCMain.mainExitless(
+      new String[]{
+        "inventory",
+        "install-sample-map",
+        "--file",
+        file.toString()
+      }
+    );
+    assertEquals(0, r);
+
+    r = ARCMain.mainExitless(
+      new String[]{
+        "inventory",
+        "list-sample-maps"
+      }
+    );
+    assertEquals(0, r);
+
+    r = ARCMain.mainExitless(
+      new String[]{
+        "inventory",
+        "uninstall-sample-map",
+        "--id",
+        "com.io7m.example_group:com.io7m.example:1.0.0"
+      }
+    );
+    assertEquals(0, r);
+  }
+
 
   @Test
   public void testInventoryUninstallUnparseable()

@@ -19,12 +19,15 @@ package com.io7m.aradine.tests.inventory;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.aradine.inventory.api.queries.ARQueryBlobGetType;
 import com.io7m.aradine.inventory.api.queries.ARQueryInstrumentGetType;
+import com.io7m.aradine.inventory.api.queries.ARQuerySampleMapGetType;
+import com.io7m.aradine.sample_map.aurantium.ARASampleMaps;
 import com.io7m.mime2045.core.MimeType;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -38,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
@@ -94,7 +98,8 @@ public final class ARInventoryTest
       ARInventoryConfiguration.builder()
         .setDataDirectory(this.dataDirectory)
         .setDatabaseFile(this.databaseFile)
-        .setReaders(new ARInstrumentReaders())
+        .addSampleMapProbes(new ARASampleMaps())
+        .setInstrumentReaders(new ARInstrumentReaders())
         .build();
 
     Files.createDirectories(this.directory);
@@ -173,6 +178,23 @@ public final class ARInventoryTest
         transaction.execute(ARQueryInstrumentGetType.class, instrumentID)
           .orElseThrow();
       assertEquals(instrumentID, instrument.identifier());
+    }
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Deinstalling instrument...");
+      inventory.instrumentUninstall(
+        instrumentID,
+        progress -> LOG.debug("{}", progress)
+      ).get();
+    }
+
+    LOG.debug("Checking database...");
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      final var transaction = database.openTransaction();
+      final var instrumentOpt =
+        transaction.execute(ARQueryInstrumentGetType.class, instrumentID);
+      assertEquals(Optional.empty(), instrumentOpt);
     }
   }
 
@@ -264,6 +286,122 @@ public final class ARInventoryTest
     try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
       final var ex = runFailure(inventory, file);
       assertEquals("error-parsing", ex.errorCode());
+    }
+  }
+
+  @Test
+  public void testSampleMapInstall()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("sample.aam");
+
+    final ARSampleMapID sampleMapID;
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing sample map...");
+      sampleMapID =
+        inventory.sampleMapInstall(
+          file,
+          progress -> LOG.debug("{}", progress)
+        ).get();
+    }
+
+    LOG.debug("Checking database...");
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      final var transaction = database.openTransaction();
+      final var sampleMap =
+        transaction.execute(ARQuerySampleMapGetType.class, sampleMapID)
+          .orElseThrow();
+      assertEquals(sampleMapID, sampleMap.identifier());
+    }
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Deinstalling sample map...");
+      inventory.sampleMapUninstall(
+        sampleMapID,
+        progress -> LOG.debug("{}", progress)
+      ).get();
+    }
+
+    LOG.debug("Checking database...");
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      final var database = inventory.database();
+      final var transaction = database.openTransaction();
+      final var instrumentOpt =
+        transaction.execute(ARQuerySampleMapGetType.class, sampleMapID);
+      assertEquals(Optional.empty(), instrumentOpt);
+    }
+  }
+
+  @Test
+  public void testSampleMapInstallUnsupported()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("white_noise_1.wav");
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing sample map...");
+
+      final var exA =
+        assertInstanceOf(ARException.class, assertThrows(
+          ExecutionException.class, () -> {
+            inventory.sampleMapInstall(
+              file,
+              progress -> LOG.debug("{}", progress)
+            ).get();
+          }).getCause());
+
+      assertEquals("error-sample-map-unsupported", exA.errorCode());
+    }
+  }
+
+  @Test
+  public void testSampleMapInstallNonexistent()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("white_noise_1.wav");
+
+    Files.deleteIfExists(file);
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing sample map...");
+
+      final var exA =
+        assertInstanceOf(ARException.class, assertThrows(
+          ExecutionException.class, () -> {
+            inventory.sampleMapInstall(
+              file,
+              progress -> LOG.debug("{}", progress)
+            ).get();
+          }).getCause());
+
+      assertEquals("error-sample-map-unsupported", exA.errorCode());
+    }
+  }
+
+  @Test
+  public void testSampleMapInstallCorrupt()
+    throws Exception
+  {
+    final var file =
+      this.resourceOf("end-missing.aam");
+
+    try (var inventory = ARInventories.open(this.inventoryConfiguration)) {
+      LOG.debug("Installing sample map...");
+
+      final var exA =
+        assertInstanceOf(ARException.class, assertThrows(
+          ExecutionException.class, () -> {
+            inventory.sampleMapInstall(
+              file,
+              progress -> LOG.debug("{}", progress)
+            ).get();
+          }).getCause());
+
+      assertEquals("error-sample-map-unsupported", exA.errorCode());
     }
   }
 

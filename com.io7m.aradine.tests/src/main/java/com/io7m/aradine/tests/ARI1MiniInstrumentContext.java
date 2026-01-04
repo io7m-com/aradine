@@ -20,6 +20,7 @@ package com.io7m.aradine.tests;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1RNGDeterministic;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
@@ -234,7 +235,7 @@ public final class ARI1MiniInstrumentContext
   @Override
   public ARI1EventBufferType createEventBuffer()
   {
-    return new ARI1EventBuffer();
+    return new ARI1EventBuffer<>();
   }
 
   @Override
@@ -248,7 +249,7 @@ public final class ARI1MiniInstrumentContext
   public ARI1RNGDeterministicType createDeterministicRNG(
     final int seed)
   {
-    return new ARI1RNGDeterministic(seed);
+    return new AREns1RNGDeterministic(seed);
   }
 
   @Override

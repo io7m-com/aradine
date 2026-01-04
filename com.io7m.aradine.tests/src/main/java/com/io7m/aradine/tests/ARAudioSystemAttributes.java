@@ -16,8 +16,11 @@
 
 package com.io7m.aradine.tests;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.jattribute.core.AttributeReadableType;
+import com.io7m.jattribute.core.AttributeSubscriptionType;
 import com.io7m.jattribute.core.AttributeType;
 import com.io7m.jattribute.core.Attributes;
 import org.slf4j.Logger;
@@ -36,6 +39,8 @@ public final class ARAudioSystemAttributes
 
   private final AttributeType<Integer> sampleRate;
   private final AttributeType<Integer> bufferSize;
+  private final AttributeSubscriptionType sampleRateSubscription;
+  private double millisecondsPerFrame;
 
   public ARAudioSystemAttributes()
   {
@@ -43,6 +48,15 @@ public final class ARAudioSystemAttributes
       ATTRIBUTES.withValue(48000);
     this.bufferSize =
       ATTRIBUTES.withValue(1024);
+
+    this.millisecondsPerFrame =
+      1.0 / (this.sampleRate.get().doubleValue() * 1000.0);
+
+    this.sampleRateSubscription =
+      this.sampleRate.subscribe((_, newRate) -> {
+        this.millisecondsPerFrame =
+          1.0 / (newRate.doubleValue() * 1000.0);
+      });
   }
 
   @Override
@@ -55,5 +69,19 @@ public final class ARAudioSystemAttributes
   public AttributeReadableType<Integer> sampleRate()
   {
     return this.sampleRate;
+  }
+
+  @Override
+  public @ARTimeMilliseconds double timeMillisecondsPerFrame()
+  {
+    return this.millisecondsPerFrame;
+  }
+
+  @Override
+  public @ARTimeFrames long timeMillisecondsToFrames(
+    @ARTimeMilliseconds final double milliseconds)
+  {
+    final var rate = this.sampleRate().get().doubleValue();
+    return Math.round((rate * (milliseconds / 1000.0)));
   }
 }

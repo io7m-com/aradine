@@ -16,6 +16,8 @@
 
 package com.io7m.aradine.api.system;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.jattribute.core.AttributeReadableType;
 
 /**
@@ -35,4 +37,40 @@ public interface ARAudioSystemAttributesType
    */
 
   AttributeReadableType<Integer> sampleRate();
+
+  /**
+   * @return The number of milliseconds in a single frame at the current sample
+   * rate
+   */
+
+  @ARTimeMilliseconds
+  double timeMillisecondsPerFrame();
+
+  /**
+   * Convert the given duration in milliseconds to the nearest equivalent number
+   * of frames at the current sample rate.
+   *
+   * @param milliseconds The millisecond duration
+   *
+   * @return The number of frames
+   */
+
+  @ARTimeFrames
+  long timeMillisecondsToFrames(
+    @ARTimeMilliseconds double milliseconds);
+
+  /**
+   * Convert the given frame count to a duration in milliseconds based on the
+   * current sample rate.
+   *
+   * @param frames The frame count
+   *
+   * @return The duration of the frames in milliseconds
+   */
+
+  default @ARTimeMilliseconds double timeFramesToMilliseconds(
+    final @ARTimeFrames long frames)
+  {
+    return (double) frames * this.timeMillisecondsPerFrame();
+  }
 }

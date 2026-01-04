@@ -25,6 +25,8 @@ module com.io7m.aradine.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.aradine.annotations;
+
   requires com.io7m.jade.api;
   requires com.io7m.jattribute.core;
   requires com.io7m.jmulticlose.core;

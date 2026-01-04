@@ -118,6 +118,10 @@
       <groupId>it.unimi.dsi</groupId>
       <artifactId>fastutil-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jmurmur</groupId>
+      <artifactId>com.io7m.jmurmur.core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>

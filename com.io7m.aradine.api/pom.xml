@@ -20,6 +20,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.annotations</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.io7m.mime2045</groupId>
       <artifactId>com.io7m.mime2045.core</artifactId>
     </dependency>

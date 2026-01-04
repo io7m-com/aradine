@@ -51,15 +51,21 @@ import java.util.Objects;
 public final class AREns1InstrumentContext
   implements AutoCloseable, ARI1InstrumentContextType
 {
+  private final ARAudioSystemAttributesType audioSystemAttributes;
   private final CloseableCollectionType<ARException> closeables;
   private final ARI1InstrumentDescription description;
   private final HashMap<ARI1ParameterNumber, ARI1ParameterType> parameters;
   private final HashMap<ARI1PortNumber, ARI1PortType> ports;
+  private Map<ARI1PortNumber, ARI1PortType> portsRead;
+  private Map<ARI1ParameterNumber, ARI1ParameterType> parametersRead;
 
   private AREns1InstrumentContext(
+    final ARAudioSystemAttributesType inAudioSystemAttributes,
     final CloseableCollectionType<ARException> inCloseables,
     final ARI1InstrumentDescription inDescription)
   {
+    this.audioSystemAttributes =
+      Objects.requireNonNull(inAudioSystemAttributes, "AudioSystemAttributes");
     this.closeables =
       Objects.requireNonNull(inCloseables, "Closeables");
     this.description =
@@ -89,19 +95,19 @@ public final class AREns1InstrumentContext
       ARCloseables.create();
     final var services =
       new AREns1InstrumentContext(
+        audioSystemAttributes,
         closeables,
         inDescription
       );
 
     services.instantiateParameters();
-    services.instantiatePorts(audioSystemAttributes);
+    services.instantiatePorts();
     return services;
   }
 
-  private void instantiatePorts(
-    final ARAudioSystemAttributesType audioSystemAttributes)
+  private void instantiatePorts()
   {
-    final var bufferSizeAttribute = audioSystemAttributes.bufferSize();
+    final var bufferSizeAttribute = this.audioSystemAttributes.bufferSize();
     for (final var entry : this.description.ports().entrySet()) {
       final var portID =
         entry.getKey();
@@ -149,6 +155,8 @@ public final class AREns1InstrumentContext
         }
       }
     }
+
+    this.portsRead = Map.copyOf(this.ports);
   }
 
   private void instantiateParameters()
@@ -172,24 +180,26 @@ public final class AREns1InstrumentContext
         }
       }
     }
+
+    this.parametersRead = Map.copyOf(this.parameters);
   }
 
   @Override
   public int statusCurrentSampleRate()
   {
-    throw new IllegalStateException();
+    return this.audioSystemAttributes.sampleRate().get().intValue();
   }
 
   @Override
   public int statusCurrentBufferSize()
   {
-    throw new IllegalStateException();
+    return this.audioSystemAttributes.bufferSize().get().intValue();
   }
 
   @Override
   public Map<ARI1ParameterNumber, ARI1ParameterType> declaredParameters()
   {
-    throw new IllegalStateException();
+    return this.parametersRead;
   }
 
   @Override
@@ -197,13 +207,13 @@ public final class AREns1InstrumentContext
     final ARI1ParameterNumber id,
     final Class<C> clazz)
   {
-    return clazz.cast(this.parameters.get(id));
+    return clazz.cast(this.parametersRead.get(id));
   }
 
   @Override
   public Map<ARI1PortNumber, ARI1PortType> declaredPorts()
   {
-    return this.ports;
+    return this.portsRead;
   }
 
   @Override
@@ -211,14 +221,14 @@ public final class AREns1InstrumentContext
     final ARI1PortNumber id,
     final Class<C> clazz)
   {
-    return clazz.cast(this.ports.get(id));
+    return clazz.cast(this.portsRead.get(id));
   }
 
   @Override
   public void eventUnhandled(
     final ARI1EventType event)
   {
-    throw new IllegalStateException();
+
   }
 
   @Override
@@ -238,7 +248,7 @@ public final class AREns1InstrumentContext
   public ARI1RNGDeterministicType createDeterministicRNG(
     final int seed)
   {
-    throw new IllegalStateException();
+    return new AREns1RNGDeterministic(0x41524144);
   }
 
   @Override
@@ -257,14 +267,14 @@ public final class AREns1InstrumentContext
   @Override
   public @ARTimeMilliseconds double timeMillisecondsPerFrame()
   {
-    throw new IllegalStateException();
+    return this.audioSystemAttributes.timeMillisecondsPerFrame();
   }
 
   @Override
   public @ARTimeFrames long timeMillisecondsToFrames(
     @ARTimeMilliseconds final double milliseconds)
   {
-    throw new IllegalStateException();
+    return this.audioSystemAttributes.timeMillisecondsToFrames(milliseconds);
   }
 
   @Override

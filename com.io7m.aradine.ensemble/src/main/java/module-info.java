@@ -36,6 +36,7 @@ module com.io7m.aradine.ensemble
   requires com.io7m.jaffirm.core;
   requires com.io7m.jattribute.core;
   requires com.io7m.jmulticlose.core;
+  requires com.io7m.jmurmur.core;
   requires com.io7m.jxe.core;
   requires com.io7m.lanark.core;
   requires com.io7m.trasco.api;
@@ -65,5 +66,7 @@ module com.io7m.aradine.ensemble
   exports com.io7m.aradine.ensemble.internal.v1.commands
     to com.io7m.aradine.tests;
   exports com.io7m.aradine.ensemble.internal.v1.json
+    to com.io7m.aradine.tests;
+  exports com.io7m.aradine.ensemble.internal.v1.context
     to com.io7m.aradine.tests;
 }

@@ -15,8 +15,11 @@
  */
 
 
-package com.io7m.aradine.tests;
+package com.io7m.aradine.tests.ensemble;
 
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1RNGDeterministic;
+import com.io7m.aradine.tests.ARTestDirectories;
+import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +33,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class ARI1RNGDeterministicTest
+public final class AREns1RNGDeterministicTest
 {
   private Path directory;
 
@@ -52,7 +55,7 @@ public final class ARI1RNGDeterministicTest
   public void testRNG()
   {
     final var rng =
-      new ARI1RNGDeterministic(0x494F376D);
+      new AREns1RNGDeterministic(0x494F376D);
 
     final var values0 = new ArrayList<Double>();
     for (int index = 0; index < 1000; ++index) {
@@ -74,7 +77,7 @@ public final class ARI1RNGDeterministicTest
     throws Exception
   {
     final var rng =
-      new ARI1RNGDeterministic(0x494F376D);
+      new AREns1RNGDeterministic(0x494F376D);
 
     final var buffer =
       DoubleBuffer.allocate(44100);

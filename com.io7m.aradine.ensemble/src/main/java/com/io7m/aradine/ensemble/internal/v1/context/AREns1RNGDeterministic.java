@@ -15,18 +15,28 @@
  */
 
 
-package com.io7m.aradine.tests;
+package com.io7m.aradine.ensemble.internal.v1.context;
 
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.jmurmur.Murmur3;
 
-public final class ARI1RNGDeterministic
+/**
+ * A deterministic RNG based on Murmur3.
+ */
+
+public final class AREns1RNGDeterministic
   implements ARI1RNGDeterministicType
 {
   private int state;
   private final int seed;
 
-  ARI1RNGDeterministic(
+  /**
+   * Construct a new deterministic RNG.
+   *
+   * @param inSeed The seed
+   */
+
+  public AREns1RNGDeterministic(
     final int inSeed)
   {
     this.seed = inSeed;

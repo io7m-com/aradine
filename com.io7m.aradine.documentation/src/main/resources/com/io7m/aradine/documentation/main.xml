@@ -22,6 +22,7 @@
 
   <xi:include href="intro.xml"/>
   <xi:include href="di.xml"/>
+  <xi:include href="cmdline.xml"/>
   <xi:include href="dsp.xml"/>
   <xi:include href="api.xml"/>
 

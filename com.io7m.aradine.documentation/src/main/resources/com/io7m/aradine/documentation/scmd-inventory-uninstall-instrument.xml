@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Section xmlns:xi="http://www.w3.org/2001/XInclude" id="e14ef4ec-ce34-35d7-852d-904f324f6c74" title="uninstall-instrument" xmlns="urn:com.io7m.structural:8:0">
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">uninstall-instrument</Term>
+       - Uninstall instruments from the local inventory.
+    </Paragraph>
+  </Subsection>
+  <Subsection title="Description">
+    <Paragraph>
+      The 
+      <Term type="command">uninstall-instrument</Term>
+       command uninstalls an instrument from the local inventory.
+    </Paragraph>
+  </Subsection>
+  <xi:include href="scmd-inventory-uninstall-instrument-parameters.xml"/>
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim><![CDATA[
+$ aradine-cli inventory uninstall-instrument --id com.io7m.aradine:com.io7m.aradine.instrument.sampler_m0:0.0.2
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+</Section>
+

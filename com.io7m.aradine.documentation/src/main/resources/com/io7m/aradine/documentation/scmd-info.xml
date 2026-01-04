@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Section xmlns:xi="http://www.w3.org/2001/XInclude" id="d623cb93-197c-320a-96af-5261a85226c3" title="info" xmlns="urn:com.io7m.structural:8:0">
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">info</Term>
+       - Display system information.
+    </Paragraph>
+  </Subsection>
+  <Subsection title="Description">
+    <Paragraph>
+      The 
+      <Term type="command">info</Term>
+       command displays information about the current system.
+    </Paragraph>
+  </Subsection>
+  <xi:include href="scmd-info-parameters.xml"/>
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim><![CDATA[
+{
+  "CacheDirectory" : "/opt/aradine/com.io7m.aradine/cache",
+  "ConfigurationDirectory" : "/opt/aradine/com.io7m.aradine/config",
+  "DataDirectory" : "/opt/aradine/com.io7m.aradine/data",
+  "InventoryDatabase" : "/opt/aradine/com.io7m.aradine/data/inventory/inventory.db",
+  "InventoryBlobDirectory" : "/opt/aradine/com.io7m.aradine/data/inventory/blobs"
+}
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+</Section>
+

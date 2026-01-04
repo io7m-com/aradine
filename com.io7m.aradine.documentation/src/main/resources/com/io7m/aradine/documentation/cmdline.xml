@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="7735e443-cf6b-43da-913c-f8622f849458"
+         title="Command Line">
+
+  <Section title="Overview">
+    <Paragraph>
+      The <Term type="package">aradine</Term> package provides a command-line interface for performing tasks such as
+      managing the local inventory, checking instrument files, and etc. The base
+      <Term type="command">aradine-cli</Term>
+      command is broken into a number of subcommands which are documented over the following sections.
+    </Paragraph>
+    <FormalItem title="Command-Line Overview">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="usage.txt"/>
+      </Verbatim>
+    </FormalItem>
+    <Paragraph>
+      All subcommands accept a <Term type="parameter">--verbose</Term> parameter that may be set to one of
+      <Term type="constant">trace</Term>, <Term type="constant">debug</Term>, <Term type="constant">info</Term>,
+      <Term type="constant">warn</Term>, or <Term type="constant">error</Term>. This parameter sets the lower bound for
+      the severity of messages that will be logged. For example, at <Term type="constant">debug</Term> verbosity, only
+      messages of severity <Term type="constant">debug</Term> and above will be logged. Setting the verbosity to
+      <Term type="constant">trace</Term>
+      level effectively causes everything to be logged, and will produce large volumes of debugging output.
+    </Paragraph>
+    <Paragraph id="af94bb25-2f6c-4fef-ae9f-3f40a9216121">
+      The <Term type="package">aradine-cli</Term> command-line tool uses
+      <LinkExternal target="https://www.io7m.com/software/quarrel/">quarrel</LinkExternal>
+      to parse command-line arguments, and therefore supports placing command-line arguments into a file, one argument
+      per line, and then referencing that file with <Term type="constant">@</Term>. For example:
+    </Paragraph>
+    <FormalItem title="@ Syntax">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="at-syntax.txt"/>
+      </Verbatim>
+    </FormalItem>
+    <Paragraph>
+      All subcommands, unless otherwise specified, yield an exit code of <Term type="constant">0</Term> on success, and
+      a non-zero exit code on failure.
+    </Paragraph>
+  </Section>
+
+  <xi:include href="scmd-help.xml"/>
+  <xi:include href="scmd-info.xml"/>
+  <xi:include href="scmd-instrument-check.xml"/>
+  <xi:include href="scmd-instrument-codegen.xml"/>
+  <xi:include href="scmd-inventory-install-instrument.xml"/>
+  <xi:include href="scmd-inventory-install-sample-map.xml"/>
+  <xi:include href="scmd-inventory-list-instruments.xml"/>
+  <xi:include href="scmd-inventory-list-sample-maps.xml"/>
+  <xi:include href="scmd-inventory-uninstall-instrument.xml"/>
+  <xi:include href="scmd-inventory-uninstall-sample-map.xml"/>
+  <xi:include href="scmd-version.xml"/>
+
+</Section>

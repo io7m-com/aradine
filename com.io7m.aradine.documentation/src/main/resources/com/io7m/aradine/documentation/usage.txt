@@ -1,0 +1,24 @@
+aradine-cli: usage: aradine-cli [command] [arguments ...]
+
+  Modular programmable synthesis (Command-line).
+
+  Use the "help" command to examine specific commands:
+
+    $ aradine-cli help help.
+
+  Command-line arguments can be placed one per line into a file, and
+  the file can be referenced using the @ symbol:
+
+    $ echo help > file.txt
+    $ echo help >> file.txt
+    $ aradine-cli @file.txt
+
+  Commands:
+    help          Show usage information for a command.
+    info          Display system information.
+    instrument    Instrument commands.
+    inventory     Inventory commands.
+    version       Show the application version.
+
+  Documentation:
+    https://www.io7m.com/software/aradine

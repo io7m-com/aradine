@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,6 +17,7 @@
 .brandingContainer
 {
   margin: 1em;
+  margin-left: 0em;
 }
 
 .branding
@@ -25,118 +26,59 @@
   font-size:   80%;
 }
 
+.button,
+.class,
 .command,
 .constant,
+.directory,
+.element,
 .expression,
 .file,
 .function,
+.goal,
+.menu,
 .package,
-.language,
 .parameter,
-.statement,
-.type,
-.variable
+.tab,
+.variable,
+.window
 {
   font-family: monospace;
+  font-size:   90%;
 }
 
-.emphasis,
 .term
 {
   font-style: italic;
 }
 
-.parameterType {
-  font-family: monospace;
-}
-.parameterValue {
-  font-family: monospace;
-}
-
-.parametersTable tr
+.genericTable, .parameterTable
 {
-
+  border:          1px solid #dddddd;
+  width:           100%;
+  border-collapse: collapse;
 }
-.parametersTable th
+.genericTable th, .parameterTable th
 {
+  border:     1px solid #dddddd;
   text-align: left;
+  font-size:  var(--stFontSize);
   padding:    0.5em;
 }
-.parametersTable td
+.genericTable td, .parameterTable td
 {
-  vertical-align: top;
-  hyphens:      auto;
-  padding:      0.5em;
-  border-top:   1px solid #eee;
-  border-right: 1px solid #eee;
+  border:    1px solid #dddddd;
+  font-size: var(--stFontSize);
+  padding:   0.5em;
 }
-.parametersTable td:nth-child(1)
+.genericTable td:nth-child(1), .parameterTable td:nth-child(1)
 {
-  hyphens: none;
-}
-.parametersTable td:nth-child(2)
-{
-
-}
-.parametersTable td:nth-child(3)
-{
-
-}
-.parametersTable td:nth-child(4)
-{
-
-}
-.parametersTable td:last-child
-{
-  border-right: none;
+  width: 12em;
 }
 
-.valueTable th
+.screenImage
 {
-  text-align: left;
-  padding:    0.5em;
-}
-.valueTable td
-{
-  padding:      0.5em;
-  border-top:   1px solid #eee;
-  border-right: 1px solid #eee;
-  vertical-align: top;
-}
-.valueTable td:nth-child(1)
-{
-  width: 8em;
-}
-.valueTable td:nth-child(2)
-{
-
-}
-.valueTable td:last-child
-{
-  border-right: none;
-}
-
-.genericTable th
-{
-  text-align: left;
-  padding:    0.5em;
-}
-.genericTable td
-{
-  padding:      0.5em;
-  border-top:   1px solid #eee;
-  border-right: 1px solid #eee;
-  vertical-align: top;
-}
-.genericTable td:nth-child(1)
-{
-  width: 8em;
-}
-.genericTable td:nth-child(2)
-{
-
-}
-.genericTable td:last-child
-{
-  border-right: none;
+  max-width:  95%;
+  max-height: 95%;
+  height:     auto;
 }

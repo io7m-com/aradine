@@ -54,6 +54,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.junreachable.core;
   requires com.io7m.lanark.core;
   requires com.io7m.mime2045.core;
+  requires com.io7m.quarrel.ext.xstructural;
   requires com.io7m.verona.core;
   requires it.unimi.dsi.fastutil.core;
   requires java.desktop;

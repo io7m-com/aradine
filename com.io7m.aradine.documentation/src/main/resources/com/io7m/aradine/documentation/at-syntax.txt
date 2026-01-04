@@ -1,0 +1,19 @@
+$ aradine-cli instrument check --file sampler.jar
+{
+  "Message" : "Instrument passed all checks.",
+  "Level" : "INFO"
+}
+
+$ (cat <<EOF
+instrument
+check
+--file
+sampler.jar
+EOF
+) > args.txt
+
+$ aradine-cli @args.txt
+{
+  "Message" : "Instrument passed all checks.",
+  "Level" : "INFO"
+}

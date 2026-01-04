@@ -134,12 +134,7 @@ public final class ARCmdInsCodegen extends ARCmdAbstract
       )
     );
 
-    final var r = generator.execute();
-    final var logger = this.logger();
-    for (final var clazz : r.javaClasses()) {
-      logger.info("Generated Java source: {}", clazz);
-    }
-    logger.info("Generated resource: {}", r.resourceFile());
+    generator.execute();
     return QCommandStatus.SUCCESS;
   }
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Section xmlns:xi="http://www.w3.org/2001/XInclude" id="3122c626-5128-3e43-8ced-3a18e6f575a2" title="uninstall-sample-map" xmlns="urn:com.io7m.structural:8:0">
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">uninstall-sample-map</Term>
+       - Uninstall sample maps from the local inventory.
+    </Paragraph>
+  </Subsection>
+  <Subsection title="Description">
+    <Paragraph>
+      The
+      <Term type="command">uninstall-sample-map</Term>
+       command uninstalls a sample map from the local inventory.
+    </Paragraph>
+  </Subsection>
+  <xi:include href="scmd-inventory-uninstall-sample-map-parameters.xml"/>
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim><![CDATA[
+$ aradine-cli inventory uninstall-sample-map --id com.io7m.example_group:com.io7m.example:1.0.0
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+</Section>
+

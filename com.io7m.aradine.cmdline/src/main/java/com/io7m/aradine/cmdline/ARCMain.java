@@ -30,10 +30,12 @@ import com.io7m.aradine.cmdline.internal.ARDottedNameConverter;
 import com.io7m.aradine.cmdline.internal.ARInstrumentIDConverter;
 import com.io7m.aradine.cmdline.internal.ARSampleMapIDConverter;
 import com.io7m.quarrel.core.QApplication;
+import com.io7m.quarrel.core.QApplicationBuilderType;
 import com.io7m.quarrel.core.QApplicationMetadata;
 import com.io7m.quarrel.core.QApplicationType;
 import com.io7m.quarrel.core.QCommandMetadata;
 import com.io7m.quarrel.core.QValueConverterDirectory;
+import com.io7m.quarrel.core.QValueConverterDirectoryType;
 import com.io7m.seltzer.api.SStructuredErrorType;
 import com.io7m.seltzer.slf4j.SSLogging;
 import org.slf4j.Logger;
@@ -83,13 +85,27 @@ public final class ARCMain implements Runnable
         Optional.of(URI.create("https://www.io7m.com/software/aradine"))
       );
 
-    final var converters =
-      QValueConverterDirectory.core()
-        .with(new ARInstrumentIDConverter())
-        .with(new ARSampleMapIDConverter())
-        .with(new ARDottedNameConverter());
+    final var builder = createApplicationBuilder(metadata);
+    this.application = builder.build();
+    this.exitCode = 0;
+  }
 
-    final var builder = QApplication.builder(metadata);
+  /**
+   * Create a new application builder.
+   *
+   * @param metadata The application metadata
+   *
+   * @return The builder
+   */
+
+  public static QApplicationBuilderType createApplicationBuilder(
+    final QApplicationMetadata metadata)
+  {
+    final var converters =
+      converters();
+
+    final var builder =
+      QApplication.builder(metadata);
 
     {
       final var g = builder.createCommandGroup(
@@ -122,9 +138,19 @@ public final class ARCMain implements Runnable
     builder.addCommand(new ARCmdInfo());
     builder.setValueConverters(converters);
     builder.allowAtSyntax(true);
+    return builder;
+  }
 
-    this.application = builder.build();
-    this.exitCode = 0;
+  /**
+   * @return The value converters
+   */
+
+  public static QValueConverterDirectoryType converters()
+  {
+    return QValueConverterDirectory.core()
+      .with(new ARInstrumentIDConverter())
+      .with(new ARSampleMapIDConverter())
+      .with(new ARDottedNameConverter());
   }
 
   /**

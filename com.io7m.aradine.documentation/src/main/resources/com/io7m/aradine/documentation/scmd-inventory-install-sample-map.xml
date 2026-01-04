@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Section xmlns:xi="http://www.w3.org/2001/XInclude" id="0c622d52-a7d1-3e56-bc9f-0ccff952f1c8" title="install-sample-map" xmlns="urn:com.io7m.structural:8:0">
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">install-sample-map</Term>
+       - Install sample maps into the local inventory.
+    </Paragraph>
+  </Subsection>
+  <Subsection title="Description">
+    <Paragraph>
+      The
+      <Term type="command">install-sample-map</Term>
+       command installs a sample map into the local inventory.
+    </Paragraph>
+  </Subsection>
+  <xi:include href="scmd-inventory-install-sample-map-parameters.xml"/>
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim><![CDATA[
+$ aradine-cli inventory install-sample-map --file drums.aam
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+</Section>
+

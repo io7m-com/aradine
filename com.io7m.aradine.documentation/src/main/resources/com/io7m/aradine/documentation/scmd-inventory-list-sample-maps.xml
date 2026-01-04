@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Section xmlns:xi="http://www.w3.org/2001/XInclude" id="c2369e6a-b1bf-30e5-b64a-5e77e4531bde" title="list-sample-maps" xmlns="urn:com.io7m.structural:8:0">
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">list-sample-maps</Term>
+       - List sample maps in the local inventory.
+    </Paragraph>
+  </Subsection>
+  <Subsection title="Description">
+    <Paragraph>
+      The 
+      <Term type="command">list-sample-maps</Term>
+       command lists sample maps installed in the local inventory.
+    </Paragraph>
+  </Subsection>
+  <xi:include href="scmd-inventory-list-sample-maps-parameters.xml"/>
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim><![CDATA[
+$ aradine-cli inventory list-sample-maps
+[ {
+  "Type" : "SampleMap",
+  "Group" : "com.io7m.example_group",
+  "Name" : "com.io7m.example",
+  "Version" : "1.0.0",
+  "Identifier" : "com.io7m.example_group:com.io7m.example:1.0.0",
+  "Title" : "",
+  "Description" : "",
+  "MIMEType" : "application/vnd.com.io7m.aurantium.sample_map",
+  "Size" : "7139504"
+} ]
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+</Section>
+

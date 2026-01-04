@@ -43,6 +43,9 @@ module com.io7m.aradine.cmdline
   requires org.slf4j;
   requires tools.jackson.core;
   requires tools.jackson.databind;
+  requires com.io7m.aradine.instrument.codegen;
+  requires com.io7m.aradine.instrument.spi1.json_data;
+  requires com.io7m.aradine.instrument.spi1;
 
   exports com.io7m.aradine.cmdline;
 }

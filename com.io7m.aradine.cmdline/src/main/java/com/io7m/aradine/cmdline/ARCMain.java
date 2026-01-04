@@ -19,12 +19,14 @@ package com.io7m.aradine.cmdline;
 import com.io7m.aradine.api.ARVersion;
 import com.io7m.aradine.cmdline.internal.ARCmdInfo;
 import com.io7m.aradine.cmdline.internal.ARCmdInsCheck;
+import com.io7m.aradine.cmdline.internal.ARCmdInsCodegen;
 import com.io7m.aradine.cmdline.internal.ARCmdInvInstallInstrument;
 import com.io7m.aradine.cmdline.internal.ARCmdInvInstallSampleMap;
 import com.io7m.aradine.cmdline.internal.ARCmdInvListInstruments;
 import com.io7m.aradine.cmdline.internal.ARCmdInvListSampleMaps;
 import com.io7m.aradine.cmdline.internal.ARCmdInvUninstallInstrument;
 import com.io7m.aradine.cmdline.internal.ARCmdInvUninstallSampleMap;
+import com.io7m.aradine.cmdline.internal.ARDottedNameConverter;
 import com.io7m.aradine.cmdline.internal.ARInstrumentIDConverter;
 import com.io7m.aradine.cmdline.internal.ARSampleMapIDConverter;
 import com.io7m.quarrel.core.QApplication;
@@ -32,13 +34,17 @@ import com.io7m.quarrel.core.QApplicationMetadata;
 import com.io7m.quarrel.core.QApplicationType;
 import com.io7m.quarrel.core.QCommandMetadata;
 import com.io7m.quarrel.core.QValueConverterDirectory;
+import com.io7m.seltzer.api.SStructuredErrorType;
+import com.io7m.seltzer.slf4j.SSLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static com.io7m.quarrel.core.QStringType.QConstant;
 
@@ -80,7 +86,8 @@ public final class ARCMain implements Runnable
     final var converters =
       QValueConverterDirectory.core()
         .with(new ARInstrumentIDConverter())
-        .with(new ARSampleMapIDConverter());
+        .with(new ARSampleMapIDConverter())
+        .with(new ARDottedNameConverter());
 
     final var builder = QApplication.builder(metadata);
 
@@ -93,6 +100,7 @@ public final class ARCMain implements Runnable
         )
       );
       g.addCommand(new ARCmdInsCheck());
+      g.addCommand(new ARCmdInsCodegen());
     }
 
     {
@@ -125,7 +133,7 @@ public final class ARCMain implements Runnable
    * @param args Command line arguments
    */
 
-  public static void main(
+  static void main(
     final String[] args)
   {
     System.exit(mainExitless(args));
@@ -142,9 +150,35 @@ public final class ARCMain implements Runnable
   public static int mainExitless(
     final String[] args)
   {
-    final ARCMain cm = new ARCMain(args);
+    final var cm = new ARCMain(args);
     cm.run();
     return cm.exitCode();
+  }
+
+  private static void logException(
+    final Logger log,
+    final Throwable e)
+  {
+    switch (e) {
+      case final ExecutionException x -> {
+        logException(log, x.getCause());
+      }
+      case final SStructuredErrorType<?> x -> {
+        SSLogging.logMDCWithStyle(
+          log,
+          Level.ERROR,
+          SSLogging.MessageStyle.STYLE_MESSAGE_ONLY,
+          x
+        );
+      }
+      case final Throwable x -> {
+        log.error("", e);
+      }
+    }
+
+    for (final var x : e.getSuppressed()) {
+      logException(log, x);
+    }
   }
 
   /**
@@ -159,7 +193,20 @@ public final class ARCMain implements Runnable
   @Override
   public void run()
   {
-    this.exitCode = this.application.run(LOG, this.args).exitCode();
+    try {
+      final var parsed =
+        this.application.parse(this.args);
+      final var result =
+        parsed.execute();
+
+      this.exitCode = switch (result) {
+        case SUCCESS -> 0;
+        case FAILURE -> 1;
+      };
+    } catch (final Exception e) {
+      logException(LOG, e);
+      this.exitCode = 1;
+    }
   }
 
   /**

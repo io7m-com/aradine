@@ -287,6 +287,59 @@ public final class ARCmdlineTest
     assertEquals(1, r);
   }
 
+  @Test
+  public void testInstrumentCodegen()
+    throws Exception
+  {
+    final var instrumentFile =
+      this.resourceOf("instrument-0.json");
+    final var sourceDirectory =
+      this.directory.resolve("source");
+    final var resourceDirectory =
+      this.directory.resolve("resource");
+
+    final int r = ARCMain.mainExitless(
+      new String[]{
+        "instrument",
+        "codegen",
+        "--package-name",
+        "com.io7m.example",
+        "--output-source-directory",
+        sourceDirectory.toString(),
+        "--output-resource-directory",
+        resourceDirectory.toString(),
+        "--file",
+        instrumentFile.toString()
+      }
+    );
+
+    assertEquals(0, r);
+    assertTrue(
+      Files.isRegularFile(
+        sourceDirectory.resolve("com")
+          .resolve("io7m")
+          .resolve("example")
+          .resolve("Ports.java")
+      )
+    );
+    assertTrue(
+      Files.isRegularFile(
+        sourceDirectory.resolve("com")
+          .resolve("io7m")
+          .resolve("example")
+          .resolve("Parameters.java")
+      )
+    );
+    assertTrue(
+      Files.isRegularFile(
+        resourceDirectory.resolve("com")
+          .resolve("io7m")
+          .resolve("example")
+          .resolve("instrument.json")
+      )
+    );
+  }
+
   private Path resourceOf(
     final String name)
     throws IOException

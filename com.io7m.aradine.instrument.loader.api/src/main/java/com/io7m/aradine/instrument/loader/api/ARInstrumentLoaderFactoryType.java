@@ -41,4 +41,19 @@ public interface ARInstrumentLoaderFactoryType
     ARInstrumentLoaderServicesConstructorType serviceConstructor,
     Path file)
     throws ARException;
+
+  /**
+   * Create a new instrument loader that performs as many checks as possible
+   * but does not actually execute any code from the loaded instrument.
+   *
+   * @param file The file
+   *
+   * @return A loader
+   *
+   * @throws ARException On errors
+   */
+
+  ARInstrumentLoaderType createNoOpLoader(
+    Path file)
+    throws ARException;
 }

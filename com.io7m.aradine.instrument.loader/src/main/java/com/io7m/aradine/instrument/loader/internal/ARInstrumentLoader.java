@@ -97,27 +97,35 @@ public final class ARInstrumentLoader
   }
 
   /**
-   * Create a new instrument loader.
+   * Create a new instrument no-op loader.
    *
-   * @param readers            The reader factory
-   * @param serviceConstructor The service constructor
-   * @param file               The instrument file
+   * @param readers The reader factory
+   * @param file    The instrument file
    *
    * @return A loader
    *
    * @throws ARException On errors
    */
 
-  public static ARInstrumentLoaderType create(
+  public static ARInstrumentLoaderType createNoOp(
     final ARInstrumentReaderFactoryType readers,
-    final ARInstrumentLoaderServicesConstructorType serviceConstructor,
     final Path file)
     throws ARException
   {
-    Objects.requireNonNull(serviceConstructor, "Service Constructor");
-    Objects.requireNonNull(readers, "Readers");
-    Objects.requireNonNull(file, "File");
+    return createInternal(
+      readers,
+      file,
+      (_, _, _) -> {
+        throw new UnsupportedOperationException();
+      });
+  }
 
+  private static ARInstrumentLoaderType createInternal(
+    final ARInstrumentReaderFactoryType readers,
+    final Path file,
+    final LoadCompletionType completion)
+    throws ARException
+  {
     try {
       final ARInstrumentReadResultType instrumentDescription;
       try (var instrumentReader = readers.create(file)) {
@@ -156,8 +164,7 @@ public final class ARInstrumentLoader
           instrumentClassLoader
         );
 
-      return createV1(
-        serviceConstructor,
+      return completion.complete(
         instrumentLayer,
         instrumentDescription,
         instrumentClassLoader
@@ -165,6 +172,41 @@ public final class ARInstrumentLoader
     } catch (final Exception e) {
       throw wrap(e);
     }
+  }
+
+  /**
+   * Create a new instrument loader.
+   *
+   * @param readers            The reader factory
+   * @param serviceConstructor The service constructor
+   * @param file               The instrument file
+   *
+   * @return A loader
+   *
+   * @throws ARException On errors
+   */
+
+  public static ARInstrumentLoaderType create(
+    final ARInstrumentReaderFactoryType readers,
+    final ARInstrumentLoaderServicesConstructorType serviceConstructor,
+    final Path file)
+    throws ARException
+  {
+    Objects.requireNonNull(serviceConstructor, "Service Constructor");
+    Objects.requireNonNull(readers, "Readers");
+    Objects.requireNonNull(file, "File");
+
+    return createInternal(
+      readers,
+      file,
+      (instrumentLayer, instrumentDescription, classLoader) -> {
+        return createV1(
+          serviceConstructor,
+          instrumentLayer,
+          instrumentDescription,
+          classLoader
+        );
+      });
   }
 
   private static ModuleDescriptor readModuleDescriptorFromJar(
@@ -311,8 +353,8 @@ public final class ARInstrumentLoader
       "error-module-disallowed",
       Map.ofEntries(
         Map.entry("File", file.toAbsolutePath().toString()),
-        Map.entry("Source", source),
-        Map.entry("Target", target)
+        Map.entry("Module Source", source),
+        Map.entry("Module Disallowed", target)
       ),
       Optional.empty()
     );
@@ -327,7 +369,7 @@ public final class ARInstrumentLoader
       "error-module-uses-disallowed",
       Map.ofEntries(
         Map.entry("File", file.toAbsolutePath().toString()),
-        Map.entry("Source", moduleName)
+        Map.entry("Module Source", moduleName)
       ),
       Optional.empty()
     );
@@ -342,7 +384,7 @@ public final class ARInstrumentLoader
       "error-module-instrument-service",
       Map.ofEntries(
         Map.entry("File", file.toAbsolutePath().toString()),
-        Map.entry("Source", moduleName),
+        Map.entry("Module Source", moduleName),
         Map.entry(
           "Service Class",
           ARI1InstrumentFactoryType.class.getCanonicalName()
@@ -362,7 +404,7 @@ public final class ARInstrumentLoader
       "error-module-instrument-service-incorrect",
       Map.ofEntries(
         Map.entry("File", file.toAbsolutePath().toString()),
-        Map.entry("Source", moduleName),
+        Map.entry("Module Source", moduleName),
         Map.entry(
           "Service Class (Required)",
           ARI1InstrumentFactoryType.class.getCanonicalName()
@@ -405,6 +447,15 @@ public final class ARInstrumentLoader
       "error-exception",
       Map.of(),
       Optional.empty()
+    );
+  }
+
+  private interface LoadCompletionType
+  {
+    ARInstrumentLoaderType complete(
+      ModuleLayer instrumentLayer,
+      ARInstrumentReadResultType instrumentDescription,
+      URLClassLoader classLoader
     );
   }
 
@@ -488,6 +539,12 @@ public final class ARInstrumentLoader
         new AtomicBoolean(false);
     }
 
+    private static VersionQualifier qualifierOf(
+      final ARI1VersionQualifier x)
+    {
+      return new VersionQualifier(x.text());
+    }
+
     @Override
     public ARInstrumentType execute(
       final ARInstrumentPortAssignerType assigner,
@@ -510,12 +567,6 @@ public final class ARInstrumentLoader
         );
 
       return new ARInstrument1(this, services, instrument, description);
-    }
-
-    private static VersionQualifier qualifierOf(
-      final ARI1VersionQualifier x)
-    {
-      return new VersionQualifier(x.text());
     }
 
     @Override

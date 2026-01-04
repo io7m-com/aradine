@@ -81,7 +81,12 @@ public abstract class ARCmdAbstract
         logException(log, x.getCause());
       }
       case final SStructuredErrorType<?> x -> {
-        SSLogging.logMDC(log, Level.ERROR, x);
+        SSLogging.logMDCWithStyle(
+          log,
+          Level.ERROR,
+          SSLogging.MessageStyle.STYLE_MESSAGE_ONLY,
+          x
+        );
       }
       case final Throwable x -> {
         log.error("", e);

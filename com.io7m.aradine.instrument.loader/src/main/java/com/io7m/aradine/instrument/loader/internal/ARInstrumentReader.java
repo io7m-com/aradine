@@ -47,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
@@ -151,6 +152,7 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
   {
     final var errorCode =
       switch (e) {
+        case NoSuchFileException _ -> "error-file-nonexistent";
         case IOException _ -> "error-io";
         case ParsingException _ -> "error-parsing";
         case JacksonException _ -> "error-json";
@@ -158,8 +160,18 @@ public final class ARInstrumentReader implements ARInstrumentReaderType
         case Exception _ -> "error-exception";
       };
 
+    final var message =
+      switch (e) {
+        case NoSuchFileException _ -> "File does not exist.";
+        case Exception _ ->
+          Objects.requireNonNullElse(
+            e.getMessage(),
+            e.getClass().getSimpleName()
+          );
+      };
+
     return new ARException(
-      Objects.requireNonNullElse(e.getMessage(), e.getClass().getSimpleName()),
+      message,
       e,
       errorCode,
       this.attributes,

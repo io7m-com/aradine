@@ -18,6 +18,7 @@ package com.io7m.aradine.cmdline;
 
 import com.io7m.aradine.api.ARVersion;
 import com.io7m.aradine.cmdline.internal.ARCmdInfo;
+import com.io7m.aradine.cmdline.internal.ARCmdInsCheck;
 import com.io7m.aradine.cmdline.internal.ARCmdInvInstall;
 import com.io7m.aradine.cmdline.internal.ARCmdInvList;
 import com.io7m.aradine.cmdline.internal.ARCmdInvUninstall;
@@ -77,6 +78,17 @@ public final class ARCMain implements Runnable
         .with(new ARInstrumentIDConverter());
 
     final var builder = QApplication.builder(metadata);
+
+    {
+      final var g = builder.createCommandGroup(
+        new QCommandMetadata(
+          "instrument",
+          new QConstant("Instrument commands."),
+          Optional.empty()
+        )
+      );
+      g.addCommand(new ARCmdInsCheck());
+    }
 
     {
       final var g = builder.createCommandGroup(

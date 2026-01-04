@@ -72,5 +72,18 @@ public final class ARInstrumentLoaders
       file
     );
   }
+
+  @Override
+  public ARInstrumentLoaderType createNoOpLoader(
+    final Path file)
+    throws ARException
+  {
+    Objects.requireNonNull(file, "File");
+
+    return ARInstrumentLoader.createNoOp(
+      this.readers,
+      file
+    );
+  }
 }
 

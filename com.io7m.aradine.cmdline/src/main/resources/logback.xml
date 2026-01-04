@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration xmlns="http://ch.qos.logback/xml/ns/logback" debug="false">
+
+  <appender name="STDERR"
+            class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <fieldNames>
+        <timestamp>[ignore]</timestamp>
+        <message>Message</message>
+        <logger>[ignore]</logger>
+        <thread>[ignore]</thread>
+        <level>Level</level>
+        <levelValue>[ignore]</levelValue>
+        <version>[ignore]</version>
+        <stackTrace>StackTrace</stackTrace>
+      </fieldNames>
+      <decorator class="net.logstash.logback.decorate.json.CharacterEscapesDecorator">
+        <escape>
+          <targetCharacterCode>9</targetCharacterCode>
+          <escapeSequence></escapeSequence>
+        </escape>
+      </decorator>
+      <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+        <rootCauseFirst>true</rootCauseFirst>
+      </throwableConverter>
+      <decorator class="net.logstash.logback.decorate.PrettyPrintingDecorator">
+        <indentArraysWithNewLine>true</indentArraysWithNewLine>
+      </decorator>
+      <writeStackTraceAsArray>true</writeStackTraceAsArray>
+    </encoder>
+    <target>System.err</target>
+  </appender>
+
+  <root level="TRACE">
+    <appender-ref ref="STDERR"/>
+  </root>
+
+</configuration>

@@ -89,7 +89,7 @@ public final class ARInstrumentLoaderTest
             file
           );
         });
-    assertEquals("error-io", ex.errorCode());
+    assertEquals("error-file-nonexistent", ex.errorCode());
   }
 
   @Test

@@ -17,26 +17,27 @@
 
 package com.io7m.aradine.tests.arbitraries;
 
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.lanark.core.RDottedName;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 
-import java.net.URI;
 import java.util.Set;
 
 /**
  * A provider of values.
  */
 
-public final class ARI1ProviderAradineURIs
+public final class ARI1ProviderDottedName1
   implements ArbitraryProvider
 {
   /**
    * A provider of values.
    */
 
-  public ARI1ProviderAradineURIs()
+  public ARI1ProviderDottedName1()
   {
 
   }
@@ -45,7 +46,7 @@ public final class ARI1ProviderAradineURIs
   public boolean canProvideFor(
     final TypeUsage targetType)
   {
-    return targetType.isOfType(URI.class);
+    return targetType.isOfType(ARI1DottedName.class);
   }
 
   @Override
@@ -53,19 +54,9 @@ public final class ARI1ProviderAradineURIs
     final TypeUsage targetType,
     final SubtypeProvider subtypeProvider)
   {
-    return Set.of(aradineURIs());
-  }
-
-  /**
-   * @return A source of aradine URIs
-   */
-
-  public static Arbitrary<URI> aradineURIs()
-  {
-    return Arbitraries.strings()
-      .alpha()
-      .ofMinLength(1)
-      .ofMaxLength(1024)
-      .map(x -> URI.create("aradine:" + x));
+    return Set.of(
+      Arbitraries.defaultFor(RDottedName.class)
+        .map(n -> new ARI1DottedName(n.value()))
+    );
   }
 }

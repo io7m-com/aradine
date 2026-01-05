@@ -19,27 +19,28 @@ package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedSampleMap;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSampleMapType>
 {
   protected abstract T createParameter(
     ARI1ParameterNumber id,
-    URI valueDefault
+    ARI1SampleMapID valueDefault
   );
 
   protected abstract void setValue(
     T parameter,
     int time,
-    URI value
+    ARI1SampleMapID value
   );
 
   protected abstract void clearChanges(
@@ -53,7 +54,7 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
   @Property
   public void testEventLastWins(
     @ForAll final ARI1ParameterNumber id,
-    @ForAll final URI valueDefault,
+    @ForAll final ARI1SampleMapID valueDefault,
     @ForAll final Map<Integer, ARI1ValueChangedSampleMap> updates)
   {
     final var param =
@@ -105,10 +106,10 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
   @Property
   public void testEventsSameTime(
     @ForAll final ARI1ParameterNumber id,
-    @ForAll final URI valueDefault,
-    @ForAll final URI valueA,
-    @ForAll final URI valueB,
-    @ForAll final URI valueC)
+    @ForAll final ARI1SampleMapID valueDefault,
+    @ForAll final ARI1SampleMapID valueA,
+    @ForAll final ARI1SampleMapID valueB,
+    @ForAll final ARI1SampleMapID valueC)
   {
     final var param =
       this.createParameter(id, valueDefault);
@@ -128,5 +129,19 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
     for (int index = 0; index <= 2000; ++index) {
       assertEquals(valueC, param.value(index));
     }
+  }
+
+  /**
+   * Property checks.
+   */
+
+  @Property
+  public void testID(
+    @ForAll final ARI1ParameterNumber id,
+    @ForAll final ARI1SampleMapID valueDefault)
+  {
+    final var param = this.createParameter(id, valueDefault);
+    assertEquals(id, param.id());
+    assertNotNull(param.label());
   }
 }

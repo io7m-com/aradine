@@ -17,8 +17,6 @@
 
 package com.io7m.aradine.instrument.spi1;
 
-import java.net.URI;
-
 /**
  * Methods to asynchronously load samples and sample maps.
  */
@@ -28,13 +26,13 @@ public interface ARI1InstrumentContextSamplesType
   /**
    * Retrieve the sample map at the given URI.
    *
-   * @param uri The URI
+   * @param id The sample map ID
    *
    * @return The sample map (or the empty map, if no such sample map has been
    * loaded)
    */
 
-  ARI1SampleMapType sampleMapGet(URI uri);
+  ARI1SampleMapType sampleMapGet(ARI1SampleMapID id);
 
   /**
    * @return An empty sample map

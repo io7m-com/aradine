@@ -20,7 +20,6 @@ import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.sample_map.ARSampleMapURIs;
 import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -35,10 +34,11 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapIdentifiers;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -174,7 +174,7 @@ public final class AREns1InstrumentContext
           this.parameters.put(
             id,
             new AREns1ParameterSampleMap(
-              this, d, ARSampleMapURIs.unspecified()
+              this, d, ARI1SampleMapIdentifiers.empty()
             )
           );
         }
@@ -253,7 +253,7 @@ public final class AREns1InstrumentContext
 
   @Override
   public ARI1SampleMapType sampleMapGet(
-    final URI uri)
+    final ARI1SampleMapID id)
   {
     throw new IllegalStateException();
   }

@@ -14,25 +14,25 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.instrument;
+package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.sample_map.ARSampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.lanark.core.RDottedName;
+import com.io7m.verona.core.Version;
+import com.io7m.verona.core.VersionQualifier;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class ARInstrumentIDTest
+public final class ARSampleMapID1Test
 {
   @Property
   public void testCompare(
-    final @ForAll ARInstrumentID id)
+    final @ForAll ARI1SampleMapID id)
   {
     assertEquals(
       0,
@@ -41,35 +41,13 @@ public final class ARInstrumentIDTest
   }
 
   @Property
-  public void testParseToString(
-    final @ForAll ARInstrumentID id)
+  public void testCompatibility(
+    final @ForAll ARI1SampleMapID id)
     throws ARException
   {
     assertEquals(
-      id,
-      ARInstrumentID.parse(id.toString())
+      id.toString(),
+      ARSampleMapID.parse(id.toString()).toString()
     );
-  }
-
-  @TestFactory
-  public Stream<DynamicTest> testParseBad()
-  {
-    return Stream.of(
-      "",
-      "com.io7m:com.io7m:x",
-      "com.io7m:com.io7m:1.0.0-%"
-    ).map(ARInstrumentIDTest::testParseBadOf);
-  }
-
-  private static DynamicTest testParseBadOf(
-    final String text)
-  {
-    return DynamicTest.dynamicTest(
-      "testParseBadOf_%s".formatted(text),
-      () -> {
-        final var ex =
-          assertThrows(ARException.class, () -> ARInstrumentID.parse(text));
-        assertEquals("error-parse", ex.errorCode());
-      });
   }
 }

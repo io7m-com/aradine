@@ -173,7 +173,8 @@ public final class ARIP0Sampler
   {
     final var sampleMap =
       context.sampleMapGet(
-        this.parameters.samples0.value(event.timeOffsetInFrames()));
+        this.parameters.samples0.value(event.timeOffsetInFrames())
+      );
 
     final var noteIndex = event.note();
     this.samplesPlaying.put(

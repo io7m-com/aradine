@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,23 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+package com.io7m.aradine.ensemble.internal.v1.context;
 
 /**
- * <p>The type of sample map parameters.</p>
+ * A parameter on an instrument. This is the interface that is
+ * visible to the ensemble implementation. This is _not_ visible to the
+ * instrument implementation.
  */
 
-public non-sealed interface ARI1ParameterSampleMapType
-  extends ARI1ParameterType
+public sealed interface AREns1ParameterType
+  permits AREns1ParameterIntegerType,
+  AREns1ParameterRealType,
+  AREns1ParameterSampleMapType
 {
   /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
+   * Clear all value changes for this processing period.
    */
 
-  ARI1SampleMapID value(int frameIndex);
+  void valueChangesClear();
 }

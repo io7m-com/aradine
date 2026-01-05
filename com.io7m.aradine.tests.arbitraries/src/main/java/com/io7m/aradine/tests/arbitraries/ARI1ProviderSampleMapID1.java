@@ -17,9 +17,12 @@
 
 package com.io7m.aradine.tests.arbitraries;
 
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Combinators;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 
@@ -29,14 +32,14 @@ import java.util.Set;
  * A provider of values.
  */
 
-public final class ARI1ProviderValueChangedSampleMap
+public final class ARI1ProviderSampleMapID1
   implements ArbitraryProvider
 {
   /**
    * A provider of values.
    */
 
-  public ARI1ProviderValueChangedSampleMap()
+  public ARI1ProviderSampleMapID1()
   {
 
   }
@@ -45,7 +48,7 @@ public final class ARI1ProviderValueChangedSampleMap
   public boolean canProvideFor(
     final TypeUsage targetType)
   {
-    return targetType.isOfType(ARI1ValueChangedSampleMap.class);
+    return targetType.isOfType(ARI1SampleMapID.class);
   }
 
   @Override
@@ -53,24 +56,19 @@ public final class ARI1ProviderValueChangedSampleMap
     final TypeUsage targetType,
     final SubtypeProvider subtypeProvider)
   {
-    return Set.of(get());
-  }
-
-  /**
-   * @return An arbitrary instance
-   */
-
-  public static Arbitrary<ARI1ValueChangedSampleMap> get()
-  {
-    final var ai =
-      Arbitraries.integers()
-        .between(0, 100_000_000);
-
-    final var al =
-      Arbitraries.defaultFor(ARI1SampleMapID.class);
-
-    return ai.flatMap(time -> al.map(v -> {
-      return new ARI1ValueChangedSampleMap(time.intValue(), v);
-    }));
+    return Set.of(
+      Combinators.combine(
+        Arbitraries.integers().greaterOrEqual(0),
+        Arbitraries.integers().greaterOrEqual(0),
+        Arbitraries.defaultFor(ARI1DottedName.class),
+        Arbitraries.defaultFor(ARI1DottedName.class)
+      ).as((major, minor, group, name) -> {
+        return new ARI1SampleMapID(
+          group,
+          name,
+          ARI1Version.of(major, minor, 0)
+        );
+      })
+    );
   }
 }

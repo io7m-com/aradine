@@ -17,24 +17,43 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1ParameterReal;
 import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
-import com.io7m.aradine.tests.ARI1ParameterReal;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
+import com.io7m.aradine.tests.ARAudioSystemAttributes;
 
+import java.util.Map;
 import java.util.Optional;
 
 public final class ARI1ParameterRealTest
-  extends ARI1ParameterRealContract<ARI1ParameterReal>
+  extends ARI1ParameterRealContract<AREns1ParameterReal>
 {
   @Override
-  protected ARI1ParameterReal createParameter(
+  protected AREns1ParameterReal createParameter(
     final ARI1ParameterNumber id,
     final double valueMinimum,
     final double valueMaximum,
     final double valueDefault)
   {
-    return new ARI1ParameterReal(
+    final var context =
+      AREns1InstrumentContext.create(
+        new ARI1InstrumentDescription(
+          new ARI1DottedName("com.io7m.aradine"),
+          new ARI1DottedName("com.io7m.aradine"),
+          ARI1Version.of(1, 0, 0),
+          Map.of(),
+          Map.of(),
+          Map.of()
+        ),
+        new ARAudioSystemAttributes()
+      );
+
+    return new AREns1ParameterReal(
+      context,
       new ARI1ParameterDescriptionReal(
         id,
         "Label",
@@ -49,7 +68,7 @@ public final class ARI1ParameterRealTest
 
   @Override
   protected void setValue(
-    final ARI1ParameterReal parameter,
+    final AREns1ParameterReal parameter,
     final int time,
     final double value)
   {
@@ -58,7 +77,7 @@ public final class ARI1ParameterRealTest
 
   @Override
   protected void clearChanges(
-    final ARI1ParameterReal parameter)
+    final AREns1ParameterReal parameter)
   {
     parameter.valueChangesClear();
   }

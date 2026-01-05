@@ -20,15 +20,15 @@ package com.io7m.aradine.tests;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 
-import java.net.URI;
 import java.util.Objects;
 
 public final class ARI1ParameterSampleMap
   implements ARI1ParameterSampleMapType
 {
-  private final Int2ObjectRBTreeMap<URI> valueByTime;
+  private final Int2ObjectRBTreeMap<ARI1SampleMapID> valueByTime;
   private final ARI1ParameterDescriptionSampleMap description;
 
   /**
@@ -37,7 +37,7 @@ public final class ARI1ParameterSampleMap
    * no value has ever been set.
    */
 
-  private URI valueAtPeriodStart;
+  private ARI1SampleMapID valueAtPeriodStart;
 
   /**
    * The time of the latest received change in the current period.
@@ -50,17 +50,17 @@ public final class ARI1ParameterSampleMap
    * period, assuming that no more events show up at a later time.
    */
 
-  private URI valueAtPeriodEnd;
+  private ARI1SampleMapID valueAtPeriodEnd;
 
   public ARI1ParameterSampleMap(
     final ARI1ParameterDescriptionSampleMap inDescription,
-    final URI valueDefault)
+    final ARI1SampleMapID valueDefault)
   {
     this.description =
       Objects.requireNonNull(inDescription, "description");
-    Objects.requireNonNull(valueDefault, "valueDefault");
 
-    this.valueByTime = new Int2ObjectRBTreeMap<URI>();
+    Objects.requireNonNull(valueDefault, "valueDefault");
+    this.valueByTime = new Int2ObjectRBTreeMap<ARI1SampleMapID>();
     this.valueLatestTime = 0;
     this.valueAtPeriodEnd = valueDefault;
     this.valueAtPeriodStart = valueDefault;
@@ -75,7 +75,7 @@ public final class ARI1ParameterSampleMap
 
   public void valueChange(
     final int time,
-    final URI value)
+    final ARI1SampleMapID value)
   {
     this.valueByTime.put(time, value);
     if (time >= this.valueLatestTime) {
@@ -97,7 +97,7 @@ public final class ARI1ParameterSampleMap
   }
 
   @Override
-  public URI value(
+  public ARI1SampleMapID value(
     final int frameIndex)
   {
     /*

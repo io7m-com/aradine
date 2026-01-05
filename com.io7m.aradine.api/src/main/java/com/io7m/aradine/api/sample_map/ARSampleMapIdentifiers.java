@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,23 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.spi1;
+package com.io7m.aradine.api.sample_map;
+
+import com.io7m.lanark.core.RDottedName;
+import com.io7m.verona.core.Version;
 
 /**
- * <p>The type of sample map parameters.</p>
+ * Sample map identifiers.
  */
 
-public non-sealed interface ARI1ParameterSampleMapType
-  extends ARI1ParameterType
+public final class ARSampleMapIdentifiers
 {
+  private static final ARSampleMapID EMPTY =
+    new ARSampleMapID(
+      new RDottedName("com.io7m.aradine"),
+      new RDottedName("com.io7m.aradine.empty"),
+      Version.of(1, 0, 0)
+    );
+
+  private ARSampleMapIdentifiers()
+  {
+
+  }
+
   /**
-   * Retrieve the value of the parameter at time {@code frameIndex} in the
-   * current processing period.
-   *
-   * @param frameIndex The frame index
-   *
-   * @return The value of the parameter
+   * @return The identifier of the empty sample map
    */
 
-  ARI1SampleMapID value(int frameIndex);
+  public static ARSampleMapID empty()
+  {
+    return EMPTY;
+  }
 }

@@ -14,13 +14,14 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import com.io7m.aradine.tests.arbitraries.ARI1ProviderAradineURIs;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderEvent;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderSampleMapID;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderSampleMapID1;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderDottedName1;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedIntegerMaps;
@@ -45,7 +46,8 @@ module com.io7m.aradine.tests.arbitraries
 
   provides ArbitraryProvider
     with
-      ARI1ProviderAradineURIs,
+      ARI1ProviderDottedName1,
+      ARI1ProviderSampleMapID1,
       ARI1ProviderEvent,
       ARI1ProviderSampleMapID,
       ARI1ProviderInstrumentID,

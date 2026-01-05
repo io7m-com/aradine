@@ -19,6 +19,7 @@ package com.io7m.aradine.tests;
 
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationBufferSizeChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationParameterChanged;
 import com.io7m.aradine.instrument.spi1.ARI1EventConfigurationSampleRateChanged;
@@ -34,6 +35,8 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortTargetAudioType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import org.jaudiolibs.jnajack.Jack;
@@ -45,7 +48,6 @@ import org.jaudiolibs.jnajack.JackStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.EnumSet;
@@ -191,8 +193,15 @@ public final class ARI1MiniJackHost
       new ARI1SampleMapDescription(sampleDescriptions)
         .load(converter, services.statusCurrentSampleRate());
 
+    final var sampleMapId =
+      new ARI1SampleMapID(
+        new ARI1DottedName("com.io7m.aradine"),
+        new ARI1DottedName("com.io7m.aradine.example"),
+        ARI1Version.of(1, 0, 0)
+      );
+
     services.sampleMapRegister(
-      URI.create("file:///anything"),
+      sampleMapId,
       sampleMap
     );
 
@@ -205,7 +214,7 @@ public final class ARI1MiniJackHost
         final var message = messages.poll();
         if (message instanceof final ARI1EventConfigurationParameterChanged e) {
           if (Objects.equals(e.parameter(), parameterSampleMap.id())) {
-            parameterSampleMap.valueChange(0, URI.create("file:///anything"));
+            parameterSampleMap.valueChange(0, sampleMapId);
           }
         }
         sampler.receiveEvent(services, message);

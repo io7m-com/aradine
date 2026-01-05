@@ -22,11 +22,13 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedInteger;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
+import net.jqwik.api.constraints.LongRange;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class ARI1ParameterIntegerContract<T extends ARI1ParameterIntegerType>
 {
@@ -129,5 +131,29 @@ public abstract class ARI1ParameterIntegerContract<T extends ARI1ParameterIntege
     for (int index = 0; index <= 2000; ++index) {
       assertEquals(valueC, param.value(index));
     }
+  }
+
+  /**
+   * Property checks.
+   */
+
+  @Property
+  public void testID(
+    @ForAll final ARI1ParameterNumber id,
+    @ForAll @LongRange(min = 0L, max = 10L) final long valueMin,
+    @ForAll @LongRange(min = 100L, max = 200L) final long valueMax,
+    @ForAll @LongRange(min = 20L, max = 80L) final long valueDefault)
+  {
+    final var param =
+      this.createParameter(
+        id,
+        valueMin,
+        valueMax,
+        valueDefault
+      );
+    assertEquals(id, param.id());
+    assertNotNull(param.label());
+    assertEquals(valueMin, param.valueMinimum());
+    assertEquals(valueMax, param.valueMaximum());
   }
 }

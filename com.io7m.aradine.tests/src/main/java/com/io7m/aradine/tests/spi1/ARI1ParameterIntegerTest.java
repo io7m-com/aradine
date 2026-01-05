@@ -17,24 +17,43 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1ParameterInteger;
 import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionInteger;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
-import com.io7m.aradine.tests.ARI1ParameterInteger;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
+import com.io7m.aradine.tests.ARAudioSystemAttributes;
 
+import java.util.Map;
 import java.util.Optional;
 
 public final class ARI1ParameterIntegerTest
-  extends ARI1ParameterIntegerContract<ARI1ParameterInteger>
+  extends ARI1ParameterIntegerContract<AREns1ParameterInteger>
 {
   @Override
-  protected ARI1ParameterInteger createParameter(
+  protected AREns1ParameterInteger createParameter(
     final ARI1ParameterNumber id,
     final long valueMinimum,
     final long valueMaximum,
     final long valueDefault)
   {
-    return new ARI1ParameterInteger(
+    final var context =
+      AREns1InstrumentContext.create(
+        new ARI1InstrumentDescription(
+          new ARI1DottedName("com.io7m.aradine"),
+          new ARI1DottedName("com.io7m.aradine"),
+          ARI1Version.of(1, 0, 0),
+          Map.of(),
+          Map.of(),
+          Map.of()
+        ),
+        new ARAudioSystemAttributes()
+      );
+
+    return new AREns1ParameterInteger(
+      context,
       new ARI1ParameterDescriptionInteger(
         id,
         "Label",
@@ -49,7 +68,7 @@ public final class ARI1ParameterIntegerTest
 
   @Override
   protected void setValue(
-    final ARI1ParameterInteger parameter,
+    final AREns1ParameterInteger parameter,
     final int time,
     final long value)
   {
@@ -58,7 +77,7 @@ public final class ARI1ParameterIntegerTest
 
   @Override
   protected void clearChanges(
-    final ARI1ParameterInteger parameter)
+    final AREns1ParameterInteger parameter)
   {
     parameter.valueChangesClear();
   }

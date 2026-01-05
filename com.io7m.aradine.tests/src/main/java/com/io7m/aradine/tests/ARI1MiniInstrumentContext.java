@@ -20,6 +20,7 @@ package com.io7m.aradine.tests;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
 import com.io7m.aradine.ensemble.internal.v1.context.AREns1RNGDeterministic;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -35,6 +36,8 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapIdentifiers;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
 import com.io7m.jattribute.core.AttributeSubscriptionType;
@@ -65,7 +68,7 @@ public final class ARI1MiniInstrumentContext
   private final CloseableCollectionType<ClosingResourceFailedException> closeables;
   private final Map<ARI1ParameterNumber, ARI1ParameterType> parameters;
   private final Map<ARI1PortNumber, ARI1PortType> ports;
-  private final ConcurrentHashMap<URI, ARI1SampleMapType> sampleMaps;
+  private final ConcurrentHashMap<ARI1SampleMapID, ARI1SampleMapType> sampleMaps;
   private final AttributeSubscriptionType sampleRateSubscription;
   private double millisecondsPerFrame;
 
@@ -223,7 +226,8 @@ public final class ARI1MiniInstrumentContext
             id,
             new ARI1ParameterSampleMap(
               d,
-              URI.create("aradine:unspecified"))
+              ARI1SampleMapIdentifiers.empty()
+            )
           );
           continue;
         }
@@ -235,7 +239,7 @@ public final class ARI1MiniInstrumentContext
   @Override
   public ARI1EventBufferType createEventBuffer()
   {
-    return new ARI1EventBuffer<>();
+    return new AREns1EventBuffer<>();
   }
 
   @Override
@@ -265,7 +269,7 @@ public final class ARI1MiniInstrumentContext
   }
 
   public void sampleMapRegister(
-    final URI uri,
+    final ARI1SampleMapID uri,
     final ARI1SampleMapType sampleMap)
   {
     this.sampleMaps.put(uri, sampleMap);
@@ -273,7 +277,7 @@ public final class ARI1MiniInstrumentContext
 
   @Override
   public ARI1SampleMapType sampleMapGet(
-    final URI uri)
+    final ARI1SampleMapID uri)
   {
     final var map = this.sampleMaps.get(uri);
     if (map == null) {

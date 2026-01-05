@@ -22,11 +22,14 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedReal;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
+import net.jqwik.api.constraints.DoubleRange;
+import net.jqwik.api.constraints.LongRange;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
 {
@@ -59,7 +62,11 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
     @ForAll final Map<Integer, ARI1ValueChangedReal> updates)
   {
     final var param =
-      this.createParameter(id, -Double.MAX_VALUE, Double.MAX_VALUE, valueDefault);
+      this.createParameter(
+        id,
+        -Double.MAX_VALUE,
+        Double.MAX_VALUE,
+        valueDefault);
 
     final var sorted = new ArrayList<>(updates.values());
     sorted.sort((o1, o2) -> Integer.compareUnsigned(o1.time(), o2.time()));
@@ -113,7 +120,11 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
     @ForAll final double valueC)
   {
     final var param =
-      this.createParameter(id, -Double.MAX_VALUE, Double.MAX_VALUE, valueDefault);
+      this.createParameter(
+        id,
+        -Double.MAX_VALUE,
+        Double.MAX_VALUE,
+        valueDefault);
 
     this.setValue(param, 1_000, valueA);
     this.setValue(param, 1_000, valueB);
@@ -130,5 +141,29 @@ public abstract class ARI1ParameterRealContract<T extends ARI1ParameterRealType>
     for (int index = 0; index <= 2000; ++index) {
       assertEquals(valueC, param.value(index));
     }
+  }
+
+  /**
+   * Property checks.
+   */
+
+  @Property
+  public void testID(
+    @ForAll final ARI1ParameterNumber id,
+    @ForAll @DoubleRange(min = 0L, max = 10L) final double valueMin,
+    @ForAll @DoubleRange(min = 100L, max = 200L) final double valueMax,
+    @ForAll @DoubleRange(min = 20L, max = 80L) final double valueDefault)
+  {
+    final var param =
+      this.createParameter(
+        id,
+        valueMin,
+        valueMax,
+        valueDefault
+      );
+    assertEquals(id, param.id());
+    assertNotNull(param.label());
+    assertEquals(valueMin, param.valueMinimum());
+    assertEquals(valueMax, param.valueMaximum());
   }
 }

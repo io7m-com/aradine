@@ -14,30 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.api.sample_map;
+package com.io7m.aradine.ensemble.internal.v1.context;
 
-import java.net.URI;
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterRealType;
 
 /**
- * Sample map URIs.
+ * A real parameter on an instrument. This is the interface that is
+ * visible to the ensemble implementation. This is _not_ visible to the
+ * instrument implementation.
  */
 
-public final class ARSampleMapURIs
+public sealed interface AREns1ParameterRealType
+  extends AREns1ParameterType, ARI1ParameterRealType
+  permits AREns1ParameterReal
 {
-  private static final URI UNSPECIFIED =
-    URI.create("aradine:unspecified");
-
-  private ARSampleMapURIs()
-  {
-
-  }
-
   /**
-   * @return The URI of the unspecified sample map
+   * Change the parameter value at the given time.
+   *
+   * @param time  The time
+   * @param value The value
    */
 
-  public static URI unspecified()
-  {
-    return UNSPECIFIED;
-  }
+  void valueChange(
+    @ARTimeFrames int time,
+    double value);
 }

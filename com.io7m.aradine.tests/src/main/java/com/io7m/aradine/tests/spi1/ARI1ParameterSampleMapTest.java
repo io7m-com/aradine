@@ -17,22 +17,42 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1ParameterSampleMap;
+import com.io7m.aradine.instrument.spi1.ARI1DottedName;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionSampleMap;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
-import com.io7m.aradine.tests.ARI1ParameterSampleMap;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1Version;
+import com.io7m.aradine.tests.ARAudioSystemAttributes;
 
-import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 public final class ARI1ParameterSampleMapTest
-  extends ARI1ParameterSampleMapContract<ARI1ParameterSampleMap>
+  extends ARI1ParameterSampleMapContract<AREns1ParameterSampleMap>
 {
   @Override
-  protected ARI1ParameterSampleMap createParameter(
+  protected AREns1ParameterSampleMap createParameter(
     final ARI1ParameterNumber id,
-    final URI valueDefault)
+    final ARI1SampleMapID valueDefault)
   {
-    return new ARI1ParameterSampleMap(
+    final var context =
+      AREns1InstrumentContext.create(
+        new ARI1InstrumentDescription(
+          new ARI1DottedName("com.io7m.aradine"),
+          new ARI1DottedName("com.io7m.aradine"),
+          ARI1Version.of(1, 0, 0),
+          Map.of(),
+          Map.of(),
+          Map.of()
+        ),
+        new ARAudioSystemAttributes()
+      );
+    
+    return new AREns1ParameterSampleMap(
+      context,
       new ARI1ParameterDescriptionSampleMap(
         id,
         "Label",
@@ -44,16 +64,16 @@ public final class ARI1ParameterSampleMapTest
 
   @Override
   protected void setValue(
-    final ARI1ParameterSampleMap parameter,
+    final AREns1ParameterSampleMap parameter,
     final int time,
-    final URI value)
+    final ARI1SampleMapID value)
   {
     parameter.valueChange(time, value);
   }
 
   @Override
   protected void clearChanges(
-    final ARI1ParameterSampleMap parameter)
+    final AREns1ParameterSampleMap parameter)
   {
     parameter.valueChangesClear();
   }

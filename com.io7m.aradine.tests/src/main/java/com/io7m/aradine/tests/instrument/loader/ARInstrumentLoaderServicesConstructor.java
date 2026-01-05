@@ -18,7 +18,7 @@ package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
-import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -33,8 +33,9 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapIdentifiers;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
-import com.io7m.aradine.tests.ARI1EventBuffer;
 import com.io7m.aradine.tests.ARI1IntMapMutable;
 import com.io7m.aradine.tests.ARI1ParameterInteger;
 import com.io7m.aradine.tests.ARI1ParameterReal;
@@ -45,7 +46,6 @@ import com.io7m.aradine.tests.ARI1PortTargetAudio;
 import com.io7m.aradine.tests.ARI1PortTargetNote;
 import com.io7m.junreachable.UnimplementedCodeException;
 
-import java.net.URI;
 import java.util.Map;
 
 public final class ARInstrumentLoaderServicesConstructor
@@ -106,7 +106,10 @@ public final class ARInstrumentLoaderServicesConstructor
             yield new ARI1ParameterReal(pr);
           }
           case final ARI1ParameterDescriptionSampleMap psm -> {
-            yield new ARI1ParameterSampleMap(psm, URI.create("urn:unused"));
+            yield new ARI1ParameterSampleMap(
+              psm,
+              ARI1SampleMapIdentifiers.empty()
+            );
           }
           case null -> {
             throw new IllegalArgumentException(
@@ -163,7 +166,7 @@ public final class ARInstrumentLoaderServicesConstructor
     @Override
     public <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer()
     {
-      return new ARI1EventBuffer<>();
+      return new AREns1EventBuffer<>();
     }
 
     @Override
@@ -182,7 +185,7 @@ public final class ARInstrumentLoaderServicesConstructor
 
     @Override
     public ARI1SampleMapType sampleMapGet(
-      final URI uri)
+      final ARI1SampleMapID uri)
     {
       throw new UnimplementedCodeException();
     }

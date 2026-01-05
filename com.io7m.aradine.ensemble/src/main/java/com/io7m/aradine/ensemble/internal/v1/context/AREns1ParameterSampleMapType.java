@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,20 +14,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.arbitraries;
+package com.io7m.aradine.ensemble.internal.v1.context;
 
+import com.io7m.aradine.annotations.ARTimeFrames;
+import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 
 /**
- * A sample-map-typed value changed.
- *
- * @param time  The change time
- * @param value The value
+ * A sample map parameter on an instrument. This is the interface that is
+ * visible to the ensemble implementation. This is _not_ visible to the
+ * instrument implementation.
  */
 
-public record ARI1ValueChangedSampleMap(
-  int time,
-  ARI1SampleMapID value)
+public sealed interface AREns1ParameterSampleMapType
+  extends AREns1ParameterType, ARI1ParameterSampleMapType
+  permits AREns1ParameterSampleMap
 {
+  /**
+   * Change the parameter value at the given time.
+   *
+   * @param time  The time
+   * @param value The value
+   */
 
+  void valueChange(
+    @ARTimeFrames int time,
+    ARI1SampleMapID value);
 }

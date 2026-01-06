@@ -16,6 +16,9 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
 import java.util.Objects;
@@ -25,6 +28,9 @@ import java.util.Set;
 final class ARInstrumentModuleFinder
   implements ModuleFinder
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARInstrumentModuleFinder.class);
+
   private final ARInstrumentModuleReference reference;
 
   ARInstrumentModuleFinder(
@@ -38,6 +44,8 @@ final class ARInstrumentModuleFinder
   public Optional<ModuleReference> find(
     final String name)
   {
+    LOG.trace("Finding module reference {}.", name);
+
     final var moduleDescriptor =
       this.reference.descriptor();
     final var descriptorName =
@@ -52,6 +60,7 @@ final class ARInstrumentModuleFinder
   @Override
   public Set<ModuleReference> findAll()
   {
+    LOG.trace("Finding all module references ({}).", this.reference);
     return Set.of(this.reference);
   }
 }

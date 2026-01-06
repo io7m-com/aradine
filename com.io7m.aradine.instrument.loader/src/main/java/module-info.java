@@ -35,6 +35,7 @@ module com.io7m.aradine.instrument.loader
   requires org.apache.commons.io;
   requires tools.jackson.core;
   requires tools.jackson.databind;
+  requires org.slf4j;
 
   uses com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 

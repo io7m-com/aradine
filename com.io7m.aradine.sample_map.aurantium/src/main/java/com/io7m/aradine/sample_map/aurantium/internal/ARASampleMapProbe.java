@@ -40,6 +40,8 @@ import com.io7m.seltzer.api.SStructuredErrorExceptionType;
 import com.io7m.seltzer.io.SIOException;
 import com.io7m.verona.core.Version;
 import com.io7m.wendover.core.CloseShieldSeekableByteChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,6 +64,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ARASampleMapProbe
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARASampleMapProbe.class);
+
   private final AtomicBoolean closed;
   private final CloseableCollectionType<ARException> resources;
   private final SampleBufferRateConverterFactoryType converters;
@@ -118,6 +123,7 @@ public final class ARASampleMapProbe
     try {
       return probeOp.execute();
     } catch (final Throwable e) {
+      LOG.trace("Exception raised during probing.", e);
       probeOp.close();
       throw e;
     }
@@ -186,7 +192,8 @@ public final class ARASampleMapProbe
         this.findParser();
         this.runParser();
         return this.processParsed();
-      } catch (final Exception e) {
+      } catch (final Throwable e) {
+        LOG.trace("Exception raised during parsing.", e);
         return Optional.empty();
       }
     }
@@ -195,6 +202,7 @@ public final class ARASampleMapProbe
       throws ARException
     {
       try {
+        LOG.trace("Opening file {}.", this.file);
         this.fileChannel =
           this.resources.add(FileChannel.open(this.file));
         this.safeChannel =
@@ -208,6 +216,7 @@ public final class ARASampleMapProbe
       throws ARException
     {
       try {
+        LOG.trace("Probing version number.");
         final var probe =
           this.probes.createProbe(
             this.file.toUri(),
@@ -223,6 +232,8 @@ public final class ARASampleMapProbe
     private void findParser()
       throws ARException
     {
+      LOG.trace("Finding a suitable format parser.");
+
       this.parsersOrdered =
         this.parsers.stream()
           .sorted((x, y) -> {
@@ -248,6 +259,8 @@ public final class ARASampleMapProbe
     private void runParser()
       throws ARException
     {
+      LOG.trace("Running format parser.");
+
       final var parseRequest =
         AUParseRequest.builder(this.safeChannel, this.file.toUri())
           .build();
@@ -264,6 +277,8 @@ public final class ARASampleMapProbe
     private Optional<ARSampleMapDataSummary> processParsed()
       throws IOException, ARException
     {
+      LOG.trace("Processing parsed file.");
+
       final var identifierSection =
         this.fileParsed.openIdentifier()
           .orElseThrow(() -> this.errorMissingData("Identifier"));
@@ -320,6 +335,8 @@ public final class ARASampleMapProbe
     private ARBlob hash()
       throws ARException
     {
+      LOG.trace("Calculating file hash.");
+
       try (var stream = Files.newInputStream(this.file)) {
         final var digest = MessageDigest.getInstance("SHA-256");
         try (var digestStream = new DigestInputStream(stream, digest)) {

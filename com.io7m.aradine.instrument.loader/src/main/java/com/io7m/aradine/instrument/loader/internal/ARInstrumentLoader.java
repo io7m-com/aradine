@@ -30,17 +30,15 @@ import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
-import com.io7m.aradine.instrument.spi1.ARI1VersionQualifier;
-import com.io7m.verona.core.VersionQualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,6 +53,9 @@ import java.util.jar.JarFile;
 
 public final class ARInstrumentLoader
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARInstrumentLoader.class);
+
   private static final String INSTRUMENT_SPI1_MODULE_NAME =
     ARI1InstrumentFactoryType.class
       .getModule()
@@ -126,14 +127,17 @@ public final class ARInstrumentLoader
     throws ARException
   {
     try {
+      LOG.trace("Reading instrument file {}", file);
       final ARInstrumentReadResultType instrumentDescription;
       try (var instrumentReader = readers.create(file)) {
         instrumentDescription = instrumentReader.executeAndParse();
       }
 
+      LOG.trace("Reading module descriptor from file.");
       final ModuleDescriptor moduleDescriptor =
         readModuleDescriptorFromJar(file);
 
+      LOG.trace("Checking module descriptor.");
       checkModule(file, moduleDescriptor);
 
       final var instrumentModuleReference =
@@ -143,12 +147,14 @@ public final class ARInstrumentLoader
       final var moduleName =
         moduleDescriptor.name();
 
+      LOG.trace("Creating module classloader.");
       final var instrumentClassLoader =
         new URLClassLoader(
           new URL[]{file.toUri().toURL()},
           null
         );
 
+      LOG.trace("Resolving module layer.");
       final var instrumentConfiguration =
         BASE_LAYER.configuration()
           .resolve(
@@ -157,18 +163,21 @@ public final class ARInstrumentLoader
             Set.of(moduleName)
           );
 
+      LOG.trace("Creating instrument module layer.");
       final var instrumentLayer =
         BASE_LAYER.defineModulesWithOneLoader(
           instrumentConfiguration,
           instrumentClassLoader
         );
 
+      LOG.trace("Completing instrument creation.");
       return completion.complete(
         instrumentLayer,
         instrumentDescription,
         instrumentClassLoader
       );
     } catch (final Exception e) {
+      LOG.trace("", e);
       throw wrap(e);
     }
   }
@@ -283,6 +292,8 @@ public final class ARInstrumentLoader
     throws ARException
   {
     final var moduleName = moduleDescriptor.name();
+    LOG.trace("Module name: {}", moduleName);
+
     for (final var requires : moduleDescriptor.requires()) {
       if (!ALLOWED_MODULES.contains(requires.name())) {
         throw errorModuleDisallowed(file, moduleName, requires.name());
@@ -304,42 +315,6 @@ public final class ARInstrumentLoader
     if (!Objects.equals(providesService, INSTRUMENT_SPI1_SERVICE_TYPE)) {
       throw errorModuleProvideWrong(file, moduleName, providesService);
     }
-  }
-
-  private static ModuleReference findInstrumentModuleReference(
-    final Path file,
-    final ModuleFinder instrumentModuleFinder)
-    throws ARException
-  {
-    final var moduleReferences = instrumentModuleFinder.findAll();
-    if (moduleReferences.isEmpty()) {
-      throw errorModuleNonexistent(file);
-    }
-    if (moduleReferences.size() > 1) {
-      throw errorModuleTooMany(file, moduleReferences);
-    }
-    return moduleReferences.iterator().next();
-  }
-
-  private static ARException errorModuleTooMany(
-    final Path file,
-    final Set<ModuleReference> moduleReferences)
-  {
-    final var names =
-      new HashMap<String, String>(moduleReferences.size() + 1);
-    var index = 0;
-    for (final var ref : moduleReferences) {
-      names.put("Module " + index, ref.descriptor().name());
-      ++index;
-    }
-    names.put("File", file.toAbsolutePath().toString());
-
-    return new ARException(
-      "Multiple modules detected.",
-      "error-module-multiple",
-      Map.copyOf(names),
-      Optional.empty()
-    );
   }
 
   private static ARException errorModuleDisallowed(
@@ -412,19 +387,6 @@ public final class ARInstrumentLoader
           "Service Class (Actual)",
           providesService
         )
-      ),
-      Optional.empty()
-    );
-  }
-
-  private static ARException errorModuleNonexistent(
-    final Path file)
-  {
-    return new ARException(
-      "Module does not exist.",
-      "error-module-nonexistent",
-      Map.ofEntries(
-        Map.entry("File", file.toAbsolutePath().toString())
       ),
       Optional.empty()
     );
@@ -536,12 +498,6 @@ public final class ARInstrumentLoader
         Objects.requireNonNull(inInstrument, "Instrument");
       this.closed =
         new AtomicBoolean(false);
-    }
-
-    private static VersionQualifier qualifierOf(
-      final ARI1VersionQualifier x)
-    {
-      return new VersionQualifier(x.text());
     }
 
     @Override

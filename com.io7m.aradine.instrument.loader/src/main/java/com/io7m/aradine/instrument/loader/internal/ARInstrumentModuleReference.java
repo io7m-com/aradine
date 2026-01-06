@@ -16,6 +16,9 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleReader;
@@ -26,6 +29,9 @@ import java.util.Objects;
 final class ARInstrumentModuleReference
   extends ModuleReference
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARInstrumentModuleReference.class);
+
   private final Path file;
 
   ARInstrumentModuleReference(
@@ -40,6 +46,7 @@ final class ARInstrumentModuleReference
   public ModuleReader open()
     throws IOException
   {
+    LOG.trace("Opening module reader for {}.", this.file);
     return new ARInstrumentModuleReader(this.file);
   }
 }

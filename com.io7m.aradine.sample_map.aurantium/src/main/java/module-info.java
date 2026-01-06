@@ -39,6 +39,7 @@ module com.io7m.aradine.sample_map.aurantium
   requires com.io7m.wendover.core;
   requires com.io7m.verona.core;
   requires com.io7m.mime2045.core;
+  requires org.slf4j;
 
   exports com.io7m.aradine.sample_map.aurantium;
 }

@@ -16,6 +16,9 @@
 
 package com.io7m.aradine.instrument.loader.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.module.ModuleReader;
@@ -28,6 +31,9 @@ import java.util.stream.Stream;
 final class ARInstrumentModuleReader
   implements ModuleReader
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ARInstrumentModuleReader.class);
+
   private final JarFile jarFile;
 
   ARInstrumentModuleReader(
@@ -41,7 +47,6 @@ final class ARInstrumentModuleReader
   @Override
   public Optional<URI> find(
     final String name)
-    throws IOException
   {
     return Optional.empty();
   }
@@ -51,6 +56,7 @@ final class ARInstrumentModuleReader
     final String name)
     throws IOException
   {
+    LOG.trace("Opening jar resource {}.", name);
     final var entry = this.jarFile.getJarEntry(name);
     if (entry == null) {
       return Optional.empty();
@@ -60,8 +66,8 @@ final class ARInstrumentModuleReader
 
   @Override
   public Stream<String> list()
-    throws IOException
   {
+    LOG.trace("Listing jar resources.");
     return Stream.empty();
   }
 

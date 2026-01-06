@@ -7,10 +7,10 @@
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
       <fieldNames>
         <timestamp>[ignore]</timestamp>
-        <message>Message</message>
-        <logger>[ignore]</logger>
+        <logger>Logger</logger>
         <thread>[ignore]</thread>
         <level>Level</level>
+        <message>Message</message>
         <levelValue>[ignore]</levelValue>
         <version>[ignore]</version>
         <stackTrace>StackTrace</stackTrace>

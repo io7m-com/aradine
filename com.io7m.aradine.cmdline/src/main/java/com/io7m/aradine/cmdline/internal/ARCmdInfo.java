@@ -84,7 +84,11 @@ public final class ARCmdInfo extends ARCmdAbstract
       ARApplicationDirectories.inventoryBlobs(directories).toString()
     );
 
-    mapper.writerWithDefaultPrettyPrinter().writeValue(System.out, output);
+    context.output()
+      .println(
+        mapper.writerWithDefaultPrettyPrinter()
+          .writeValueAsString(output)
+      );
     return QCommandStatus.SUCCESS;
   }
 

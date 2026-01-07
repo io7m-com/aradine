@@ -93,10 +93,11 @@ public final class ARCmdInvListSampleMaps extends ARCmdAbstract
         start = Optional.of(r.getLast().identifier());
       }
 
-      System.out.println(
+      final var out = context.output();
+      out.println(
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output)
       );
-      System.out.flush();
+      out.flush();
       return QCommandStatus.SUCCESS;
     }
   }

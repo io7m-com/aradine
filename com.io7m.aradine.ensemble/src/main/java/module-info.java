@@ -35,6 +35,7 @@ module com.io7m.aradine.ensemble
   requires com.io7m.dixmont.core;
   requires com.io7m.jaffirm.core;
   requires com.io7m.jattribute.core;
+  requires com.io7m.jdeferthrow.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.jmurmur.core;
   requires com.io7m.jxe.core;

@@ -38,7 +38,7 @@ public interface ARInstrumentLoaderFactoryType
    */
 
   ARInstrumentLoaderType createLoader(
-    ARInstrumentLoaderServicesConstructorType serviceConstructor,
+    ARInstrumentContextConstructorType serviceConstructor,
     Path file)
     throws ARException;
 

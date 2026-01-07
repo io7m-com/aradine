@@ -18,7 +18,7 @@ package com.io7m.aradine.instrument.loader;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
 import com.io7m.aradine.instrument.loader.internal.ARInstrumentLoader;
@@ -59,7 +59,7 @@ public final class ARInstrumentLoaders
 
   @Override
   public ARInstrumentLoaderType createLoader(
-    final ARInstrumentLoaderServicesConstructorType serviceConstructor,
+    final ARInstrumentContextConstructorType serviceConstructor,
     final Path file)
     throws ARException
   {

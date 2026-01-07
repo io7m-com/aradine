@@ -17,34 +17,26 @@
 package com.io7m.aradine.instrument.loader.api;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
-import com.io7m.jmulticlose.core.CloseableType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 
 /**
- * An instrument loader.
+ * A constructor of instrument contexts.
  */
 
-public interface ARInstrumentLoaderType
-  extends CloseableType
+public interface ARInstrumentContextConstructorType
 {
   /**
-   * Execute the instrument loader and return the instrument instance.
+   * Create a new instrument context for a v1 instrument.
    *
-   * @param assigner   The port ID assigner
-   * @param instanceID The instance ID to assign
+   * @param description The instrument description
    *
-   * @return The instance
+   * @return A service instance
    *
    * @throws ARException On errors
    */
 
-  ARInstrumentExecutableType execute(
-    ARInstrumentPortAssignerType assigner,
-    ARInstrumentInstanceID instanceID)
-    throws ARException;
-
-  @Override
-  void close()
+  ARI1InstrumentContextType createContextV1(
+    ARI1InstrumentDescription description)
     throws ARException;
 }

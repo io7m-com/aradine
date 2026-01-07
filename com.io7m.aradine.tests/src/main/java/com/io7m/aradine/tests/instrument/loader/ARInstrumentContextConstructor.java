@@ -19,7 +19,7 @@ package com.io7m.aradine.tests.instrument.loader;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
@@ -48,16 +48,16 @@ import com.io7m.junreachable.UnimplementedCodeException;
 
 import java.util.Map;
 
-public final class ARInstrumentLoaderServicesConstructor
-  implements ARInstrumentLoaderServicesConstructorType
+public final class ARInstrumentContextConstructor
+  implements ARInstrumentContextConstructorType
 {
-  public ARInstrumentLoaderServicesConstructor()
+  public ARInstrumentContextConstructor()
   {
 
   }
 
   @Override
-  public ARI1InstrumentContextType createServicesV1(
+  public ARI1InstrumentContextType createContextV1(
     final ARI1InstrumentDescription description)
   {
     return new Services1(description);

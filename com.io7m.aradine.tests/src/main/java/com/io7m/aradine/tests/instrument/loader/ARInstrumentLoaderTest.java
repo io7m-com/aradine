@@ -18,7 +18,7 @@ package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.instrument.ARInstrumentType;
+import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
@@ -46,7 +46,7 @@ public final class ARInstrumentLoaderTest
 
   private Path directory;
   private ARInstrumentLoaders loaders;
-  private ARInstrumentLoaderServicesConstructor serviceConstructor;
+  private ARInstrumentContextConstructor serviceConstructor;
   private ARFakeInstrumentPortAssigner assigner;
 
   @BeforeEach
@@ -56,7 +56,7 @@ public final class ARInstrumentLoaderTest
     this.directory =
       Files.createTempDirectory("aradine");
     this.serviceConstructor =
-      new ARInstrumentLoaderServicesConstructor();
+      new ARInstrumentContextConstructor();
 
     this.assigner = new ARFakeInstrumentPortAssigner();
     this.loaders = new ARInstrumentLoaders();
@@ -192,8 +192,8 @@ public final class ARInstrumentLoaderTest
       loaders[index] = this.loaders.createLoader(this.serviceConstructor, file);
     }
 
-    final ARInstrumentType[] instruments =
-      new ARInstrumentType[loaders.length];
+    final ARInstrumentExecutableType[] instruments =
+      new ARInstrumentExecutableType[loaders.length];
 
     for (int index = 0; index < loaders.length; ++index) {
       instruments[index] =

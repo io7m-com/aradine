@@ -19,8 +19,8 @@ package com.io7m.aradine.instrument.loader.internal;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.instrument.ARInstrumentType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
+import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;
@@ -196,7 +196,7 @@ public final class ARInstrumentLoader
 
   public static ARInstrumentLoaderType create(
     final ARInstrumentReaderFactoryType readers,
-    final ARInstrumentLoaderServicesConstructorType serviceConstructor,
+    final ARInstrumentContextConstructorType serviceConstructor,
     final Path file)
     throws ARException
   {
@@ -246,7 +246,7 @@ public final class ARInstrumentLoader
   }
 
   private static ARInstrumentLoader1 createV1(
-    final ARInstrumentLoaderServicesConstructorType serviceConstructor,
+    final ARInstrumentContextConstructorType serviceConstructor,
     final ModuleLayer instrumentLayer,
     final ARInstrumentReadResultType instrumentDescription,
     final URLClassLoader instrumentClassLoader)
@@ -420,8 +420,8 @@ public final class ARInstrumentLoader
     );
   }
 
-  private static final class ARInstrument1
-    implements ARInstrumentType
+  private static final class ARInstrumentExecutable1
+    implements ARInstrumentExecutableType
   {
     private final AtomicBoolean closed;
     private final ARInstrumentLoader1 loader;
@@ -429,7 +429,7 @@ public final class ARInstrumentLoader
     private final ARI1InstrumentContextType services;
     private final ARInstrumentDescription description;
 
-    private ARInstrument1(
+    private ARInstrumentExecutable1(
       final ARInstrumentLoader1 inLoader,
       final ARI1InstrumentContextType inServices,
       final ARI1InstrumentType inInstrument,
@@ -477,10 +477,10 @@ public final class ARInstrumentLoader
     private final ModuleLayer moduleLayer;
     private final ARI1InstrumentFactoryType instrumentFactory;
     private final AtomicBoolean closed;
-    private final ARInstrumentLoaderServicesConstructorType serviceConstructor;
+    private final ARInstrumentContextConstructorType serviceConstructor;
 
     private ARInstrumentLoader1(
-      final ARInstrumentLoaderServicesConstructorType inServiceConstructor,
+      final ARInstrumentContextConstructorType inServiceConstructor,
       final ARI1InstrumentDescription inInstrumentDescription,
       final URLClassLoader inClassLoader,
       final ModuleLayer inModuleLayer,
@@ -501,7 +501,7 @@ public final class ARInstrumentLoader
     }
 
     @Override
-    public ARInstrumentType execute(
+    public ARInstrumentExecutableType execute(
       final ARInstrumentPortAssignerType assigner,
       final ARInstrumentInstanceID instanceID)
       throws ARException
@@ -510,7 +510,7 @@ public final class ARInstrumentLoader
       Objects.requireNonNull(instanceID, "InstanceID");
 
       final var services =
-        this.serviceConstructor.createServicesV1(this.instrumentDescription);
+        this.serviceConstructor.createContextV1(this.instrumentDescription);
       final var instrument =
         this.instrumentFactory.createInstrument(services);
 
@@ -521,7 +521,7 @@ public final class ARInstrumentLoader
           this.instrumentDescription
         );
 
-      return new ARInstrument1(this, services, instrument, description);
+      return new ARInstrumentExecutable1(this, services, instrument, description);
     }
 
     @Override
@@ -553,7 +553,7 @@ public final class ARInstrumentLoader
     }
 
     @Override
-    public ARInstrumentType execute(
+    public ARInstrumentExecutableType execute(
       final ARInstrumentPortAssignerType assigner,
       final ARInstrumentInstanceID instanceID)
     {

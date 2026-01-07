@@ -18,12 +18,9 @@ package com.io7m.aradine.ensemble.internal.v1.commands;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
-import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.ensemble.internal.model.AREnsCommandUndoable;
 import com.io7m.aradine.ensemble.internal.model.AREnsCommandUndoableType;
 import com.io7m.aradine.ensemble.internal.model.AREnsModelCommandContextType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 
 import java.nio.file.Path;
@@ -72,38 +69,6 @@ public enum AREnsModelCommandInstrumentLoad
     return instrumentFileOpt.get();
   }
 
-  private static void instrumentPortsRegister(
-    final AREnsModelCommandContextType context,
-    final ARInstrumentType instrument)
-    throws ARException
-  {
-    final var ports = instrument.description().ports();
-    for (final var entry : ports.entrySet()) {
-      final var port = entry.getValue();
-      context.instrumentPortRegister(port);
-    }
-  }
-
-  private static ARInstrumentType instrumentLoadAndRegister(
-    final AREnsModelCommandContextType context,
-    final ARInstrumentInstanceID instanceID,
-    final ARInstrumentLoaderFactoryType loaders,
-    final Path file)
-    throws ARException
-  {
-    final var services =
-      context.instrumentServicesConstructor(instanceID);
-
-    final ARInstrumentType instrument;
-    try (var loader = loaders.createLoader(services, file)) {
-      instrument = loader.execute(context.instrumentPortAssigner(), instanceID);
-    }
-    context.instrumentRegister(instrument);
-
-    instrumentPortsRegister(context, instrument);
-    return instrument;
-  }
-
   @Override
   public AREnsCommandUndoableType<AREnsModelCommandInstrumentLoadState>
   execute(
@@ -113,16 +78,13 @@ public enum AREnsModelCommandInstrumentLoad
   {
     final var inventory =
       context.inventory();
-    final var loaders =
-      context.instrumentLoaders();
-
     final var instrumentID =
       parameters.instrumentID();
     final var instanceID =
       parameters.instanceID();
 
     final var file = instrumentFile(parameters, inventory, instrumentID);
-    instrumentLoadAndRegister(context, instanceID, loaders, file);
+    context.instrumentLoadAndRegister(instanceID, file);
 
     return new AREnsCommandUndoable<>(
       new AREnsModelCommandInstrumentLoadState(instanceID, instrumentID)
@@ -137,8 +99,10 @@ public enum AREnsModelCommandInstrumentLoad
   {
     final var instrument =
       context.instrumentGet(state.instanceID());
+    final var executable =
+      instrument.executable();
 
-    final var ports = instrument.description().ports();
+    final var ports = executable.description().ports();
     for (final var entry : ports.entrySet()) {
       final var port = entry.getValue();
       context.instrumentPortDeregister(port);

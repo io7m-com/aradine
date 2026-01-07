@@ -18,9 +18,9 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
-import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortNumber;
@@ -45,8 +45,8 @@ import com.io7m.aradine.ensemble.internal.graph.AREnsGraph;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraphType;
 import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommands1;
 import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
+import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.jattribute.core.AttributeType;
@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -97,8 +98,7 @@ public final class AREnsModel implements AREnsModelType
   private final ARInstrumentLoaderFactoryType loaders;
   private final ARAudioSystemAttributesType audioSystemAttributes;
   private final CompletableFuture<Void> loading;
-  private final AtomicReference<Map<ARInstrumentInstanceID, ARInstrumentType>> instruments;
-  private final AtomicReference<Map<ARInstrumentInstanceID, AREns1InstrumentContext>> instrumentContexts;
+  private final AtomicReference<Map<ARInstrumentInstanceID, AREnsInstrumentType>> instruments;
   private final AttributeType<Optional<AREnsModelCommandRecord>> undoTip;
   private final AttributeType<Optional<AREnsModelCommandRecord>> redoTip;
   private final AtomicReference<AREnsGraph> graph;
@@ -134,8 +134,6 @@ public final class AREnsModel implements AREnsModelType
     this.loading =
       new CompletableFuture<>();
     this.instruments =
-      new AtomicReference<>(Map.of());
-    this.instrumentContexts =
       new AtomicReference<>(Map.of());
     this.graph =
       new AtomicReference<>(AREnsGraph.create());
@@ -500,7 +498,7 @@ public final class AREnsModel implements AREnsModelType
     return this.closed.get();
   }
 
-  private ARInstrumentType instrumentGet(
+  private AREnsInstrumentType instrumentGet(
     final ARInstrumentInstanceID instrumentInstanceID)
     throws ARException
   {
@@ -519,8 +517,7 @@ public final class AREnsModel implements AREnsModelType
     private final AREnsGraph graph;
     private final ARDBTransactionType transaction;
     private final AREnsModel model;
-    private final HashMap<ARInstrumentInstanceID, AREns1InstrumentContext> instrumentContextsToRegister;
-    private final HashMap<ARInstrumentInstanceID, ARInstrumentType> instrumentsToRegister;
+    private final HashMap<ARInstrumentInstanceID, AREnsInstrumentType> instrumentsToRegister;
     private final HashSet<ARInstrumentInstanceID> instrumentsToDeregister;
     private final AtomicBoolean succeeded;
 
@@ -534,7 +531,6 @@ public final class AREnsModel implements AREnsModelType
       this.transaction = inTransaction;
       this.instrumentsToRegister = new HashMap<>();
       this.instrumentsToDeregister = new HashSet<>();
-      this.instrumentContextsToRegister = new HashMap<>();
       this.succeeded = new AtomicBoolean(false);
     }
 
@@ -576,24 +572,6 @@ public final class AREnsModel implements AREnsModelType
     }
 
     @Override
-    public ARInstrumentLoaderServicesConstructorType
-    instrumentServicesConstructor(
-      final ARInstrumentInstanceID instanceID)
-    {
-      Objects.requireNonNull(instanceID, "InstanceID");
-
-      return description -> {
-        final var services =
-          AREns1InstrumentContext.create(
-            description,
-            this.model.audioSystemAttributes
-          );
-        this.instrumentContextsToRegister.put(instanceID, services);
-        return services;
-      };
-    }
-
-    @Override
     public ARInstrumentPortAssignerType instrumentPortAssigner()
     {
       return this;
@@ -601,13 +579,16 @@ public final class AREnsModel implements AREnsModelType
 
     @Override
     public void instrumentRegister(
-      final ARInstrumentType instrument)
+      final AREnsInstrumentType instrument)
       throws ARException
     {
+      final var instrumentExecutable =
+        instrument.executable();
       final var instrumentDescription =
-        instrument.description();
+        instrumentExecutable.description();
       final var instanceID =
         instrumentDescription.instanceId();
+
       final var reference =
         new ARInstrumentReference(
           instanceID,
@@ -639,11 +620,13 @@ public final class AREnsModel implements AREnsModelType
 
     @Override
     public void instrumentDeregister(
-      final ARInstrumentType instrument)
+      final AREnsInstrumentType instrument)
       throws ARException
     {
+      final var instrumentExecutable =
+        instrument.executable();
       final var instrumentDescription =
-        instrument.description();
+        instrumentExecutable.description();
       final var instanceID =
         instrumentDescription.instanceId();
 
@@ -653,7 +636,7 @@ public final class AREnsModel implements AREnsModelType
     }
 
     @Override
-    public ARInstrumentType instrumentGet(
+    public AREnsInstrumentType instrumentGet(
       final ARInstrumentInstanceID instrumentInstanceID)
       throws ARException
     {
@@ -668,21 +651,48 @@ public final class AREnsModel implements AREnsModelType
     }
 
     @Override
+    public AREnsInstrumentV1 instrumentLoad(
+      final ARInstrumentInstanceID instanceID,
+      final ARInstrumentLoaderFactoryType loaders,
+      final Path file)
+      throws ARException
+    {
+      Objects.requireNonNull(instanceID, "InstanceID");
+      Objects.requireNonNull(loaders, "Loaders");
+      Objects.requireNonNull(file, "File");
+
+      final var contextSaved =
+        new AtomicReference<AREns1InstrumentContext>();
+
+      final ARInstrumentContextConstructorType constructor =
+        description -> {
+          final var context =
+            AREns1InstrumentContext.create(
+              description,
+              CommandContext.this.model.audioSystemAttributes
+            );
+          contextSaved.set(context);
+          return context;
+        };
+
+      final ARInstrumentExecutableType executable;
+      try (var loader = loaders.createLoader(constructor, file)) {
+        executable = loader.execute(this, instanceID);
+      }
+
+      return new AREnsInstrumentV1(
+        instanceID,
+        executable,
+        contextSaved.get()
+      );
+    }
+
+    @Override
     public void close()
     {
       if (this.succeeded.get()) {
         this.closeRegisterInstruments();
-        this.closeRegisterContexts();
       }
-    }
-
-    private void closeRegisterContexts()
-    {
-      final var existing = new HashMap<>(this.model.instrumentContexts.get());
-      for (final var entry : this.instrumentContextsToRegister.entrySet()) {
-        existing.put(entry.getKey(), entry.getValue());
-      }
-      this.model.instrumentContexts.set(Map.copyOf(existing));
     }
 
     private void closeRegisterInstruments()
@@ -690,7 +700,7 @@ public final class AREnsModel implements AREnsModelType
       final var nextInstrumentSet =
         new HashMap<>(this.model.instruments.get());
       final var instrumentsToClose =
-        new HashSet<ARInstrumentType>(this.instrumentsToDeregister.size());
+        new HashSet<AREnsInstrumentType>(this.instrumentsToDeregister.size());
 
       /*
        * Calculate the set of resulting instruments by adding new instruments
@@ -710,11 +720,14 @@ public final class AREnsModel implements AREnsModelType
        */
 
       for (final var instrument : instrumentsToClose) {
+        final var description =
+          instrument.executable().description();
+
         try (var _ = instrument) {
           this.model.events.submit(
             new AREnsEventInstrumentClosed(
-              instrument.description().instanceId(),
-              instrument.description().identifier()
+              description.instanceId(),
+              description.identifier()
             )
           );
         } catch (final ARException e) {
@@ -723,12 +736,14 @@ public final class AREnsModel implements AREnsModelType
       }
 
       for (final var entry : this.instrumentsToRegister.entrySet()) {
+        final var instanceID =
+          entry.getKey();
+        final var description =
+          entry.getValue().executable().description();
+
         try {
           this.model.events.submit(
-            new AREnsEventInstrumentLoaded(
-              entry.getKey(),
-              entry.getValue().description().identifier()
-            )
+            new AREnsEventInstrumentLoaded(instanceID, description.identifier())
           );
         } catch (final Exception e) {
           // Nothing we can do about this.

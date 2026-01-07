@@ -18,14 +18,15 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.instrument.ARInstrumentType;
 import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraphType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderServicesConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.inventory.api.ARInventoryType;
+
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * The context of a model command.
@@ -58,15 +59,6 @@ public interface AREnsModelCommandContextType
   ARInstrumentLoaderFactoryType instrumentLoaders();
 
   /**
-   * @param instanceID The instrument instance ID
-   *
-   * @return The instrument loader services constructor
-   */
-
-  ARInstrumentLoaderServicesConstructorType instrumentServicesConstructor(
-    ARInstrumentInstanceID instanceID);
-
-  /**
    * @return The instrument port assigner
    */
 
@@ -81,7 +73,7 @@ public interface AREnsModelCommandContextType
    */
 
   void instrumentRegister(
-    ARInstrumentType instrument)
+    AREnsInstrumentType instrument)
     throws ARException;
 
   /**
@@ -117,7 +109,7 @@ public interface AREnsModelCommandContextType
    */
 
   void instrumentDeregister(
-    ARInstrumentType instrument)
+    AREnsInstrumentType instrument)
     throws ARException;
 
   /**
@@ -130,7 +122,101 @@ public interface AREnsModelCommandContextType
    * @throws ARException On errors
    */
 
-  ARInstrumentType instrumentGet(
+  AREnsInstrumentType instrumentGet(
     ARInstrumentInstanceID instrumentInstanceID)
     throws ARException;
+
+  /**
+   * Load an instrument and register all ports on the instrument.
+   *
+   * @param instanceID The instance ID
+   * @param file       The instrument file
+   *
+   * @return A loaded instrument
+   *
+   * @throws ARException On errors
+   */
+
+  default AREnsInstrumentType instrumentLoadAndRegister(
+    final ARInstrumentInstanceID instanceID,
+    final Path file)
+    throws ARException
+  {
+    return this.instrumentLoadAndRegister(
+      instanceID,
+      this.instrumentLoaders(),
+      file
+    );
+  }
+
+  /**
+   * Load an instrument and register all ports on the instrument.
+   *
+   * @param instanceID The instance ID
+   * @param loaders    The loaders
+   * @param file       The instrument file
+   *
+   * @return A loaded instrument
+   *
+   * @throws ARException On errors
+   */
+
+  default AREnsInstrumentType instrumentLoadAndRegister(
+    final ARInstrumentInstanceID instanceID,
+    final ARInstrumentLoaderFactoryType loaders,
+    final Path file)
+    throws ARException
+  {
+    Objects.requireNonNull(instanceID, "InstanceID");
+    Objects.requireNonNull(loaders, "Loaders");
+    Objects.requireNonNull(file, "File");
+
+    final var instrument = this.instrumentLoad(instanceID, loaders, file);
+    this.instrumentRegister(instrument);
+
+    final var executable = instrument.executable();
+    final var ports = executable.description().ports();
+    for (final var entry : ports.entrySet()) {
+      final var port = entry.getValue();
+      this.instrumentPortRegister(port);
+    }
+    return instrument;
+  }
+
+  /**
+   * Load an instrument. Do not register it, or register any ports.
+   *
+   * @param instanceID The instance ID
+   * @param loaders    The loaders
+   * @param file       The instrument file
+   *
+   * @return A loaded instrument
+   *
+   * @throws ARException On errors
+   */
+
+  AREnsInstrumentType instrumentLoad(
+    ARInstrumentInstanceID instanceID,
+    ARInstrumentLoaderFactoryType loaders,
+    Path file)
+    throws ARException;
+
+  /**
+   * Load an instrument. Do not register it, or register any ports.
+   *
+   * @param instanceID The instance ID
+   * @param file       The instrument file
+   *
+   * @return A loaded instrument
+   *
+   * @throws ARException On errors
+   */
+
+  default AREnsInstrumentType instrumentLoad(
+    final ARInstrumentInstanceID instanceID,
+    final Path file)
+    throws ARException
+  {
+    return this.instrumentLoad(instanceID, this.instrumentLoaders(), file);
+  }
 }

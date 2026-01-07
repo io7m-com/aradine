@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,29 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.instrument.loader.api;
+package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
+import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 
 /**
- * A constructor of instrument services.
+ * A loaded instrument.
  */
 
-public interface ARInstrumentLoaderServicesConstructorType
+public sealed interface AREnsInstrumentType
+  extends AutoCloseable
+  permits AREnsInstrumentV1
 {
   /**
-   * Create a new instrument services instance for a v1 instrument.
-   *
-   * @param description The instrument description
-   *
-   * @return A service instance
-   *
-   * @throws ARException On errors
+   * @return The instance ID
    */
 
-  ARI1InstrumentContextType createServicesV1(
-    ARI1InstrumentDescription description)
+  ARInstrumentInstanceID instanceID();
+
+  /**
+   * @return The instrument executable
+   */
+
+  ARInstrumentExecutableType executable();
+
+  @Override
+  void close()
     throws ARException;
 }

@@ -20,10 +20,10 @@ import com.io7m.aradine.api.ARException;
 import com.io7m.jmulticlose.core.CloseableType;
 
 /**
- * A loaded instrument instance.
+ * A loaded instrument executable.
  */
 
-public interface ARInstrumentType
+public interface ARInstrumentExecutableType
   extends CloseableType
 {
   /**

@@ -14,27 +14,34 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.spi1.json_data;
 
-import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersion;
-import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersionQualifier;
-import org.junit.jupiter.api.Test;
+package com.io7m.aradine.tests;
 
-import java.util.Optional;
+import com.io7m.aradine.api.ports.ARPortID;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.UUID;
 
-public final class ARI1JVersionTest
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public final class ARPortIDTest
 {
   /**
-   * An invalid version.
+   * Test that the toString method reflects the contents of the class.
+   *
+   * @param id0 Value A
+   * @param id1 Value B
    */
 
-  @Test
-  public void testInvalidQualifier0()
+  @Property
+  public void testPortIDOrder(
+    final @ForAll UUID id0,
+    final @ForAll UUID id1)
   {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1JVersion(1, 0, 0, Optional.of(new ARI1JVersionQualifier("β")));
-    });
+    assertEquals(
+      id0.compareTo(id1),
+      new ARPortID(id0).compareTo(new ARPortID(id1))
+    );
   }
 }

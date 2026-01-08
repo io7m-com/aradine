@@ -15,9 +15,9 @@
  */
 
 
-package com.io7m.aradine.tests.spi1;
+package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
+import com.io7m.aradine.api.ports.ARPortNumber;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.IntRange;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class ARI1ParameterNumberTest
+public final class ARPortNumberTest
 {
   /**
    * Test that the toString method reflects the contents of the class.
@@ -37,9 +37,9 @@ public final class ARI1ParameterNumberTest
    */
 
   @Property
-  public void testParameterIdToString(
-    final @ForAll ARI1ParameterNumber id0,
-    final @ForAll ARI1ParameterNumber id1)
+  public void testPortIdToString(
+    final @ForAll ARPortNumber id0,
+    final @ForAll ARPortNumber id1)
   {
     if (id0.equals(id1)) {
       assertEquals(id0.toString(), id1.toString());
@@ -55,7 +55,7 @@ public final class ARI1ParameterNumberTest
   {
     assertEquals(
       Integer.compareUnsigned(x, y),
-      new ARI1ParameterNumber(x).compareTo(new ARI1ParameterNumber(y))
+      new ARPortNumber(x).compareTo(new ARPortNumber(y))
     );
   }
 
@@ -63,7 +63,7 @@ public final class ARI1ParameterNumberTest
   public void testOutOfRange0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1ParameterNumber(42949672956L);
+      new ARPortNumber(42949672956L);
     });
   }
 
@@ -71,7 +71,7 @@ public final class ARI1ParameterNumberTest
   public void testOutOfRange1()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1ParameterNumber(-1L);
+      new ARPortNumber(-1L);
     });
   }
 }

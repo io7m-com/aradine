@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,27 +14,24 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.tests.spi1.json_data;
+package com.io7m.aradine.tests;
 
-import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersion;
-import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersionQualifier;
+import com.io7m.aradine.api.ports.ARPortConnection;
+import com.io7m.aradine.api.ports.ARPortID;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class ARI1JVersionTest
+public final class ARPortConnectionTest
 {
-  /**
-   * An invalid version.
-   */
-
   @Test
-  public void testInvalidQualifier0()
+  public void testConnectSelf()
   {
+    final var port = new ARPortID(UUID.randomUUID());
     assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1JVersion(1, 0, 0, Optional.of(new ARI1JVersionQualifier("β")));
+      new ARPortConnection(port, port);
     });
   }
 }

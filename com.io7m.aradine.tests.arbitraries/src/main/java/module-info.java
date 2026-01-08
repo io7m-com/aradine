@@ -29,6 +29,7 @@ import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedReal;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedRealMaps;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMap;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMapMaps;
+import com.io7m.aradine.tests.arbitraries.ARProviderPortNumber;
 import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
@@ -47,20 +48,21 @@ module com.io7m.aradine.tests.arbitraries
   provides ArbitraryProvider
     with
       ARI1ProviderDottedName1,
-      ARI1ProviderSampleMapID1,
       ARI1ProviderEvent,
-      ARI1ProviderSampleMapID,
       ARI1ProviderInstrumentID,
       ARI1ProviderInstrumentInstanceID,
       ARI1ProviderParameterNumber,
       ARI1ProviderPortNumber,
+      ARI1ProviderSampleMapID,
+      ARI1ProviderSampleMapID1,
       ARI1ProviderUUID,
       ARI1ProviderValueChangedInteger,
       ARI1ProviderValueChangedIntegerMaps,
       ARI1ProviderValueChangedReal,
       ARI1ProviderValueChangedRealMaps,
       ARI1ProviderValueChangedSampleMap,
-      ARI1ProviderValueChangedSampleMapMaps
+      ARI1ProviderValueChangedSampleMapMaps,
+      ARProviderPortNumber
     ;
 
   exports com.io7m.aradine.tests.arbitraries;

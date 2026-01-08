@@ -20,9 +20,11 @@ package com.io7m.aradine.tests.spi1;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class ARI1ParameterNumberTest
 {
@@ -43,5 +45,21 @@ public final class ARI1ParameterNumberTest
     } else {
       assertNotEquals(id0.toString(), id1.toString());
     }
+  }
+
+  @Test
+  public void testOutOfRange0()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new ARI1ParameterNumber(42949672956L);
+    });
+  }
+
+  @Test
+  public void testOutOfRange1()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new ARI1ParameterNumber(-1L);
+    });
   }
 }

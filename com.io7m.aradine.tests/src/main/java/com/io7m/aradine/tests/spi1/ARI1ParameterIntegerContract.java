@@ -23,6 +23,8 @@ import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedInteger;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.LongRange;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -155,5 +157,53 @@ public abstract class ARI1ParameterIntegerContract<T extends ARI1ParameterIntege
     assertNotNull(param.label());
     assertEquals(valueMin, param.valueMinimum());
     assertEquals(valueMax, param.valueMaximum());
+  }
+
+  @Test
+  public void testRange0()
+  {
+    Assertions.assertThrows(
+      IllegalArgumentException.class,
+      () -> {
+        this.createParameter(
+          new ARI1ParameterNumber(0),
+          100,
+          99,
+          100
+        );
+      }
+    );
+  }
+
+  @Test
+  public void testRange1()
+  {
+    Assertions.assertThrows(
+      IllegalArgumentException.class,
+      () -> {
+        this.createParameter(
+          new ARI1ParameterNumber(0),
+          5,
+          100,
+          3
+        );
+      }
+    );
+  }
+
+  @Test
+  public void testRange2()
+  {
+    Assertions.assertThrows(
+      IllegalArgumentException.class,
+      () -> {
+        this.createParameter(
+          new ARI1ParameterNumber(0),
+          5,
+          100,
+          101
+        );
+      }
+    );
   }
 }

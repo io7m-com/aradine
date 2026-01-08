@@ -17,12 +17,8 @@
 package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
-import com.io7m.lanark.core.RDottedName;
-import com.io7m.verona.core.Version;
-import com.io7m.verona.core.VersionQualifier;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 

@@ -17,7 +17,6 @@
 package com.io7m.aradine.instrument.spi1;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,29 +50,6 @@ public record ARI1DottedName(String value)
   public String toString()
   {
     return this.value;
-  }
-
-  /**
-   * @return The name as a list of segments
-   */
-
-  public List<String> segments()
-  {
-    return List.of(this.value.split("\\."));
-  }
-
-  /**
-   * Construct a name from a list of segments.
-   *
-   * @param segments The segments
-   *
-   * @return A name
-   */
-
-  public static ARI1DottedName ofSegments(
-    final List<String> segments)
-  {
-    return new ARI1DottedName(String.join(".", segments));
   }
 
   @Override

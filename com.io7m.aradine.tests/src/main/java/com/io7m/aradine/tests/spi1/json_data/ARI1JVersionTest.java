@@ -14,52 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.aradine.tests.spi1.json_data;
 
-package com.io7m.aradine.tests.spi1;
-
-import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
+import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersion;
+import com.io7m.aradine.instrument.spi1.json_data.internal.ARI1JVersionQualifier;
+import com.io7m.verona.core.Version;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class ARI1PortNumberTest
+public final class ARI1JVersionTest
 {
   /**
-   * Test that the toString method reflects the contents of the class.
-   *
-   * @param id0 Value A
-   * @param id1 Value B
+   * An invalid version.
    */
 
-  @Property
-  public void testPortIdToString(
-    final @ForAll ARI1PortNumber id0,
-    final @ForAll ARI1PortNumber id1)
-  {
-    if (id0.equals(id1)) {
-      assertEquals(id0.toString(), id1.toString());
-    } else {
-      assertNotEquals(id0.toString(), id1.toString());
-    }
-  }
-
   @Test
-  public void testOutOfRange0()
+  public void testInvalidQualifier0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1PortNumber(42949672956L);
-    });
-  }
-
-  @Test
-  public void testOutOfRange1()
-  {
-    assertThrows(IllegalArgumentException.class, () -> {
-      new ARI1PortNumber(-1L);
+      new ARI1JVersion(1, 0, 0, Optional.of(new ARI1JVersionQualifier("β")));
     });
   }
 }

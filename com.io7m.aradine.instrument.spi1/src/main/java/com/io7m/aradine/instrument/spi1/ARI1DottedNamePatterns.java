@@ -32,9 +32,6 @@ public final class ARI1DottedNamePatterns
   private static final Pattern DOTTED_NAME =
     Pattern.compile("([a-z][a-z0-9_-]{0,63})(\\.[a-z][a-z0-9_-]{0,62}){0,15}");
 
-  private static final Pattern DOTTED_PREFIX =
-    Pattern.compile("([a-z][a-z0-9_-]{0,63})(\\.[a-z][a-z0-9_-]{0,62}){0,15}\\.");
-
   /**
    * @return The pattern that defines a restricted dotted name
    */
@@ -42,14 +39,5 @@ public final class ARI1DottedNamePatterns
   public static Pattern dottedName()
   {
     return DOTTED_NAME;
-  }
-
-  /**
-   * @return The pattern that defines a restricted dotted prefix
-   */
-
-  public static Pattern dottedPrefix()
-  {
-    return DOTTED_PREFIX;
   }
 }

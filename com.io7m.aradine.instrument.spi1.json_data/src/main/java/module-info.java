@@ -34,7 +34,10 @@ module com.io7m.aradine.instrument.spi1.json_data
   exports com.io7m.aradine.instrument.spi1.json_data;
 
   opens com.io7m.aradine.instrument.spi1.json_data.internal
-    to com.io7m.aradine.instrument.spi1.json_schemagen, tools.jackson.databind;
+    to com.io7m.aradine.instrument.spi1.json_schemagen,
+    tools.jackson.databind;
+
   exports com.io7m.aradine.instrument.spi1.json_data.internal
-    to com.io7m.aradine.instrument.spi1.json_schemagen;
+    to com.io7m.aradine.instrument.spi1.json_schemagen,
+    com.io7m.aradine.tests;
 }

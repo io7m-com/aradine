@@ -19,6 +19,8 @@ package com.io7m.aradine.instrument.spi1;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 
+import java.util.Objects;
+
 /**
  * The value of a parameter has changed at this time period.
  *
@@ -31,5 +33,15 @@ public record ARI1EventConfigurationParameterChanged(
   ARI1ParameterNumber parameter)
   implements ARI1EventConfigurationType
 {
+  /**
+   * The value of a parameter has changed at this time period.
+   *
+   * @param timeOffsetInFrames The time offset in frames
+   * @param parameter          The parameter ID
+   */
 
+  public ARI1EventConfigurationParameterChanged
+  {
+    Objects.requireNonNull(parameter, "Parameter");
+  }
 }

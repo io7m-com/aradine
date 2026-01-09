@@ -16,34 +16,17 @@
 
 package com.io7m.aradine.ensemble.internal.v1.context;
 
-import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
-import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
-
-import java.util.Objects;
-
 /**
- * A source note port.
+ * A port on an instrument. This is the interface that is
+ * visible to the ensemble implementation. This is _not_ visible to the
+ * instrument implementation.
  */
 
-public final class AREns1PortSourceNote
-  implements ARI1PortSourceNoteType, AREns1PortType
+public sealed interface AREns1PortType
+  permits AREns1PortSourceAudio,
+  AREns1PortSourceNote,
+  AREns1PortTargetAudio,
+  AREns1PortTargetNote
 {
-  private final AREns1InstrumentContext context;
-  private final ARI1PortNumber portNumber;
 
-  AREns1PortSourceNote(
-    final AREns1InstrumentContext inContext,
-    final ARI1PortNumber inPortNumber)
-  {
-    this.context =
-      Objects.requireNonNull(inContext, "Context");
-    this.portNumber =
-      Objects.requireNonNull(inPortNumber, "PortNumber");
-  }
-
-  @Override
-  public ARI1PortNumber id()
-  {
-    return this.portNumber;
-  }
 }

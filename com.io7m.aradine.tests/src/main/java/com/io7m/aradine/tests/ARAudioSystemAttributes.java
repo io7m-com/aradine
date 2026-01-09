@@ -26,6 +26,10 @@ import com.io7m.jattribute.core.Attributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The audio system attributes implementation.
+ */
+
 public final class ARAudioSystemAttributes
   implements ARAudioSystemAttributesType
 {
@@ -42,6 +46,10 @@ public final class ARAudioSystemAttributes
   private final AttributeSubscriptionType sampleRateSubscription;
   private double millisecondsPerFrame;
 
+  /**
+   * The audio system attributes implementation.
+   */
+
   public ARAudioSystemAttributes()
   {
     this.sampleRate =
@@ -57,6 +65,34 @@ public final class ARAudioSystemAttributes
         this.millisecondsPerFrame =
           1.0 / (newRate.doubleValue() * 1000.0);
       });
+  }
+
+  /**
+   * Set the buffer size.
+   *
+   * @param size The new size
+   */
+
+  public void setBufferSize(
+    final int size)
+  {
+    this.bufferSize.set(
+      Integer.valueOf(Math.clamp(size, 1, Integer.MAX_VALUE))
+    );
+  }
+
+  /**
+   * Set the sample rate.
+   *
+   * @param rate The new rate
+   */
+
+  public void setSampleRate(
+    final int rate)
+  {
+    this.sampleRate.set(
+      Integer.valueOf(Math.clamp(rate, 1, Integer.MAX_VALUE))
+    );
   }
 
   @Override

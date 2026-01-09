@@ -20,16 +20,13 @@ import com.io7m.aradine.instrument.grain_sampler_m0.ARIGM0SamplerFactory;
 import com.io7m.aradine.instrument.sampler_m0.ARIM0SamplerFactory;
 import com.io7m.aradine.instrument.sampler_p0.ARIP0SamplerFactory;
 import com.io7m.aradine.instrument.sampler_xp0.ARIXP0SamplerFactory;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
+import com.io7m.aradine.instrument.sine0.ARSine0SynthFactory;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentFactoryType;
-import com.io7m.aradine.instrument.spi1.ARI1PortTargetAudioType;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
 import com.io7m.aradine.tests.ARFakeInstrumentContext;
-import com.io7m.aradine.tests.ARI1PortTargetAudio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.List;
@@ -44,7 +41,8 @@ public final class ARCoreInstrumentsTest
       new ARIGM0SamplerFactory(),
       new ARIM0SamplerFactory(),
       new ARIP0SamplerFactory(),
-      new ARIXP0SamplerFactory()
+      new ARIXP0SamplerFactory(),
+      new ARSine0SynthFactory()
     );
 
   private static final ARI1InstrumentParsers PARSERS =

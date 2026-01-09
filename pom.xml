@@ -40,6 +40,7 @@
     <module>com.io7m.aradine.instrument.sampler_m0</module>
     <module>com.io7m.aradine.instrument.sampler_p0</module>
     <module>com.io7m.aradine.instrument.sampler_xp0</module>
+    <module>com.io7m.aradine.instrument.sine0</module>
     <module>com.io7m.aradine.instrument.spi1.json_data</module>
     <module>com.io7m.aradine.instrument.spi1.json_schemagen</module>
     <module>com.io7m.aradine.instrument.spi1</module>

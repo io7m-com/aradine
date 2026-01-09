@@ -7,3 +7,4 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 pom.xml.versionsBackup
 target
+com.io7m.aradine.tests/*.png

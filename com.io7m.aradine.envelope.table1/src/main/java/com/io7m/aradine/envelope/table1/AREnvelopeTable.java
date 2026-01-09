@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import static com.io7m.aradine.envelope.table1.AREnvelopeInterpolation.LINEAR;
 
 /**
- * A table1 of nodes comprising an envelope.
+ * A table of nodes comprising an envelope.
  */
 
 public final class AREnvelopeTable

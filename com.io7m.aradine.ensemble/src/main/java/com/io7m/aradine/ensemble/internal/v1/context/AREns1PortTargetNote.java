@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 
 public final class AREns1PortTargetNote
-  implements ARI1PortTargetNoteType
+  implements ARI1PortTargetNoteType, AREns1PortType
 {
   private final AREns1InstrumentContext context;
   private final ARI1PortNumber portNumber;
@@ -59,5 +59,17 @@ public final class AREns1PortTargetNote
     final int frameIndex)
   {
     return this.eventBuffer.eventsTake(frameIndex);
+  }
+
+  /**
+   * Add an event to be processed in the next processing period.
+   *
+   * @param event The event
+   */
+
+  public void eventPut(
+    final ARI1EventNoteType event)
+  {
+    this.eventBuffer.eventAdd(event);
   }
 }

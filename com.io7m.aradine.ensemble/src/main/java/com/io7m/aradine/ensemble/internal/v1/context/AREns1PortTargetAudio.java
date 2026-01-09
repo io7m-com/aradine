@@ -26,7 +26,7 @@ import java.util.Objects;
  */
 
 public final class AREns1PortTargetAudio
-  implements ARI1PortTargetAudioType
+  implements ARI1PortTargetAudioType, AREns1PortType
 {
   private final AREns1InstrumentContext context;
   private final ARI1PortNumber portNumber;

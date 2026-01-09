@@ -29,6 +29,10 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.filter.biquad1;
   requires com.io7m.aradine.filter.recursive1;
   requires com.io7m.aradine.filter.statevar1;
+  requires com.io7m.aradine.instrument.bad_extradep;
+  requires com.io7m.aradine.instrument.bad_noprovides;
+  requires com.io7m.aradine.instrument.bad_provides;
+  requires com.io7m.aradine.instrument.bad_uses;
   requires com.io7m.aradine.instrument.codegen;
   requires com.io7m.aradine.instrument.grain_sampler_m0;
   requires com.io7m.aradine.instrument.loader.api;
@@ -36,6 +40,7 @@ open module com.io7m.aradine.tests
   requires com.io7m.aradine.instrument.sampler_m0;
   requires com.io7m.aradine.instrument.sampler_p0;
   requires com.io7m.aradine.instrument.sampler_xp0;
+  requires com.io7m.aradine.instrument.sine0;
   requires com.io7m.aradine.instrument.spi1.json_data;
   requires com.io7m.aradine.instrument.spi1;
   requires com.io7m.aradine.inventory.api;
@@ -82,8 +87,4 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
-  requires com.io7m.aradine.instrument.bad_extradep;
-  requires com.io7m.aradine.instrument.bad_noprovides;
-  requires com.io7m.aradine.instrument.bad_provides;
-  requires com.io7m.aradine.instrument.bad_uses;
 }

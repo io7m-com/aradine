@@ -14,36 +14,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.aradine.ensemble.internal.v1.context;
-
-import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
-import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
-
-import java.util.Objects;
-
 /**
- * A source note port.
+ * Modular programmable synthesis (Monophonic sine synth)
  */
 
-public final class AREns1PortSourceNote
-  implements ARI1PortSourceNoteType, AREns1PortType
-{
-  private final AREns1InstrumentContext context;
-  private final ARI1PortNumber portNumber;
+@Export
+@Version("1.0.0")
+@Header(name = "Aradine-Instrument", value = "/src/main/instrument/instrument.json")
+package com.io7m.aradine.instrument.sine0;
 
-  AREns1PortSourceNote(
-    final AREns1InstrumentContext inContext,
-    final ARI1PortNumber inPortNumber)
-  {
-    this.context =
-      Objects.requireNonNull(inContext, "Context");
-    this.portNumber =
-      Objects.requireNonNull(inPortNumber, "PortNumber");
-  }
-
-  @Override
-  public ARI1PortNumber id()
-  {
-    return this.portNumber;
-  }
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.bundle.Header;
+import org.osgi.annotation.versioning.Version;

@@ -60,6 +60,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.instrument.sine0</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.aradine.instrument.sampler_m0</artifactId>
       <version>${project.version}</version>
     </dependency>

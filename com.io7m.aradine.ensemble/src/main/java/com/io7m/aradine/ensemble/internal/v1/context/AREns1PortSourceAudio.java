@@ -26,7 +26,7 @@ import java.util.Objects;
  */
 
 public final class AREns1PortSourceAudio
-  implements ARI1PortSourceAudioType
+  implements ARI1PortSourceAudioType, AREns1PortType
 {
   private final AREns1InstrumentContext context;
   private final ARI1PortNumber portNumber;
@@ -57,6 +57,29 @@ public final class AREns1PortSourceAudio
     final double value)
   {
     this.buffer[frame] = value;
+  }
+
+  /**
+   * Read a value at the given frame.
+   *
+   * @param frame The frame index
+   *
+   * @return The value in the buffer
+   */
+
+  public double read(
+    final int frame)
+  {
+    return this.buffer[frame];
+  }
+
+  /**
+   * @return The port buffer
+   */
+
+  public double[] buffer()
+  {
+    return this.buffer;
   }
 
   /**

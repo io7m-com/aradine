@@ -40,7 +40,7 @@ public final class BadFactory implements ARI1InstrumentFactoryType
   public InputStream openInstrumentDescription()
   {
     return BadFactory.class.getResourceAsStream(
-      "/com/io7m/aradine/instrument/bad_noprovides/internal/instrument.json"
+      "/com/io7m/aradine/instrument/bad_provides/internal/instrument.json"
     );
   }
 

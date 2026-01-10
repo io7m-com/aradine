@@ -27,13 +27,17 @@ import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.jaffirm.core.Preconditions;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.graph.GraphCycleProhibitedException;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A port/instrument graph.
@@ -47,15 +51,7 @@ public final class AREnsGraph implements AREnsGraphType
   private final HashMap<ARInstrumentInstanceID, ARInstrumentReference> instruments;
   private final HashMap<ARInstrumentInstanceID, Set<ARPort>> instrumentPorts;
   private final long versionCode;
-
-  @Override
-  public String toString()
-  {
-    return "[AREnsGraph 0x%s %d]".formatted(
-      Integer.toUnsignedString(System.identityHashCode(this), 16),
-      this.versionCode
-    );
-  }
+  private List<AREnsGraphExecutionStep> executionSteps;
 
   private AREnsGraph(
     final DirectedAcyclicGraph<ARPortID, ARPortConnection> inPortGraph,
@@ -77,6 +73,8 @@ public final class AREnsGraph implements AREnsGraphType
       Objects.requireNonNull(inInstrumentPorts, "InstrumentPorts");
     this.versionCode =
       inVersionCode;
+    this.executionSteps =
+      this.calculateExecutionSteps();
   }
 
   /**
@@ -112,7 +110,42 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   @Override
-  public boolean equals(final Object o)
+  public String toString()
+  {
+    return "[AREnsGraph 0x%s %d]".formatted(
+      Integer.toUnsignedString(System.identityHashCode(this), 16),
+      this.versionCode
+    );
+  }
+
+  private List<AREnsGraphExecutionStep> calculateExecutionSteps()
+  {
+    final var iterator =
+      new TopologicalOrderIterator<>(this.instrumentGraph);
+    final var outputSteps =
+      new ArrayList<AREnsGraphExecutionStep>(this.instruments.size());
+
+    int index = 0;
+    while (iterator.hasNext()) {
+      final var instrument = iterator.next();
+      outputSteps.add(
+        new AREnsGraphExecutionStep(
+          index,
+          this.instrumentGraph.incomingEdgesOf(instrument)
+            .stream()
+            .map(ARInstrumentConnection::instrumentSource)
+            .collect(Collectors.toSet()),
+          instrument
+        )
+      );
+      ++index;
+    }
+    return List.copyOf(outputSteps);
+  }
+
+  @Override
+  public boolean equals(
+    final Object o)
   {
     if (!(o instanceof final AREnsGraph that)) {
       return false;
@@ -137,6 +170,12 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   @Override
+  public List<AREnsGraphExecutionStep> executionSteps()
+  {
+    return this.executionSteps;
+  }
+
+  @Override
   public void instrumentDeregister(
     final ARInstrumentInstanceID instrument)
     throws ARException
@@ -150,6 +189,7 @@ public final class AREnsGraph implements AREnsGraphType
     this.instruments.remove(instrument);
     this.instrumentGraph.removeVertex(instrument);
     this.instrumentPorts.remove(instrument);
+    this.executionSteps = this.calculateExecutionSteps();
   }
 
   private void checkInstrumentNoPorts(
@@ -194,6 +234,7 @@ public final class AREnsGraph implements AREnsGraphType
 
     this.instruments.put(instanceID, instrument);
     this.instrumentGraph.addVertex(instanceID);
+    this.executionSteps = this.calculateExecutionSteps();
   }
 
   @Override
@@ -241,6 +282,8 @@ public final class AREnsGraph implements AREnsGraphType
           portTargetID
         )
       );
+
+      this.executionSteps = this.calculateExecutionSteps();
     } catch (final GraphCycleProhibitedException e) {
       throw new ARException(
         e.getMessage(),
@@ -293,6 +336,7 @@ public final class AREnsGraph implements AREnsGraphType
 
     this.portGraph.removeEdge(portsEdge);
     this.instrumentGraph.removeEdge(instrumentEdge);
+    this.executionSteps = this.calculateExecutionSteps();
   }
 
   @Override

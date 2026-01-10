@@ -22,12 +22,20 @@ import com.io7m.aradine.api.instrument.ARInstrumentReference;
 import com.io7m.aradine.api.ports.ARPort;
 import com.io7m.aradine.api.ports.ARPortID;
 
+import java.util.List;
+
 /**
  * The port/instrument graph.
  */
 
 public interface AREnsGraphType
 {
+  /**
+   * @return The graph steps
+   */
+
+  List<AREnsGraphExecutionStep> executionSteps();
+
   /**
    * Deregister an instrument.
    *

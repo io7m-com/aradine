@@ -26,10 +26,12 @@ import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
 import com.io7m.aradine.api.ports.ARPortNumber;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraph;
+import com.io7m.aradine.ensemble.internal.graph.AREnsGraphExecutionStep;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,6 +57,16 @@ public final class AREnsGraphTest
       new ARInstrumentID(
         new RDottedName("com.io7m.aradine"),
         new RDottedName("com.io7m.aradine.example1"),
+        Version.of(1, 0, 0)
+      )
+    );
+
+  private static final ARInstrumentReference INSTRUMENT_2 =
+    new ARInstrumentReference(
+      ARInstrumentInstanceID.random(),
+      new ARInstrumentID(
+        new RDottedName("com.io7m.aradine"),
+        new RDottedName("com.io7m.aradine.example2"),
         Version.of(1, 0, 0)
       )
     );
@@ -90,7 +102,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -101,7 +113,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("ef4fc254-8dc8-4386-9b48-6dbb0a9dd1d8"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Target0",
         Set.of()
       );
@@ -112,7 +124,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("addacc8f-e666-47ed-be5d-8a3acc2eeb30"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(1),
+        new ARPortNumber(1L),
         "Source0",
         Set.of()
       );
@@ -123,7 +135,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("121814ad-c534-436d-91b4-04f6de9087b0"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(1),
+        new ARPortNumber(1L),
         "Target0",
         Set.of()
       );
@@ -155,7 +167,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -182,7 +194,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -193,7 +205,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("ef4fc254-8dc8-4386-9b48-6dbb0a9dd1d8"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Target0",
         Set.of()
       );
@@ -226,7 +238,7 @@ public final class AREnsGraphTest
             ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
             ARPortKind.AR_AUDIO,
             ARPortDirection.AR_SOURCE,
-            new ARPortNumber(0),
+            new ARPortNumber(0L),
             "Source0",
             Set.of()
           ));
@@ -247,7 +259,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -258,7 +270,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -285,7 +297,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -296,7 +308,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -329,7 +341,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -340,7 +352,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -373,7 +385,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -384,7 +396,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Target1",
         Set.of()
       );
@@ -416,7 +428,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -427,7 +439,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -460,7 +472,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -489,7 +501,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -500,7 +512,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -534,7 +546,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -564,7 +576,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -575,7 +587,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("b61cbfbb-99bb-4527-9a19-3ad665733e7c"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(1),
+        new ARPortNumber(1L),
         "Source1",
         Set.of()
       );
@@ -586,7 +598,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Target1",
         Set.of()
       );
@@ -622,7 +634,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_SOURCE,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source0",
         Set.of()
       );
@@ -633,7 +645,7 @@ public final class AREnsGraphTest
         ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
         ARPortKind.AR_AUDIO,
         ARPortDirection.AR_TARGET,
-        new ARPortNumber(0),
+        new ARPortNumber(0L),
         "Source1",
         Set.of()
       );
@@ -660,5 +672,232 @@ public final class AREnsGraphTest
           graph.portDisconnect(port0.id(), port1.id());
         });
     assertEquals("error-ports-not-connected", ex.errorCode());
+  }
+
+  /// `[A] -> [B]`
+  ///
+  /// @throws ARException On errors
+
+  @Test
+  public void testGraphSteps0()
+    throws ARException
+  {
+    final var graph = AREnsGraph.create();
+
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0L),
+        "Source0",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(0L),
+        "Source1",
+        Set.of()
+      );
+
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.instrumentRegister(INSTRUMENT_1);
+    graph.portRegister(port0);
+    graph.portRegister(port1);
+    graph.portConnect(port0.id(), port1.id());
+
+    assertEquals(
+      List.of(
+        new AREnsGraphExecutionStep(
+          0L,
+          Set.of(),
+          INSTRUMENT_0.instanceID()
+        ),
+        new AREnsGraphExecutionStep(
+          1L,
+          Set.of(INSTRUMENT_0.instanceID()),
+          INSTRUMENT_1.instanceID()
+        )
+      ),
+      graph.executionSteps()
+    );
+  }
+
+  /// `[A] -> [B] -> [C]`
+  ///
+  /// @throws ARException On errors
+
+  @Test
+  public void testGraphSteps1()
+    throws ARException
+  {
+    final var graph = AREnsGraph.create();
+
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0L),
+        "A",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(0L),
+        "B",
+        Set.of()
+      );
+
+    final var port2 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("8ecba7f3-c294-40ba-a677-425a7c24cb4a"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(1L),
+        "C",
+        Set.of()
+      );
+
+    final var port3 =
+      new ARPort(
+        INSTRUMENT_2.instanceID(),
+        ARPortID.ofString("742962bc-203c-4d57-89fd-ff47fea2a9e2"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(2L),
+        "D",
+        Set.of()
+      );
+
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.instrumentRegister(INSTRUMENT_1);
+    graph.instrumentRegister(INSTRUMENT_2);
+    graph.portRegister(port0);
+    graph.portRegister(port1);
+    graph.portRegister(port2);
+    graph.portRegister(port3);
+    graph.portConnect(port0.id(), port1.id());
+    graph.portConnect(port2.id(), port3.id());
+
+    assertEquals(
+      List.of(
+        new AREnsGraphExecutionStep(
+          0L,
+          Set.of(),
+          INSTRUMENT_0.instanceID()
+        ),
+        new AREnsGraphExecutionStep(
+          1L,
+          Set.of(INSTRUMENT_0.instanceID()),
+          INSTRUMENT_1.instanceID()
+        ),
+        new AREnsGraphExecutionStep(
+          2L,
+          Set.of(INSTRUMENT_1.instanceID()),
+          INSTRUMENT_2.instanceID()
+        )
+      ),
+      graph.executionSteps()
+    );
+  }
+
+  /// `([A] + [B]) -> [C]`
+  ///
+  /// @throws ARException On errors
+
+  @Test
+  public void testGraphSteps2()
+    throws ARException
+  {
+    final var graph = AREnsGraph.create();
+
+    final var port0 =
+      new ARPort(
+        INSTRUMENT_0.instanceID(),
+        ARPortID.ofString("1ef64b40-cfac-456a-9a20-b168c8e579e9"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(0L),
+        "X",
+        Set.of()
+      );
+
+    final var port1 =
+      new ARPort(
+        INSTRUMENT_1.instanceID(),
+        ARPortID.ofString("7f5ab52c-4cad-491d-844d-700b24ac4841"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_SOURCE,
+        new ARPortNumber(1L),
+        "X",
+        Set.of()
+      );
+
+    final var port2 =
+      new ARPort(
+        INSTRUMENT_2.instanceID(),
+        ARPortID.ofString("742962bc-203c-4d57-89fd-ff47fea2a9e2"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(0L),
+        "D",
+        Set.of()
+      );
+
+    final var port3 =
+      new ARPort(
+        INSTRUMENT_2.instanceID(),
+        ARPortID.ofString("1cf77f73-f540-49a2-a512-0940548c0336"),
+        ARPortKind.AR_AUDIO,
+        ARPortDirection.AR_TARGET,
+        new ARPortNumber(1L),
+        "D",
+        Set.of()
+      );
+
+    graph.instrumentRegister(INSTRUMENT_0);
+    graph.instrumentRegister(INSTRUMENT_1);
+    graph.instrumentRegister(INSTRUMENT_2);
+    graph.portRegister(port0);
+    graph.portRegister(port1);
+    graph.portRegister(port2);
+    graph.portRegister(port3);
+    graph.portConnect(port0.id(), port2.id());
+    graph.portConnect(port1.id(), port3.id());
+
+    assertEquals(
+      List.of(
+        new AREnsGraphExecutionStep(
+          0L,
+          Set.of(),
+          INSTRUMENT_0.instanceID()
+        ),
+        new AREnsGraphExecutionStep(
+          1L,
+          Set.of(),
+          INSTRUMENT_1.instanceID()
+        ),
+        new AREnsGraphExecutionStep(
+          2L,
+          Set.of(INSTRUMENT_0.instanceID(), INSTRUMENT_1.instanceID()),
+          INSTRUMENT_2.instanceID()
+        )
+      ),
+      graph.executionSteps()
+    );
   }
 }

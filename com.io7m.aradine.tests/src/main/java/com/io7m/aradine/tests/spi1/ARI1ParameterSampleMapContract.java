@@ -19,7 +19,7 @@ package com.io7m.aradine.tests.spi1;
 
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterSampleMapType;
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 import com.io7m.aradine.tests.arbitraries.ARI1ValueChangedSampleMap;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -34,13 +34,13 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
 {
   protected abstract T createParameter(
     ARI1ParameterNumber id,
-    ARI1SampleMapID valueDefault
+    ARI1SampleMapInstanceID valueDefault
   );
 
   protected abstract void setValue(
     T parameter,
     int time,
-    ARI1SampleMapID value
+    ARI1SampleMapInstanceID value
   );
 
   protected abstract void clearChanges(
@@ -54,7 +54,7 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
   @Property
   public void testEventLastWins(
     @ForAll final ARI1ParameterNumber id,
-    @ForAll final ARI1SampleMapID valueDefault,
+    @ForAll final ARI1SampleMapInstanceID valueDefault,
     @ForAll final Map<Integer, ARI1ValueChangedSampleMap> updates)
   {
     final var param =
@@ -106,10 +106,10 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
   @Property
   public void testEventsSameTime(
     @ForAll final ARI1ParameterNumber id,
-    @ForAll final ARI1SampleMapID valueDefault,
-    @ForAll final ARI1SampleMapID valueA,
-    @ForAll final ARI1SampleMapID valueB,
-    @ForAll final ARI1SampleMapID valueC)
+    @ForAll final ARI1SampleMapInstanceID valueDefault,
+    @ForAll final ARI1SampleMapInstanceID valueA,
+    @ForAll final ARI1SampleMapInstanceID valueB,
+    @ForAll final ARI1SampleMapInstanceID valueC)
   {
     final var param =
       this.createParameter(id, valueDefault);
@@ -138,7 +138,7 @@ public abstract class ARI1ParameterSampleMapContract<T extends ARI1ParameterSamp
   @Property
   public void testID(
     @ForAll final ARI1ParameterNumber id,
-    @ForAll final ARI1SampleMapID valueDefault)
+    @ForAll final ARI1SampleMapInstanceID valueDefault)
   {
     final var param = this.createParameter(id, valueDefault);
     assertEquals(id, param.id());

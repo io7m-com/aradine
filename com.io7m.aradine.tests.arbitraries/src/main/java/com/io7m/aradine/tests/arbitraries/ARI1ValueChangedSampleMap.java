@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.tests.arbitraries;
 
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 
 /**
  * A sample-map-typed value changed.
@@ -27,7 +27,7 @@ import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 
 public record ARI1ValueChangedSampleMap(
   int time,
-  ARI1SampleMapID value)
+  ARI1SampleMapInstanceID value)
 {
 
 }

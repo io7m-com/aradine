@@ -43,6 +43,7 @@ CREATE TABLE instruments (
   instrument_version_minor         INTEGER NOT NULL,
   instrument_version_patch         INTEGER NOT NULL,
   instrument_qualifier             TEXT    NOT NULL,
+  instrument_role                  TEXT    NOT NULL,
 
   CONSTRAINT instrument_instance_id_valid
     CHECK (instrument_instance_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
@@ -60,9 +61,24 @@ CREATE TABLE instruments (
     CHECK ((instrument_version_minor >= 0) AND (instrument_version_minor <= 4294967295)),
 
   CONSTRAINT instrument_version_patch_range
-    CHECK ((instrument_version_patch >= 0) AND (instrument_version_patch <= 4294967295))
+    CHECK ((instrument_version_patch >= 0) AND (instrument_version_patch <= 4294967295)),
+
+  CONSTRAINT instrument_role_valid
+    CHECK (instrument_role REGEXP '^(AR_INSTRUMENT|AR_SYSTEM_SOURCE|AR_SYSTEM_TARGET)$')
 
 ) STRICT
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE UNIQUE INDEX instrument_role_system_source_unique
+  ON instruments (instrument_role)
+    WHERE instrument_role = 'AR_SYSTEM_SOURCE'
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE UNIQUE INDEX instrument_role_system_target_unique
+  ON instruments (instrument_role)
+    WHERE instrument_role = 'AR_SYSTEM_TARGET'
 ]]></Statement>
 
     <Comment>

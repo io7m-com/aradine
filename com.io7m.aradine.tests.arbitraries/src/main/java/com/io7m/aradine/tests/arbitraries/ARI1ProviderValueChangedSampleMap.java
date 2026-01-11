@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests.arbitraries;
 
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.providers.ArbitraryProvider;
@@ -67,7 +67,7 @@ public final class ARI1ProviderValueChangedSampleMap
         .between(0, 100_000_000);
 
     final var al =
-      Arbitraries.defaultFor(ARI1SampleMapID.class);
+      Arbitraries.defaultFor(ARI1SampleMapInstanceID.class);
 
     return ai.flatMap(time -> al.map(v -> {
       return new ARI1ValueChangedSampleMap(time.intValue(), v);

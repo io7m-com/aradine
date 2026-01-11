@@ -32,9 +32,21 @@ public final class ARSampleMapIdentifiers
       Version.of(1, 0, 0)
     );
 
+  private static final ARSampleMapInstanceID EMPTY_INSTANCE_ID =
+    ARSampleMapInstanceID.ofString("00000000-0000-0000-0000-000000000000");
+
   private ARSampleMapIdentifiers()
   {
 
+  }
+
+  /**
+   * @return The identifier of the empty map
+   */
+
+  public static ARSampleMapInstanceID emptyInstanceID()
+  {
+    return EMPTY_INSTANCE_ID;
   }
 
   /**

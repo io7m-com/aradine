@@ -20,8 +20,8 @@ package com.io7m.aradine.tests;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1RNGDeterministic;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1EventBuffer;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1RNGDeterministic;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
@@ -38,6 +38,7 @@ import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapIdentifiers;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
 import com.io7m.jattribute.core.AttributeSubscriptionType;
@@ -68,7 +69,7 @@ public final class ARI1MiniInstrumentContext
   private final CloseableCollectionType<ClosingResourceFailedException> closeables;
   private final Map<ARI1ParameterNumber, ARI1ParameterType> parameters;
   private final Map<ARI1PortNumber, ARI1PortType> ports;
-  private final ConcurrentHashMap<ARI1SampleMapID, ARI1SampleMapType> sampleMaps;
+  private final ConcurrentHashMap<ARI1SampleMapInstanceID, ARI1SampleMapType> sampleMaps;
   private final AttributeSubscriptionType sampleRateSubscription;
   private double millisecondsPerFrame;
 
@@ -226,7 +227,7 @@ public final class ARI1MiniInstrumentContext
             id,
             new ARI1ParameterSampleMap(
               d,
-              ARI1SampleMapIdentifiers.empty()
+              ARI1SampleMapIdentifiers.emptyInstanceID()
             )
           );
           continue;
@@ -239,7 +240,7 @@ public final class ARI1MiniInstrumentContext
   @Override
   public ARI1EventBufferType createEventBuffer()
   {
-    return new AREns1EventBuffer<>();
+    return new AREnsSPI1EventBuffer<>();
   }
 
   @Override
@@ -253,7 +254,7 @@ public final class ARI1MiniInstrumentContext
   public ARI1RNGDeterministicType createDeterministicRNG(
     final int seed)
   {
-    return new AREns1RNGDeterministic(seed);
+    return new AREnsSPI1RNGDeterministic(seed);
   }
 
   @Override
@@ -270,14 +271,15 @@ public final class ARI1MiniInstrumentContext
 
   public void sampleMapRegister(
     final ARI1SampleMapID uri,
+    final ARI1SampleMapInstanceID instance,
     final ARI1SampleMapType sampleMap)
   {
-    this.sampleMaps.put(uri, sampleMap);
+    this.sampleMaps.put(instance, sampleMap);
   }
 
   @Override
   public ARI1SampleMapType sampleMapGet(
-    final ARI1SampleMapID uri)
+    final ARI1SampleMapInstanceID uri)
   {
     final var map = this.sampleMaps.get(uri);
     if (map == null) {

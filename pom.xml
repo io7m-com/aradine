@@ -48,6 +48,7 @@
     <module>com.io7m.aradine.inventory</module>
     <module>com.io7m.aradine.maven_plugin</module>
     <module>com.io7m.aradine.sample_map.aurantium</module>
+    <module>com.io7m.aradine.system.jnajack</module>
     <module>com.io7m.aradine.tests.arbitraries</module>
     <module>com.io7m.aradine.tests</module>
   </modules>

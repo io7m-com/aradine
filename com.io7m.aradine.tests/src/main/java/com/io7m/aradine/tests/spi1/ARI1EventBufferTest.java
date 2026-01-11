@@ -17,15 +17,15 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1EventBuffer;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 
 public final class ARI1EventBufferTest
-  extends ARI1EventBufferContract<AREns1EventBuffer<ARI1EventType>>
+  extends ARI1EventBufferContract<AREnsSPI1EventBuffer<ARI1EventType>>
 {
   @Override
-  protected AREns1EventBuffer<ARI1EventType> createEventBuffer()
+  protected AREnsSPI1EventBuffer<ARI1EventType> createEventBuffer()
   {
-    return new AREns1EventBuffer<>();
+    return new AREnsSPI1EventBuffer<>();
   }
 }

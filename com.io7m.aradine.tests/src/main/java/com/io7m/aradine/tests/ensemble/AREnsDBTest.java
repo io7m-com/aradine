@@ -20,7 +20,8 @@ import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.instrument.ARInstrumentRole;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.ports.ARPortConnection;
 import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
@@ -137,16 +138,16 @@ public final class AREnsDBTest
       ARInstrumentInstanceID.random();
 
     final var portsWritten =
-      new ArrayList<ARPort>();
+      new ArrayList<ARPortDescription>();
     final var portsRead =
-      new ArrayList<ARPort>();
+      new ArrayList<ARPortDescription>();
 
     {
       var number = 0;
       for (final var kind : ARPortKind.values()) {
         for (var index = 0; index < 3; ++index) {
           portsWritten.add(
-            new ARPort(
+            new ARPortDescription(
               sourceId,
               new ARPortID(UUID.randomUUID()),
               kind,
@@ -166,7 +167,7 @@ public final class AREnsDBTest
       for (final var kind : ARPortKind.values()) {
         for (var index = 0; index < 3; ++index) {
           portsWritten.add(
-            new ARPort(
+            new ARPortDescription(
               targetId,
               new ARPortID(UUID.randomUUID()),
               kind,
@@ -191,7 +192,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -201,7 +203,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     try (var db = AREnsDB.createDatabase(file)) {
@@ -286,7 +289,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -296,11 +300,12 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var port0 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
@@ -311,7 +316,7 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPort(
+      new ARPortDescription(
         targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
@@ -396,7 +401,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -406,11 +412,12 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var port0 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
@@ -421,7 +428,7 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPort(
+      new ARPortDescription(
         targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
@@ -472,7 +479,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -482,11 +490,12 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var port0 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
@@ -497,7 +506,7 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPort(
+      new ARPortDescription(
         targetId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
@@ -548,7 +557,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -558,11 +568,12 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var port0 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
@@ -573,7 +584,7 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("e4a68329-5935-4193-9837-150adfba6381"),
         ARPortKind.AR_AUDIO,
@@ -584,7 +595,7 @@ public final class AREnsDBTest
       );
 
     final var port2 =
-      new ARPort(
+      new ARPortDescription(
         targetId,
         ARPortID.ofString("019f798d-a28b-4795-94d8-874d0d5ec069"),
         ARPortKind.AR_AUDIO,
@@ -640,11 +651,12 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var port0 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("4c3100c1-e37a-4253-a60f-9d6c04a6bfc3"),
         ARPortKind.AR_AUDIO,
@@ -655,7 +667,7 @@ public final class AREnsDBTest
       );
 
     final var port1 =
-      new ARPort(
+      new ARPortDescription(
         sourceId,
         ARPortID.ofString("019f798d-a28b-4795-94d8-874d0d5ec069"),
         ARPortKind.AR_AUDIO,
@@ -707,7 +719,8 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_source"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
     final var instrument1 =
@@ -717,12 +730,13 @@ public final class AREnsDBTest
           new RDottedName("com.io7m.aradine"),
           new RDottedName("com.io7m.aradine.ensemble_target"),
           Version.of(1, 0, 0)
-        )
+        ),
+        ARInstrumentRole.AR_INSTRUMENT
       );
 
-    final var portSources = new ArrayList<ARPort>();
+    final var portSources = new ArrayList<ARPortDescription>();
     for (var index = 0; index < 100; ++index) {
-      final var p = new ARPort(
+      final var p = new ARPortDescription(
         sourceId,
         new ARPortID(UUID.randomUUID()),
         ARPortKind.AR_AUDIO,
@@ -734,9 +748,9 @@ public final class AREnsDBTest
       portSources.add(p);
     }
 
-    final var portTargets = new ArrayList<ARPort>();
+    final var portTargets = new ArrayList<ARPortDescription>();
     for (var index = 0; index < 100; ++index) {
-      final var p = new ARPort(
+      final var p = new ARPortDescription(
         targetId,
         new ARPortID(UUID.randomUUID()),
         ARPortKind.AR_AUDIO,

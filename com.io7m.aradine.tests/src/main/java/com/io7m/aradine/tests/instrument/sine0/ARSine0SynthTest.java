@@ -16,9 +16,15 @@
 
 package com.io7m.aradine.tests.instrument.sine0;
 
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1PortSourceAudio;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1PortTargetNote;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.system.ARAudioSystemAttributes;
+import com.io7m.aradine.ensemble.internal.events.AREnsEventNoteOff;
+import com.io7m.aradine.ensemble.internal.events.AREnsEventNoteOn;
+import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentContextAdapter;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentDescriptions;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1PortAudioAdapter;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1PortNoteAdapter;
 import com.io7m.aradine.instrument.sine0.ARSine0SynthFactory;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
@@ -28,9 +34,7 @@ import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortSourceAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortTargetNoteType;
 import com.io7m.aradine.instrument.spi1.json_data.ARI1InstrumentParsers;
-import com.io7m.aradine.tests.ARAudioSystemAttributes;
 import com.io7m.aradine.tests.AROutputCharting;
-import com.io7m.aradine.tests.ARTestFrequencyAnalysis;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +44,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.DoubleBuffer;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,14 +53,15 @@ public final class ARSine0SynthTest
   private static final Logger LOG =
     LoggerFactory.getLogger(ARSine0SynthTest.class);
 
-  private AREns1InstrumentContext context;
   private ARSine0SynthFactory factory;
   private ARAudioSystemAttributes audioSystem;
   private ARI1InstrumentDescription description;
   private ARI1InstrumentType synth;
-  private AREns1PortTargetNote notePort;
-  private AREns1PortSourceAudio outputL;
-  private AREns1PortSourceAudio outputR;
+  private AREnsSPI1PortNoteAdapter notePort;
+  private AREnsSPI1PortAudioAdapter outputL;
+  private AREnsSPI1PortAudioAdapter outputR;
+  private ARInstrumentInstanceID instanceId;
+  private AREnsSPI1InstrumentContextAdapter context;
 
   @BeforeEach
   public void setup()
@@ -71,29 +75,37 @@ public final class ARSine0SynthTest
           URI.create("urn:input"),
           this.factory.openInstrumentDescription()
         );
+    this.instanceId =
+      ARInstrumentInstanceID.random();
     this.audioSystem =
       new ARAudioSystemAttributes();
     this.context =
-      AREns1InstrumentContext.create(
-        this.description,
-        this.audioSystem
+      AREnsSPI1InstrumentContextAdapter.wrap(
+        this.audioSystem,
+        AREnsInstrumentContext.create(
+          this.audioSystem,
+          AREnsSPI1InstrumentDescriptions.ofV1(
+            this.instanceId,
+            this.description
+          )
+        )
       );
 
     this.synth =
       this.factory.createInstrument(this.context);
 
     this.notePort =
-      (AREns1PortTargetNote) this.context.declaredPort(
+      (AREnsSPI1PortNoteAdapter) this.context.declaredPort(
         new ARI1PortNumber(2L),
         ARI1PortTargetNoteType.class
       );
     this.outputL =
-      (AREns1PortSourceAudio) this.context.declaredPort(
+      (AREnsSPI1PortAudioAdapter) this.context.declaredPort(
         new ARI1PortNumber(0),
         ARI1PortSourceAudioType.class
       );
     this.outputR =
-      (AREns1PortSourceAudio) this.context.declaredPort(
+      (AREnsSPI1PortAudioAdapter) this.context.declaredPort(
         new ARI1PortNumber(1),
         ARI1PortSourceAudioType.class
       );
@@ -139,9 +151,9 @@ public final class ARSine0SynthTest
     throws Exception
   {
     this.notePort.eventPut(
-      new ARI1EventNoteOn(0, 60, 1.0));
+      new AREnsEventNoteOn(0, 60, 1.0));
     this.notePort.eventPut(
-      new ARI1EventNoteOff(512, 60, 0.0));
+      new AREnsEventNoteOff(512, 60, 0.0));
 
     this.synth.process(this.context);
 

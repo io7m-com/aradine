@@ -20,7 +20,7 @@ import com.io7m.aradine.tests.arbitraries.ARI1ProviderInstrumentInstanceID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderParameterNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderPortNumber;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderSampleMapID;
-import com.io7m.aradine.tests.arbitraries.ARI1ProviderSampleMapID1;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderSPI1SampleMapID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderDottedName1;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderUUID;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedInteger;
@@ -30,6 +30,7 @@ import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedRealMaps;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMap;
 import com.io7m.aradine.tests.arbitraries.ARI1ProviderValueChangedSampleMapMaps;
 import com.io7m.aradine.tests.arbitraries.ARProviderPortNumber;
+import com.io7m.aradine.tests.arbitraries.ARI1ProviderSPI1SampleMapInstanceID;
 import net.jqwik.api.providers.ArbitraryProvider;
 
 /**
@@ -47,6 +48,7 @@ module com.io7m.aradine.tests.arbitraries
 
   provides ArbitraryProvider
     with
+      ARI1ProviderSPI1SampleMapInstanceID,
       ARI1ProviderDottedName1,
       ARI1ProviderEvent,
       ARI1ProviderInstrumentID,
@@ -54,7 +56,7 @@ module com.io7m.aradine.tests.arbitraries
       ARI1ProviderParameterNumber,
       ARI1ProviderPortNumber,
       ARI1ProviderSampleMapID,
-      ARI1ProviderSampleMapID1,
+      ARI1ProviderSPI1SampleMapID,
       ARI1ProviderUUID,
       ARI1ProviderValueChangedInteger,
       ARI1ProviderValueChangedIntegerMaps,

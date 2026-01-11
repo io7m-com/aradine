@@ -18,11 +18,10 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraphType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 
 import java.nio.file.Path;
@@ -59,12 +58,6 @@ public interface AREnsModelCommandContextType
   ARInstrumentLoaderFactoryType instrumentLoaders();
 
   /**
-   * @return The instrument port assigner
-   */
-
-  ARInstrumentPortAssignerType instrumentPortAssigner();
-
-  /**
    * Mark an instrument to be registered.
    *
    * @param instrument The instrument
@@ -85,7 +78,7 @@ public interface AREnsModelCommandContextType
    */
 
   void instrumentPortRegister(
-    ARPort port)
+    ARPortDescription port)
     throws ARException;
 
   /**
@@ -97,7 +90,7 @@ public interface AREnsModelCommandContextType
    */
 
   void instrumentPortDeregister(
-    ARPort port)
+    ARPortDescription port)
     throws ARException;
 
   /**
@@ -174,11 +167,10 @@ public interface AREnsModelCommandContextType
     final var instrument = this.instrumentLoad(instanceID, loaders, file);
     this.instrumentRegister(instrument);
 
-    final var executable = instrument.executable();
-    final var ports = executable.description().ports();
+    final var ports = instrument.ports();
     for (final var entry : ports.entrySet()) {
       final var port = entry.getValue();
-      this.instrumentPortRegister(port);
+      this.instrumentPortRegister(port.portDescription());
     }
     return instrument;
   }

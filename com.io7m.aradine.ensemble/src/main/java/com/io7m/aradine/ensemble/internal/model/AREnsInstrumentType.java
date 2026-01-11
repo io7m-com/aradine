@@ -17,28 +17,66 @@
 package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
+import com.io7m.aradine.api.instrument.ARInstrumentDescription;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.instrument.ARInstrumentRole;
+import com.io7m.aradine.api.parameters.ARParameterID;
+import com.io7m.aradine.api.ports.ARPortID;
+
+import java.util.Map;
 
 /**
  * A loaded instrument.
  */
 
-public sealed interface AREnsInstrumentType
+public interface AREnsInstrumentType
   extends AutoCloseable
-  permits AREnsInstrumentV1
 {
+  /**
+   * @return The ports
+   */
+
+  Map<ARPortID, AREnsPortInstanceType> ports();
+
+  /**
+   * @return The parameters
+   */
+
+  Map<ARParameterID, AREnsParameterType> parameters();
+
+  /**
+   * @return The instrument description
+   */
+
+  ARInstrumentDescription description();
+
   /**
    * @return The instance ID
    */
 
-  ARInstrumentInstanceID instanceID();
+  default ARInstrumentInstanceID instanceID()
+  {
+    return this.description().instanceId();
+  }
 
   /**
-   * @return The instrument executable
+   * @return The instrument identifier
    */
 
-  ARInstrumentExecutableType executable();
+  default ARInstrumentID identifier()
+  {
+    return this.description().identifier();
+  }
+
+  /**
+   * @return The instrument role
+   */
+
+  default ARInstrumentRole role()
+  {
+    return this.description().role();
+  }
 
   @Override
   void close()

@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.database.api.ARDBQueryType;
 import com.io7m.aradine.database.api.ARDBUnit;
 
@@ -25,7 +25,7 @@ import com.io7m.aradine.database.api.ARDBUnit;
  */
 
 public interface AREnsQPortPutType
-  extends ARDBQueryType<ARPort, ARDBUnit>
+  extends ARDBQueryType<ARPortDescription, ARDBUnit>
 {
 
 }

@@ -34,9 +34,11 @@ module com.io7m.aradine.api
   requires com.io7m.mime2045.core;
   requires com.io7m.seltzer.api;
   requires com.io7m.verona.core;
+  requires org.slf4j;
 
   exports com.io7m.aradine.api.directories;
   exports com.io7m.aradine.api.instrument;
+  exports com.io7m.aradine.api.parameters;
   exports com.io7m.aradine.api.ports;
   exports com.io7m.aradine.api.progress;
   exports com.io7m.aradine.api.sample_map;

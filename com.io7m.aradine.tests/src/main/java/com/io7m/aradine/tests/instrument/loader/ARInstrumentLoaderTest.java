@@ -19,6 +19,7 @@ package com.io7m.aradine.tests.instrument.loader;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.system.ARAudioSystemAttributes;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
@@ -47,7 +48,8 @@ public final class ARInstrumentLoaderTest
   private Path directory;
   private ARInstrumentLoaders loaders;
   private ARInstrumentContextConstructor serviceConstructor;
-  private ARFakeInstrumentPortAssigner assigner;
+  private ARInstrumentInstanceID instanceID;
+  private ARAudioSystemAttributes attributes;
 
   @BeforeEach
   public void setup()
@@ -55,10 +57,13 @@ public final class ARInstrumentLoaderTest
   {
     this.directory =
       Files.createTempDirectory("aradine");
+    this.instanceID =
+      ARInstrumentInstanceID.random();
+    this.attributes =
+      new ARAudioSystemAttributes();
     this.serviceConstructor =
-      new ARInstrumentContextConstructor();
+      new ARInstrumentContextConstructor(this.attributes, this.instanceID);
 
-    this.assigner = new ARFakeInstrumentPortAssigner();
     this.loaders = new ARInstrumentLoaders();
     Files.createDirectories(this.directory);
   }
@@ -173,7 +178,7 @@ public final class ARInstrumentLoaderTest
     final var loader =
       this.loaders.createLoader(this.serviceConstructor, file);
 
-    try (var instrument = loader.execute(this.assigner, ARInstrumentInstanceID.random())) {
+    try (var instrument = loader.execute(ARInstrumentInstanceID.random())) {
       assertFalse(instrument.isClosed());
     }
   }
@@ -197,7 +202,7 @@ public final class ARInstrumentLoaderTest
 
     for (int index = 0; index < loaders.length; ++index) {
       instruments[index] =
-        loaders[index].execute(this.assigner, ARInstrumentInstanceID.random());
+        loaders[index].execute(ARInstrumentInstanceID.random());
     }
 
     for (int index = 0; index < loaders.length; ++index) {

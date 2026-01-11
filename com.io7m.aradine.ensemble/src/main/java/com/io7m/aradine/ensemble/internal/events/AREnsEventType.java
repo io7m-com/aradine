@@ -21,7 +21,8 @@ package com.io7m.aradine.ensemble.internal.events;
  */
 
 public sealed interface AREnsEventType
-  permits AREnsEventInstrumentClosed, AREnsEventInstrumentLoaded
+  permits AREnsEventEnsembleType,
+  AREnsEventInstrumentType
 {
 
 }

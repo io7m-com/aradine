@@ -45,7 +45,8 @@ public enum AREnsQInstrumentPut
       instrument_version_major,
       instrument_version_minor,
       instrument_version_patch,
-      instrument_qualifier
+      instrument_qualifier,
+      instrument_role
     ) VALUES (
       $1,
       $2,
@@ -53,14 +54,16 @@ public enum AREnsQInstrumentPut
       $4,
       $5,
       $6,
-      $7
+      $7,
+      $8
     ) ON CONFLICT DO UPDATE SET
       instrument_group              = $2,
       instrument_name               = $3,
       instrument_version_major      = $4,
       instrument_version_minor      = $5,
       instrument_version_patch      = $6,
-      instrument_qualifier          = $7
+      instrument_qualifier          = $7,
+      instrument_role               = $8
     """;
 
   @Override
@@ -97,6 +100,7 @@ public enum AREnsQInstrumentPut
       st.setInt(5, instrumentId.version().minor());
       st.setInt(6, instrumentId.version().patch());
       st.setString(7, qualifierOf(instrumentId));
+      st.setString(8, parameters.role().name());
       st.execute();
       return ARDBUnit.UNIT;
     } catch (final Exception e) {

@@ -36,6 +36,7 @@ import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
 import com.io7m.aradine.instrument.spi1.ARI1PortSourceNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortTargetAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 import com.io7m.aradine.instrument.spi1.ARI1Version;
 import com.io7m.jsamplebuffer.xmedia.SXMSampleBufferRateConverters;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
@@ -200,8 +201,12 @@ public final class ARI1MiniJackHost
         ARI1Version.of(1, 0, 0)
       );
 
+    final var sampleMapInstanceID =
+      ARI1SampleMapInstanceID.random();
+
     services.sampleMapRegister(
       sampleMapId,
+      sampleMapInstanceID,
       sampleMap
     );
 
@@ -214,7 +219,7 @@ public final class ARI1MiniJackHost
         final var message = messages.poll();
         if (message instanceof final ARI1EventConfigurationParameterChanged e) {
           if (Objects.equals(e.parameter(), parameterSampleMap.id())) {
-            parameterSampleMap.valueChange(0, sampleMapId);
+            parameterSampleMap.valueChange(0, sampleMapInstanceID);
           }
         }
         sampler.receiveEvent(services, message);

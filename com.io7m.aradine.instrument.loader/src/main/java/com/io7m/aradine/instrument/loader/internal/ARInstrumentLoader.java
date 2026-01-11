@@ -18,11 +18,10 @@ package com.io7m.aradine.instrument.loader.internal;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
-import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadV1;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReaderFactoryType;
@@ -502,11 +501,9 @@ public final class ARInstrumentLoader
 
     @Override
     public ARInstrumentExecutableType execute(
-      final ARInstrumentPortAssignerType assigner,
       final ARInstrumentInstanceID instanceID)
       throws ARException
     {
-      Objects.requireNonNull(assigner, "assigner");
       Objects.requireNonNull(instanceID, "InstanceID");
 
       final var services =
@@ -516,12 +513,15 @@ public final class ARInstrumentLoader
 
       final var description =
         ARInstrumentDescriptionsV1.fromV1(
-          assigner,
           instanceID,
           this.instrumentDescription
         );
 
-      return new ARInstrumentExecutable1(this, services, instrument, description);
+      return new ARInstrumentExecutable1(
+        this,
+        services,
+        instrument,
+        description);
     }
 
     @Override
@@ -554,7 +554,6 @@ public final class ARInstrumentLoader
 
     @Override
     public ARInstrumentExecutableType execute(
-      final ARInstrumentPortAssignerType assigner,
       final ARInstrumentInstanceID instanceID)
     {
       throw new UnsupportedOperationException();

@@ -31,7 +31,7 @@ import java.util.Objects;
 public record AREnsEventInstrumentLoaded(
   ARInstrumentInstanceID instanceID,
   ARInstrumentID instrumentID)
-  implements AREnsEventType
+  implements AREnsEventEnsembleType
 {
   /**
    * An instrument was loaded.

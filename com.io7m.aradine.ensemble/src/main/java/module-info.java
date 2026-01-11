@@ -38,6 +38,7 @@ module com.io7m.aradine.ensemble
   requires com.io7m.jdeferthrow.core;
   requires com.io7m.jmulticlose.core;
   requires com.io7m.jmurmur.core;
+  requires com.io7m.junreachable.core;
   requires com.io7m.jxe.core;
   requires com.io7m.lanark.core;
   requires com.io7m.trasco.api;

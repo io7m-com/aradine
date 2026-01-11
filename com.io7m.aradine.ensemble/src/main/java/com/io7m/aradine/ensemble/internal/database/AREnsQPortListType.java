@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.database;
 
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.database.api.ARDBQueryType;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 
 public interface AREnsQPortListType
-  extends ARDBQueryType<AREnsQPortListType.Parameters, List<ARPort>>
+  extends ARDBQueryType<AREnsQPortListType.Parameters, List<ARPortDescription>>
 {
   /**
    * The parameters.
@@ -38,7 +38,7 @@ public interface AREnsQPortListType
    */
 
   record Parameters(
-    Optional<ARPort> start,
+    Optional<ARPortDescription> start,
     int limit)
   {
     /**

@@ -29,9 +29,21 @@ public final class ARI1SampleMapIdentifiers
       ARI1Version.of(1, 0, 0)
     );
 
+  private static final ARI1SampleMapInstanceID EMPTY_INSTANCE_ID =
+    ARI1SampleMapInstanceID.ofString("00000000-0000-0000-0000-000000000000");
+
   private ARI1SampleMapIdentifiers()
   {
 
+  }
+
+  /**
+   * @return The identifier of the empty map
+   */
+
+  public static ARI1SampleMapInstanceID emptyInstanceID()
+  {
+    return EMPTY_INSTANCE_ID;
   }
 
   /**

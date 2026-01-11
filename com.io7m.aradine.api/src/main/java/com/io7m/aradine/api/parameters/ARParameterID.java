@@ -1,0 +1,81 @@
+/*
+ * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package com.io7m.aradine.api.parameters;
+
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
+import java.util.UUID;
+
+/**
+ * A parameter ID.
+ *
+ * @param value The raw ID value
+ */
+
+public record ARParameterID(
+  UUID value)
+  implements Comparable<ARParameterID>
+{
+  /**
+   * @param text The text
+   *
+   * @return A parameter ID from the given text
+   */
+
+  public static ARParameterID ofString(
+    final String text)
+  {
+    return new ARParameterID(UUID.fromString(text));
+  }
+
+  /**
+   * Deterministically generate a unique parameter ID.
+   *
+   * @param instance The instrument instance ID
+   * @param number   The parameter number
+   *
+   * @return A unique parameter ID
+   */
+
+  public static ARParameterID ofInstanceParameter(
+    final ARInstrumentInstanceID instance,
+    final ARParameterNumber number)
+  {
+    final var text =
+      String.format("%s:parameter:%s", instance, number);
+    final var uuid =
+      UUID.nameUUIDFromBytes(text.getBytes(StandardCharsets.UTF_8));
+
+    return new ARParameterID(uuid);
+  }
+
+  @Override
+  public String toString()
+  {
+    return this.value.toString();
+  }
+
+  @Override
+  public int compareTo(
+    final ARParameterID other)
+  {
+    return Comparator.comparing(ARParameterID::value)
+      .compare(this, other);
+  }
+}

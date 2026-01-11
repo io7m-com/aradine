@@ -18,8 +18,8 @@ package com.io7m.aradine.tests;
 
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1IntMapMutable;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1EventBuffer;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1IntMapMutable;
 import com.io7m.aradine.instrument.spi1.ARI1DottedName;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
@@ -38,8 +38,8 @@ import com.io7m.aradine.instrument.spi1.ARI1PortSourceAudioType;
 import com.io7m.aradine.instrument.spi1.ARI1PortTargetNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortType;
 import com.io7m.aradine.instrument.spi1.ARI1RNGDeterministicType;
-import com.io7m.aradine.instrument.spi1.ARI1SampleMapID;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapIdentifiers;
+import com.io7m.aradine.instrument.spi1.ARI1SampleMapInstanceID;
 import com.io7m.aradine.instrument.spi1.ARI1SampleMapType;
 import com.io7m.junreachable.UnimplementedCodeException;
 
@@ -118,7 +118,7 @@ public final class ARFakeInstrumentContext
             id.toString(),
             Optional.empty()
           ),
-          ARI1SampleMapIdentifiers.empty()
+          ARI1SampleMapIdentifiers.emptyInstanceID()
         )
       );
     }
@@ -162,14 +162,14 @@ public final class ARFakeInstrumentContext
   @Override
   public <T extends ARI1EventType> ARI1EventBufferType<T> createEventBuffer()
   {
-    return new AREns1EventBuffer<>();
+    return new AREnsSPI1EventBuffer<>();
   }
 
   @Override
   public <T> ARI1IntMapMutableType<T> createIntMap(
     final int size)
   {
-    return new AREns1IntMapMutable<>(size);
+    return new AREnsSPI1IntMapMutable<>(size);
   }
 
   @Override
@@ -181,7 +181,7 @@ public final class ARFakeInstrumentContext
 
   @Override
   public ARI1SampleMapType sampleMapGet(
-    final ARI1SampleMapID id)
+    final ARI1SampleMapInstanceID id)
   {
     throw new UnimplementedCodeException();
   }

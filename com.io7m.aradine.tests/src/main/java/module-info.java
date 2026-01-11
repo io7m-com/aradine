@@ -87,4 +87,5 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
+  requires com.io7m.aradine.system.jnajack;
 }

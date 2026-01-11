@@ -18,12 +18,11 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
-import com.io7m.aradine.api.ports.ARPort;
-import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.ports.ARPortNumber;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
@@ -44,10 +43,13 @@ import com.io7m.aradine.ensemble.internal.events.AREnsEventType;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraph;
 import com.io7m.aradine.ensemble.internal.graph.AREnsGraphType;
 import com.io7m.aradine.ensemble.internal.v1.commands.AREnsModelCommands1;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1Instrument;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentContextAdapter;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentDescriptions;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentContextConstructorType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
-import com.io7m.aradine.instrument.loader.api.ARInstrumentPortAssignerType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
+import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 import com.io7m.jattribute.core.AttributeType;
 import com.io7m.jattribute.core.Attributes;
@@ -55,7 +57,6 @@ import com.io7m.jmulticlose.core.CloseableCollectionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -64,7 +65,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -510,9 +510,7 @@ public final class AREnsModel implements AREnsModelType
   }
 
   private static final class CommandContext
-    implements AREnsModelCommandContextType,
-    ARInstrumentPortAssignerType,
-    AutoCloseable
+    implements AREnsModelCommandContextType, AutoCloseable
   {
     private final AREnsGraph graph;
     private final ARDBTransactionType transaction;
@@ -532,19 +530,6 @@ public final class AREnsModel implements AREnsModelType
       this.instrumentsToRegister = new HashMap<>();
       this.instrumentsToDeregister = new HashSet<>();
       this.succeeded = new AtomicBoolean(false);
-    }
-
-    @Override
-    public ARPortID assign(
-      final ARInstrumentInstanceID instance,
-      final ARPortNumber portNumber)
-    {
-      final var text =
-        String.format("%s:%s", instance, portNumber);
-      final var uuid =
-        UUID.nameUUIDFromBytes(text.getBytes(StandardCharsets.UTF_8));
-
-      return new ARPortID(uuid);
     }
 
     @Override
@@ -572,27 +557,20 @@ public final class AREnsModel implements AREnsModelType
     }
 
     @Override
-    public ARInstrumentPortAssignerType instrumentPortAssigner()
-    {
-      return this;
-    }
-
-    @Override
     public void instrumentRegister(
       final AREnsInstrumentType instrument)
       throws ARException
     {
-      final var instrumentExecutable =
-        instrument.executable();
-      final var instrumentDescription =
-        instrumentExecutable.description();
       final var instanceID =
-        instrumentDescription.instanceId();
+        instrument.instanceID();
+      final var identifier =
+        instrument.identifier();
 
       final var reference =
         new ARInstrumentReference(
           instanceID,
-          instrumentDescription.identifier()
+          identifier,
+          instrument.role()
         );
 
       this.graph.instrumentRegister(reference);
@@ -602,7 +580,7 @@ public final class AREnsModel implements AREnsModelType
 
     @Override
     public void instrumentPortRegister(
-      final ARPort port)
+      final ARPortDescription port)
       throws ARException
     {
       this.graph.portRegister(port);
@@ -611,7 +589,7 @@ public final class AREnsModel implements AREnsModelType
 
     @Override
     public void instrumentPortDeregister(
-      final ARPort port)
+      final ARPortDescription port)
       throws ARException
     {
       this.graph.portDeregister(port);
@@ -623,13 +601,7 @@ public final class AREnsModel implements AREnsModelType
       final AREnsInstrumentType instrument)
       throws ARException
     {
-      final var instrumentExecutable =
-        instrument.executable();
-      final var instrumentDescription =
-        instrumentExecutable.description();
-      final var instanceID =
-        instrumentDescription.instanceId();
-
+      final var instanceID = instrument.instanceID();
       this.graph.instrumentDeregister(instanceID);
       this.transaction.execute(AREnsQInstrumentDeleteType.class, instanceID);
       this.instrumentsToDeregister.add(instanceID);
@@ -650,8 +622,56 @@ public final class AREnsModel implements AREnsModelType
       throw errorInstrumentNonexistent(instrumentInstanceID);
     }
 
+    private enum SupportedInstrumentVersion {
+      SPI_VERSION_1
+    }
+
+    private static final class AREnsInstrumentContextConstructor
+      implements ARInstrumentContextConstructorType
+    {
+      private final CommandContext commandContext;
+      private final ARInstrumentInstanceID instanceID;
+      private SupportedInstrumentVersion instrumentVersion;
+      private ARInstrumentDescription coreDescription;
+      private AREnsInstrumentContext baseContext;
+      private AREnsSPI1InstrumentContextAdapter spi1Context;
+
+      AREnsInstrumentContextConstructor(
+        final CommandContext inCommandContext,
+        final ARInstrumentInstanceID inInstanceID)
+      {
+        this.commandContext = inCommandContext;
+        this.instanceID = inInstanceID;
+      }
+
+      @Override
+      public ARI1InstrumentContextType createContextV1(
+        final ARI1InstrumentDescription description)
+      {
+        this.instrumentVersion =
+          SupportedInstrumentVersion.SPI_VERSION_1;
+
+        this.coreDescription =
+          AREnsSPI1InstrumentDescriptions.ofV1(this.instanceID, description);
+
+        this.baseContext =
+          AREnsInstrumentContext.create(
+            this.commandContext.model.audioSystemAttributes,
+            this.coreDescription
+          );
+
+        this.spi1Context =
+          AREnsSPI1InstrumentContextAdapter.wrap(
+            this.commandContext.model.audioSystemAttributes,
+            this.baseContext
+          );
+
+        return this.spi1Context;
+      }
+    }
+
     @Override
-    public AREnsInstrumentV1 instrumentLoad(
+    public AREnsInstrumentType instrumentLoad(
       final ARInstrumentInstanceID instanceID,
       final ARInstrumentLoaderFactoryType loaders,
       final Path file)
@@ -661,30 +681,22 @@ public final class AREnsModel implements AREnsModelType
       Objects.requireNonNull(loaders, "Loaders");
       Objects.requireNonNull(file, "File");
 
-      final var contextSaved =
-        new AtomicReference<AREns1InstrumentContext>();
-
-      final ARInstrumentContextConstructorType constructor =
-        description -> {
-          final var context =
-            AREns1InstrumentContext.create(
-              description,
-              CommandContext.this.model.audioSystemAttributes
-            );
-          contextSaved.set(context);
-          return context;
-        };
+      final var constructor =
+        new AREnsInstrumentContextConstructor(this, instanceID);
 
       final ARInstrumentExecutableType executable;
       try (var loader = loaders.createLoader(constructor, file)) {
-        executable = loader.execute(this, instanceID);
+        executable = loader.execute(instanceID);
       }
 
-      return new AREnsInstrumentV1(
-        instanceID,
-        executable,
-        contextSaved.get()
-      );
+      return switch (constructor.instrumentVersion) {
+        case SPI_VERSION_1 -> {
+          yield new AREnsSPI1Instrument(
+            executable,
+            constructor.spi1Context
+          );
+        }
+      };
     }
 
     @Override
@@ -720,15 +732,14 @@ public final class AREnsModel implements AREnsModelType
        */
 
       for (final var instrument : instrumentsToClose) {
-        final var description =
-          instrument.executable().description();
+        final var instanceID =
+          instrument.instanceID();
+        final var identifier =
+          instrument.identifier();
 
         try (var _ = instrument) {
           this.model.events.submit(
-            new AREnsEventInstrumentClosed(
-              description.instanceId(),
-              description.identifier()
-            )
+            new AREnsEventInstrumentClosed(instanceID, identifier)
           );
         } catch (final ARException e) {
           LOG.debug("Failed to close instrument: ", e);
@@ -738,12 +749,12 @@ public final class AREnsModel implements AREnsModelType
       for (final var entry : this.instrumentsToRegister.entrySet()) {
         final var instanceID =
           entry.getKey();
-        final var description =
-          entry.getValue().executable().description();
+        final var identifier =
+          entry.getValue().identifier();
 
         try {
           this.model.events.submit(
-            new AREnsEventInstrumentLoaded(instanceID, description.identifier())
+            new AREnsEventInstrumentLoaded(instanceID, identifier)
           );
         } catch (final Exception e) {
           // Nothing we can do about this.

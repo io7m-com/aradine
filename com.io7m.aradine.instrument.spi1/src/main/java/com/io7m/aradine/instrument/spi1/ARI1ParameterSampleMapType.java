@@ -32,5 +32,5 @@ public non-sealed interface ARI1ParameterSampleMapType
    * @return The value of the parameter
    */
 
-  ARI1SampleMapID value(int frameIndex);
+  ARI1SampleMapInstanceID value(int frameIndex);
 }

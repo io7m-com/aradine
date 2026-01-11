@@ -23,22 +23,26 @@ import java.util.Objects;
  *
  * @param instanceID The instance ID
  * @param identifier The instrument identifier
+ * @param role       The instrument role
  */
 
 public record ARInstrumentReference(
   ARInstrumentInstanceID instanceID,
-  ARInstrumentID identifier)
+  ARInstrumentID identifier,
+  ARInstrumentRole role)
 {
   /**
    * A reference to a loaded instrument.
    *
    * @param instanceID The instance ID
    * @param identifier The instrument identifier
+   * @param role       The instrument role
    */
 
   public ARInstrumentReference
   {
     Objects.requireNonNull(instanceID, "InstanceID");
     Objects.requireNonNull(identifier, "Identifier");
+    Objects.requireNonNull(role, "Role");
   }
 }

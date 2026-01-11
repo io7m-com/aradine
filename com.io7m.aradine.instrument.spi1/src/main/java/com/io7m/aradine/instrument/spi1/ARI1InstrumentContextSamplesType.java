@@ -24,7 +24,7 @@ package com.io7m.aradine.instrument.spi1;
 public interface ARI1InstrumentContextSamplesType
 {
   /**
-   * Retrieve the sample map at the given URI.
+   * Retrieve the sample map at the given ID.
    *
    * @param id The sample map ID
    *
@@ -32,7 +32,7 @@ public interface ARI1InstrumentContextSamplesType
    * loaded)
    */
 
-  ARI1SampleMapType sampleMapGet(ARI1SampleMapID id);
+  ARI1SampleMapType sampleMapGet(ARI1SampleMapInstanceID id);
 
   /**
    * @return An empty sample map

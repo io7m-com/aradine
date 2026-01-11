@@ -16,6 +16,9 @@
 
 package com.io7m.aradine.api.ports;
 
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.UUID;
 
@@ -39,6 +42,27 @@ public record ARPortID(
     final String text)
   {
     return new ARPortID(UUID.fromString(text));
+  }
+
+  /**
+   * Deterministically generate a unique port ID.
+   *
+   * @param instance The instrument instance ID
+   * @param number   The port number
+   *
+   * @return A unique port ID
+   */
+
+  public static ARPortID ofInstancePort(
+    final ARInstrumentInstanceID instance,
+    final ARPortNumber number)
+  {
+    final var text =
+      String.format("%s:port:%s", instance, number);
+    final var uuid =
+      UUID.nameUUIDFromBytes(text.getBytes(StandardCharsets.UTF_8));
+
+    return new ARPortID(uuid);
   }
 
   @Override

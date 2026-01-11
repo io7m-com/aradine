@@ -16,8 +16,10 @@
 
 package com.io7m.aradine.api.instrument;
 
+import com.io7m.aradine.api.parameters.ARParameterDescriptionType;
+import com.io7m.aradine.api.parameters.ARParameterID;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.ports.ARPort;
 
 import java.util.Map;
 import java.util.Objects;
@@ -28,12 +30,16 @@ import java.util.Objects;
  * @param instanceId The instance ID
  * @param identifier The instrument identifier
  * @param ports      The instrument ports
+ * @param parameters The instrument parameters
+ * @param role       The instrument role
  */
 
 public record ARInstrumentDescription(
   ARInstrumentInstanceID instanceId,
   ARInstrumentID identifier,
-  Map<ARPortID, ARPort> ports)
+  Map<ARPortID, ARPortDescription> ports,
+  Map<ARParameterID, ARParameterDescriptionType> parameters,
+  ARInstrumentRole role)
 {
   /**
    * A description of a loaded instrument.
@@ -41,6 +47,8 @@ public record ARInstrumentDescription(
    * @param instanceId The instance ID
    * @param identifier The instrument identifier
    * @param ports      The instrument ports
+   * @param parameters The instrument parameters
+   * @param role       The instrument role
    */
 
   public ARInstrumentDescription
@@ -48,15 +56,20 @@ public record ARInstrumentDescription(
     Objects.requireNonNull(instanceId, "InstanceID");
     Objects.requireNonNull(identifier, "Identifier");
     ports = Map.copyOf(ports);
+    parameters = Map.copyOf(parameters);
+    Objects.requireNonNull(role, "Role");
 
     for (final var entry : ports.entrySet()) {
-      this.checkEntry(instanceId, entry);
+      this.checkEntryPort(instanceId, entry);
+    }
+    for (final var entry : parameters.entrySet()) {
+      this.checkEntryParameter(instanceId, entry);
     }
   }
 
-  private void checkEntry(
+  private void checkEntryPort(
     final ARInstrumentInstanceID expectedInstanceId,
-    final Map.Entry<ARPortID, ARPort> entry)
+    final Map.Entry<ARPortID, ARPortDescription> entry)
   {
     final var portId = entry.getKey();
     final var port = entry.getValue();
@@ -70,6 +83,27 @@ public record ARInstrumentDescription(
       throw new IllegalArgumentException(
         "Port instrument instance %s must match %s"
           .formatted(port.instrumentInstance(), expectedInstanceId)
+      );
+    }
+  }
+
+  private void checkEntryParameter(
+    final ARInstrumentInstanceID expectedInstanceId,
+    final Map.Entry<ARParameterID, ARParameterDescriptionType> entry)
+  {
+    final var parameterID = entry.getKey();
+    final var parameter = entry.getValue();
+
+    if (!Objects.equals(parameterID, parameter.id())) {
+      throw new IllegalArgumentException(
+        "Parameter map key %s must match parameter ID %s"
+          .formatted(parameterID, parameter.id())
+      );
+    }
+    if (!Objects.equals(parameter.instrumentInstance(), expectedInstanceId)) {
+      throw new IllegalArgumentException(
+        "Parameter instrument instance %s must match %s"
+          .formatted(parameter.instrumentInstance(), expectedInstanceId)
       );
     }
   }

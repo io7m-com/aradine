@@ -17,7 +17,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1EventBuffer;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1EventBuffer;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventNoteType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
@@ -37,7 +37,7 @@ public final class ARI1PortSourceNote
     this.id =
       Objects.requireNonNull(inId, "inName");
     this.eventBuffer =
-      new AREns1EventBuffer<>();
+      new AREnsSPI1EventBuffer<>();
   }
 
   @Override

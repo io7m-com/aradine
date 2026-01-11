@@ -30,7 +30,7 @@ import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
-import com.io7m.aradine.tests.ARAudioSystemAttributes;
+import com.io7m.aradine.api.system.ARAudioSystemAttributes;
 import com.io7m.aradine.tests.ARFunctionSubscriber;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
 import org.apache.commons.io.FileUtils;

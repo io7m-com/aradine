@@ -18,7 +18,7 @@ package com.io7m.aradine.ensemble.internal.database;
 
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.ports.ARPortKind;
@@ -78,11 +78,11 @@ public enum AREnsQPortList
     LIMIT $2
     """;
 
-  private static List<ARPort> readResults(
+  private static List<ARPortDescription> readResults(
     final PreparedStatement st)
     throws SQLException
   {
-    final var results = new ArrayList<ARPort>();
+    final var results = new ArrayList<ARPortDescription>();
     try (var rs = st.executeQuery()) {
       while (rs.next()) {
         final var portId =
@@ -99,7 +99,7 @@ public enum AREnsQPortList
           semanticsOf(rs.getString("port_semantics"));
 
         results.add(
-          new ARPort(
+          new ARPortDescription(
             new ARInstrumentInstanceID(
               UUID.fromString(rs.getString("port_instrument_instance"))
             ),
@@ -124,7 +124,7 @@ public enum AREnsQPortList
       .collect(Collectors.toSet());
   }
 
-  private static List<ARPort> executeWithoutStart(
+  private static List<ARPortDescription> executeWithoutStart(
     final Connection connection,
     final AREnsQPortListType.Parameters parameters)
     throws ARException
@@ -137,10 +137,10 @@ public enum AREnsQPortList
     }
   }
 
-  private static List<ARPort> executeWithStart(
+  private static List<ARPortDescription> executeWithStart(
     final Connection connection,
     final AREnsQPortListType.Parameters parameters,
-    final ARPort portStart)
+    final ARPortDescription portStart)
     throws ARException
   {
     try (var st = connection.prepareStatement(QUERY_TEXT_WITH_START)) {
@@ -165,7 +165,7 @@ public enum AREnsQPortList
   }
 
   @Override
-  public List<ARPort> execute(
+  public List<ARPortDescription> execute(
     final ARDBTransactionType transaction,
     final AREnsQPortListType.Parameters parameters)
     throws ARException

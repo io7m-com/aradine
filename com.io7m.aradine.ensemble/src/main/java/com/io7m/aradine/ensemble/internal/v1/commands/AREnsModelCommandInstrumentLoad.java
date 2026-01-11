@@ -99,13 +99,11 @@ public enum AREnsModelCommandInstrumentLoad
   {
     final var instrument =
       context.instrumentGet(state.instanceID());
-    final var executable =
-      instrument.executable();
 
-    final var ports = executable.description().ports();
+    final var ports = instrument.ports();
     for (final var entry : ports.entrySet()) {
       final var port = entry.getValue();
-      context.instrumentPortDeregister(port);
+      context.instrumentPortDeregister(port.portDescription());
     }
 
     context.instrumentDeregister(instrument);

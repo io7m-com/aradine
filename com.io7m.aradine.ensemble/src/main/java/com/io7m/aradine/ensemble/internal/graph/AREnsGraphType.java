@@ -19,7 +19,7 @@ package com.io7m.aradine.ensemble.internal.graph;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.ports.ARPortID;
 
 import java.util.List;
@@ -108,7 +108,7 @@ public interface AREnsGraphType
    */
 
   void portRegister(
-    ARPort port)
+    ARPortDescription port)
     throws ARException;
 
   /**
@@ -120,7 +120,7 @@ public interface AREnsGraphType
    */
 
   void portDeregister(
-    ARPort port)
+    ARPortDescription port)
     throws ARException;
 
   /**

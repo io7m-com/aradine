@@ -17,58 +17,85 @@
 
 package com.io7m.aradine.tests.spi1;
 
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1InstrumentContext;
-import com.io7m.aradine.ensemble.internal.v1.context.AREns1ParameterReal;
-import com.io7m.aradine.instrument.spi1.ARI1DottedName;
-import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
-import com.io7m.aradine.instrument.spi1.ARI1ParameterDescriptionReal;
+import com.io7m.aradine.api.instrument.ARInstrumentDescription;
+import com.io7m.aradine.api.instrument.ARInstrumentID;
+import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
+import com.io7m.aradine.api.instrument.ARInstrumentRole;
+import com.io7m.aradine.api.parameters.ARParameterDescriptionReal;
+import com.io7m.aradine.api.parameters.ARParameterID;
+import com.io7m.aradine.api.parameters.ARParameterNumber;
+import com.io7m.aradine.api.system.ARAudioSystemAttributes;
+import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
+import com.io7m.aradine.ensemble.internal.model.AREnsParameterReal;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentContextAdapter;
+import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1ParameterRealAdapter;
 import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
-import com.io7m.aradine.instrument.spi1.ARI1Version;
-import com.io7m.aradine.tests.ARAudioSystemAttributes;
+import com.io7m.lanark.core.RDottedName;
+import com.io7m.verona.core.Version;
 
 import java.util.Map;
-import java.util.Optional;
 
 public final class ARI1ParameterRealTest
-  extends ARI1ParameterRealContract<AREns1ParameterReal>
+  extends ARI1ParameterRealContract<AREnsSPI1ParameterRealAdapter>
 {
   @Override
-  protected AREns1ParameterReal createParameter(
+  protected AREnsSPI1ParameterRealAdapter createParameter(
     final ARI1ParameterNumber id,
     final double valueMinimum,
     final double valueMaximum,
     final double valueDefault)
   {
-    final var context =
-      AREns1InstrumentContext.create(
-        new ARI1InstrumentDescription(
-          new ARI1DottedName("com.io7m.aradine"),
-          new ARI1DottedName("com.io7m.aradine"),
-          ARI1Version.of(1, 0, 0),
+    final var audioSystemAttributes =
+      new ARAudioSystemAttributes();
+    final var instanceId =
+      ARInstrumentInstanceID.random();
+
+    final var baseContext =
+      AREnsInstrumentContext.create(
+        audioSystemAttributes,
+        new ARInstrumentDescription(
+          instanceId,
+          new ARInstrumentID(
+            new RDottedName("com.io7m.aradine"),
+            new RDottedName("com.io7m.aradine"),
+            Version.of(1, 0, 0)
+          ),
           Map.of(),
           Map.of(),
-          Map.of()
-        ),
-        new ARAudioSystemAttributes()
+          ARInstrumentRole.AR_INSTRUMENT
+        )
       );
 
-    return new AREns1ParameterReal(
+    final var context =
+      AREnsSPI1InstrumentContextAdapter.wrap(
+        audioSystemAttributes,
+        baseContext
+      );
+
+    final var number =
+      new ARParameterNumber(id.value());
+
+    return new AREnsSPI1ParameterRealAdapter(
       context,
-      new ARI1ParameterDescriptionReal(
-        id,
-        "Label",
-        Optional.empty(),
-        new ARI1DottedName("x"),
-        valueMinimum,
-        valueMaximum,
-        valueDefault
+      new AREnsParameterReal(
+        baseContext,
+        new ARParameterDescriptionReal(
+          instanceId,
+          number,
+          ARParameterID.ofInstanceParameter(instanceId, number),
+          "L",
+          new RDottedName("com.io7m.example"),
+          valueMinimum,
+          valueMaximum,
+          valueDefault
+        )
       )
     );
   }
 
   @Override
   protected void setValue(
-    final AREns1ParameterReal parameter,
+    final AREnsSPI1ParameterRealAdapter parameter,
     final int time,
     final double value)
   {
@@ -77,7 +104,7 @@ public final class ARI1ParameterRealTest
 
   @Override
   protected void clearChanges(
-    final AREns1ParameterReal parameter)
+    final AREnsSPI1ParameterRealAdapter parameter)
   {
     parameter.valueChangesClear();
   }

@@ -20,7 +20,7 @@ import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
 import com.io7m.aradine.api.ports.ARInstrumentConnection;
-import com.io7m.aradine.api.ports.ARPort;
+import com.io7m.aradine.api.ports.ARPortDescription;
 import com.io7m.aradine.api.ports.ARPortConnection;
 import com.io7m.aradine.api.ports.ARPortDirection;
 import com.io7m.aradine.api.ports.ARPortID;
@@ -47,18 +47,18 @@ public final class AREnsGraph implements AREnsGraphType
 {
   private final DirectedAcyclicGraph<ARPortID, ARPortConnection> portGraph;
   private final DirectedAcyclicGraph<ARInstrumentInstanceID, ARInstrumentConnection> instrumentGraph;
-  private final HashMap<ARPortID, ARPort> ports;
+  private final HashMap<ARPortID, ARPortDescription> ports;
   private final HashMap<ARInstrumentInstanceID, ARInstrumentReference> instruments;
-  private final HashMap<ARInstrumentInstanceID, Set<ARPort>> instrumentPorts;
+  private final HashMap<ARInstrumentInstanceID, Set<ARPortDescription>> instrumentPorts;
   private final long versionCode;
   private List<AREnsGraphExecutionStep> executionSteps;
 
   private AREnsGraph(
     final DirectedAcyclicGraph<ARPortID, ARPortConnection> inPortGraph,
     final DirectedAcyclicGraph<ARInstrumentInstanceID, ARInstrumentConnection> inInstrumentGraph,
-    final HashMap<ARPortID, ARPort> inPorts,
+    final HashMap<ARPortID, ARPortDescription> inPorts,
     final HashMap<ARInstrumentInstanceID, ARInstrumentReference> inInstruments,
-    final HashMap<ARInstrumentInstanceID, Set<ARPort>> inInstrumentPorts,
+    final HashMap<ARInstrumentInstanceID, Set<ARPortDescription>> inInstrumentPorts,
     final long inVersionCode)
   {
     this.portGraph =
@@ -93,11 +93,11 @@ public final class AREnsGraph implements AREnsGraphType
       );
 
     final var ports =
-      new HashMap<ARPortID, ARPort>(4 * 16);
+      new HashMap<ARPortID, ARPortDescription>(4 * 16);
     final var instruments =
       new HashMap<ARInstrumentInstanceID, ARInstrumentReference>();
     final var instrumentPorts =
-      new HashMap<ARInstrumentInstanceID, Set<ARPort>>();
+      new HashMap<ARInstrumentInstanceID, Set<ARPortDescription>>();
 
     return new AREnsGraph(
       portGraph,
@@ -341,7 +341,7 @@ public final class AREnsGraph implements AREnsGraphType
 
   @Override
   public void portRegister(
-    final ARPort port)
+    final ARPortDescription port)
     throws ARException
   {
     Objects.requireNonNull(port, "Port");
@@ -357,7 +357,7 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   private void instrumentPortRegister(
-    final ARPort port)
+    final ARPortDescription port)
   {
     var instrumentPortSet =
       this.instrumentPorts.get(port.instrumentInstance());
@@ -372,7 +372,7 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   private void instrumentPortDeregister(
-    final ARPort port)
+    final ARPortDescription port)
   {
     final var instrumentPortSet =
       this.instrumentPorts.get(port.instrumentInstance());
@@ -388,7 +388,7 @@ public final class AREnsGraph implements AREnsGraphType
 
   @Override
   public void portDeregister(
-    final ARPort port)
+    final ARPortDescription port)
     throws ARException
   {
     Objects.requireNonNull(port, "Port");
@@ -528,7 +528,7 @@ public final class AREnsGraph implements AREnsGraphType
     }
   }
 
-  private ARPort checkPortExists(
+  private ARPortDescription checkPortExists(
     final ARPortID portID)
     throws ARException
   {
@@ -559,7 +559,7 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   private void checkPortTarget(
-    final ARPort port)
+    final ARPortDescription port)
     throws ARException
   {
     if (port.direction() != ARPortDirection.AR_TARGET) {
@@ -573,7 +573,7 @@ public final class AREnsGraph implements AREnsGraphType
   }
 
   private void checkPortSource(
-    final ARPort port)
+    final ARPortDescription port)
     throws ARException
   {
     if (port.direction() != ARPortDirection.AR_SOURCE) {

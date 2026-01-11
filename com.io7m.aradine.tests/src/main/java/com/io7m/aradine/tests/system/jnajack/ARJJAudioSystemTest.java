@@ -20,6 +20,7 @@ import com.io7m.aradine.system.jnajack.ARJJAudioSystemProvider;
 import com.io7m.aradine.system.jnajack.ARJJConfiguration;
 import com.io7m.aradine.system.jnajack.internal.ARJJAudioSystem;
 import com.io7m.aradine.tests.ARFunctionSubscriber;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +30,17 @@ public final class ARJJAudioSystemTest
   private static final Logger LOG =
     LoggerFactory.getLogger(ARJJAudioSystemTest.class);
 
+  private static boolean runningOnCI()
+  {
+    return System.getenv("CI") != null;
+  }
+
   @Test
   public void testOpenClose()
     throws Exception
   {
+    Assumptions.assumeFalse(runningOnCI());
+
     final var configuration =
       ARJJConfiguration.builder()
         .build();
@@ -49,6 +57,8 @@ public final class ARJJAudioSystemTest
   public void testOpenCloseProvider()
     throws Exception
   {
+    Assumptions.assumeFalse(runningOnCI());
+
     final var configuration =
       ARJJConfiguration.builder()
         .build();

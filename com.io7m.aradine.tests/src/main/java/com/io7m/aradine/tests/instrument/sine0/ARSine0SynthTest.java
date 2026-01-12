@@ -16,8 +16,11 @@
 
 package com.io7m.aradine.tests.instrument.sine0;
 
+import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.system.ARAudioSystemAttributes;
+import com.io7m.aradine.audiosystem.main.ARAudioSystem;
+import com.io7m.aradine.audiosystem.zero.ARAudioBackendZeroProvider;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventNoteOff;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventNoteOn;
 import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
@@ -26,8 +29,6 @@ import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentDescript
 import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1PortAudioAdapter;
 import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1PortNoteAdapter;
 import com.io7m.aradine.instrument.sine0.ARSine0SynthFactory;
-import com.io7m.aradine.instrument.spi1.ARI1EventNoteOff;
-import com.io7m.aradine.instrument.spi1.ARI1EventNoteOn;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentType;
 import com.io7m.aradine.instrument.spi1.ARI1PortNumber;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -54,7 +56,7 @@ public final class ARSine0SynthTest
     LoggerFactory.getLogger(ARSine0SynthTest.class);
 
   private ARSine0SynthFactory factory;
-  private ARAudioSystemAttributes audioSystem;
+  private ARAudioSystemUsableType audioSystem;
   private ARI1InstrumentDescription description;
   private ARI1InstrumentType synth;
   private AREnsSPI1PortNoteAdapter notePort;
@@ -78,7 +80,7 @@ public final class ARSine0SynthTest
     this.instanceId =
       ARInstrumentInstanceID.random();
     this.audioSystem =
-      new ARAudioSystemAttributes();
+      createAudioSystem();
     this.context =
       AREnsSPI1InstrumentContextAdapter.wrap(
         this.audioSystem,
@@ -111,6 +113,17 @@ public final class ARSine0SynthTest
       );
   }
 
+  private static ARAudioSystemUsableType createAudioSystem()
+    throws ARException
+  {
+    final var provider =
+      new ARAudioBackendZeroProvider();
+
+    return ARAudioSystem.open(
+      List.of(provider)
+    );
+  }
+
   @AfterEach
   public void tearDown(
     final TestInfo info)
@@ -139,7 +152,9 @@ public final class ARSine0SynthTest
   {
     this.synth.process(this.context);
 
-    final var size = this.audioSystem.bufferSize().get().intValue();
+    final var size =
+      this.audioSystem.attributes().bufferSize().get().intValue();
+
     for (var index = 0; index < size; ++index) {
       assertEquals(0.0, this.outputL.read(index));
       assertEquals(0.0, this.outputR.read(index));

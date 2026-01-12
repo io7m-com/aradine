@@ -17,7 +17,7 @@
 package com.io7m.aradine.tests.inventory;
 
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.ARHash;
+import com.io7m.aradine.api.data.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
+import static com.io7m.aradine.api.data.ARHashAlgorithm.SHA_256;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;

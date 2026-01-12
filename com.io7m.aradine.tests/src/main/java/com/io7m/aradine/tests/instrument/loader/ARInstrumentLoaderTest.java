@@ -17,9 +17,11 @@
 package com.io7m.aradine.tests.instrument.loader;
 
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.system.ARAudioSystemAttributes;
+import com.io7m.aradine.audiosystem.main.ARAudioSystem;
+import com.io7m.aradine.audiosystem.zero.ARAudioBackendZeroProvider;
 import com.io7m.aradine.instrument.loader.ARInstrumentLoaders;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderType;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,11 +48,22 @@ public final class ARInstrumentLoaderTest
   private static final Logger LOG =
     LoggerFactory.getLogger(ARInventoryTest.class);
 
+  private static ARAudioSystemUsableType createAudioSystem()
+    throws ARException
+  {
+    final var provider =
+      new ARAudioBackendZeroProvider();
+
+    return ARAudioSystem.open(
+      List.of(provider)
+    );
+  }
+
   private Path directory;
   private ARInstrumentLoaders loaders;
   private ARInstrumentContextConstructor serviceConstructor;
   private ARInstrumentInstanceID instanceID;
-  private ARAudioSystemAttributes attributes;
+  private ARAudioSystemUsableType audioSystem;
 
   @BeforeEach
   public void setup()
@@ -59,10 +73,10 @@ public final class ARInstrumentLoaderTest
       Files.createTempDirectory("aradine");
     this.instanceID =
       ARInstrumentInstanceID.random();
-    this.attributes =
-      new ARAudioSystemAttributes();
+    this.audioSystem =
+      createAudioSystem();
     this.serviceConstructor =
-      new ARInstrumentContextConstructor(this.attributes, this.instanceID);
+      new ARInstrumentContextConstructor(this.audioSystem, this.instanceID);
 
     this.loaders = new ARInstrumentLoaders();
     Files.createDirectories(this.directory);

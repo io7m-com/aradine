@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.tests.instrument.loader;
 
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
-import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
 import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentContextAdapter;
 import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentDescriptions;
@@ -28,14 +28,14 @@ import com.io7m.aradine.instrument.spi1.ARI1InstrumentDescription;
 public final class ARInstrumentContextConstructor
   implements ARInstrumentContextConstructorType
 {
-  private final ARAudioSystemAttributesType attributes;
+  private final ARAudioSystemUsableType audioSystem;
   private final ARInstrumentInstanceID instanceID;
 
   public ARInstrumentContextConstructor(
-    final ARAudioSystemAttributesType attributes,
+    final ARAudioSystemUsableType audioSystem,
     final ARInstrumentInstanceID instanceID)
   {
-    this.attributes = attributes;
+    this.audioSystem = audioSystem;
     this.instanceID = instanceID;
   }
 
@@ -46,8 +46,8 @@ public final class ARInstrumentContextConstructor
     final var baseDescription =
       AREnsSPI1InstrumentDescriptions.ofV1(this.instanceID, description);
     final var baseContext =
-      AREnsInstrumentContext.create(this.attributes, baseDescription);
+      AREnsInstrumentContext.create(this.audioSystem, baseDescription);
 
-    return AREnsSPI1InstrumentContextAdapter.wrap(this.attributes, baseContext);
+    return AREnsSPI1InstrumentContextAdapter.wrap(this.audioSystem, baseContext);
   }
 }

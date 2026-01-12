@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
-import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.data.ARBlob;
 import com.io7m.aradine.database.api.ARDBQueryType;
 
 /**

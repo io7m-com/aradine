@@ -16,8 +16,8 @@
 
 package com.io7m.aradine.api.instrument;
 
-import com.io7m.aradine.api.ARBlob;
-import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.data.ARBlob;
+import com.io7m.aradine.api.data.ARBytes;
 import com.io7m.lanark.core.RDottedName;
 
 import java.util.Objects;

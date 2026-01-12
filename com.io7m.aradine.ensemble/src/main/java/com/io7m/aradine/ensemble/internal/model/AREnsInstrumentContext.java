@@ -18,6 +18,7 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.parameters.ARParameterDescriptionInteger;
 import com.io7m.aradine.api.parameters.ARParameterDescriptionReal;
@@ -25,7 +26,6 @@ import com.io7m.aradine.api.parameters.ARParameterDescriptionSampleMap;
 import com.io7m.aradine.api.parameters.ARParameterID;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.api.sample_map.ARSampleMapIdentifiers;
-import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
 
 import java.util.HashMap;
@@ -39,21 +39,21 @@ import java.util.Objects;
 public final class AREnsInstrumentContext
   implements AutoCloseable
 {
-  private final ARAudioSystemAttributesType audioSystemAttributes;
+  private final ARAudioSystemUsableType audioSystem;
   private final ARInstrumentDescription description;
   private final CloseableCollectionType<ARException> closeables;
-  private final HashMap<ARPortID, AREnsPortInstanceType> ports;
+  private final HashMap<ARPortID, AREnsPortType> ports;
   private final HashMap<ARParameterID, AREnsParameterType> parameters;
-  private Map<ARPortID, AREnsPortInstanceType> portsRead;
+  private Map<ARPortID, AREnsPortType> portsRead;
   private Map<ARParameterID, AREnsParameterType> parametersRead;
 
   private AREnsInstrumentContext(
-    final ARAudioSystemAttributesType inAudioSystemAttributes,
+    final ARAudioSystemUsableType inAudioSystem,
     final ARInstrumentDescription inDescription,
     final CloseableCollectionType<ARException> inCloseables)
   {
-    this.audioSystemAttributes =
-      Objects.requireNonNull(inAudioSystemAttributes, "AudioSystemAttributes");
+    this.audioSystem =
+      Objects.requireNonNull(inAudioSystem, "AudioSystem");
     this.description =
       Objects.requireNonNull(inDescription, "Description");
     this.closeables =
@@ -67,24 +67,24 @@ public final class AREnsInstrumentContext
   /**
    * Create instrument services.
    *
-   * @param audioSystemAttributes The audio system attributes
-   * @param description           The instrument description
+   * @param audioSystem The audio system
+   * @param description The instrument description
    *
    * @return The services
    */
 
   public static AREnsInstrumentContext create(
-    final ARAudioSystemAttributesType audioSystemAttributes,
+    final ARAudioSystemUsableType audioSystem,
     final ARInstrumentDescription description)
   {
-    Objects.requireNonNull(audioSystemAttributes, "AudioSystemAttributes");
+    Objects.requireNonNull(audioSystem, "AudioSystem");
     Objects.requireNonNull(description, "Description");
 
     final var closeables =
       ARCloseables.create();
     final var services =
       new AREnsInstrumentContext(
-        audioSystemAttributes,
+        audioSystem,
         description,
         closeables
       );
@@ -98,7 +98,7 @@ public final class AREnsInstrumentContext
    * @return The ports
    */
 
-  public Map<ARPortID, AREnsPortInstanceType> ports()
+  public Map<ARPortID, AREnsPortType> ports()
   {
     return this.portsRead;
   }
@@ -114,7 +114,11 @@ public final class AREnsInstrumentContext
 
   private void instantiatePorts()
   {
-    final var bufferSizeAttribute = this.audioSystemAttributes.bufferSize();
+    final var attributes =
+      this.audioSystem.attributes();
+    final var bufferSizeAttribute =
+      attributes.bufferSize();
+
     for (final var entry : this.description.ports().entrySet()) {
       final var portID =
         entry.getKey();

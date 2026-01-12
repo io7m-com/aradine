@@ -17,6 +17,8 @@
 
 package com.io7m.aradine.tests.spi1;
 
+import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
@@ -24,7 +26,8 @@ import com.io7m.aradine.api.instrument.ARInstrumentRole;
 import com.io7m.aradine.api.parameters.ARParameterDescriptionInteger;
 import com.io7m.aradine.api.parameters.ARParameterID;
 import com.io7m.aradine.api.parameters.ARParameterNumber;
-import com.io7m.aradine.api.system.ARAudioSystemAttributes;
+import com.io7m.aradine.audiosystem.main.ARAudioSystem;
+import com.io7m.aradine.audiosystem.zero.ARAudioBackendZeroProvider;
 import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterInteger;
 import com.io7m.aradine.ensemble.internal.v1.context.AREnsSPI1InstrumentContextAdapter;
@@ -33,11 +36,23 @@ import com.io7m.aradine.instrument.spi1.ARI1ParameterNumber;
 import com.io7m.lanark.core.RDottedName;
 import com.io7m.verona.core.Version;
 
+import java.util.List;
 import java.util.Map;
 
 public final class ARI1ParameterIntegerTest
   extends ARI1ParameterIntegerContract<AREnsSPI1ParameterIntegerAdapter>
 {
+  private static ARAudioSystemUsableType createAudioSystem()
+    throws ARException
+  {
+    final var provider =
+      new ARAudioBackendZeroProvider();
+
+    return ARAudioSystem.open(
+      List.of(provider)
+    );
+  }
+
   @Override
   protected AREnsSPI1ParameterIntegerAdapter createParameter(
     final ARI1ParameterNumber id,
@@ -45,14 +60,19 @@ public final class ARI1ParameterIntegerTest
     final long valueMaximum,
     final long valueDefault)
   {
-    final var audioSystemAttributes =
-      new ARAudioSystemAttributes();
+    final ARAudioSystemUsableType audioSystem;
+    try {
+      audioSystem = createAudioSystem();
+    } catch (final ARException e) {
+      throw new RuntimeException(e);
+    }
+
     final var instanceId =
       ARInstrumentInstanceID.random();
 
     final var baseContext =
       AREnsInstrumentContext.create(
-        audioSystemAttributes,
+        audioSystem,
         new ARInstrumentDescription(
           instanceId,
           new ARInstrumentID(
@@ -68,7 +88,7 @@ public final class ARI1ParameterIntegerTest
 
     final var context =
       AREnsSPI1InstrumentContextAdapter.wrap(
-        audioSystemAttributes,
+        audioSystem,
         baseContext
       );
 

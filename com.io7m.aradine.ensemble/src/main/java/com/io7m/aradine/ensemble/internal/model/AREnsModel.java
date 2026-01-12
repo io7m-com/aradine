@@ -18,12 +18,12 @@ package com.io7m.aradine.ensemble.internal.model;
 
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentDescription;
 import com.io7m.aradine.api.instrument.ARInstrumentExecutableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.instrument.ARInstrumentReference;
 import com.io7m.aradine.api.ports.ARPortDescription;
-import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.aradine.database.api.ARDBTransactionType;
 import com.io7m.aradine.ensemble.internal.database.AREnsDB;
 import com.io7m.aradine.ensemble.internal.database.AREnsQCommandIDNextType;
@@ -96,7 +96,7 @@ public final class AREnsModel implements AREnsModelType
   private final AREnsDB database;
   private final ARInventoryType inventory;
   private final ARInstrumentLoaderFactoryType loaders;
-  private final ARAudioSystemAttributesType audioSystemAttributes;
+  private final ARAudioSystemUsableType audioSystem;
   private final CompletableFuture<Void> loading;
   private final AtomicReference<Map<ARInstrumentInstanceID, AREnsInstrumentType>> instruments;
   private final AttributeType<Optional<AREnsModelCommandRecord>> undoTip;
@@ -111,7 +111,7 @@ public final class AREnsModel implements AREnsModelType
     final AREnsDB inDatabase,
     final ARInventoryType inInventory,
     final ARInstrumentLoaderFactoryType inLoaders,
-    final ARAudioSystemAttributesType inAudioSystemAttributesType)
+    final ARAudioSystemUsableType inAudioSystem)
   {
     this.resources =
       Objects.requireNonNull(inResources, "Resources");
@@ -123,11 +123,8 @@ public final class AREnsModel implements AREnsModelType
       Objects.requireNonNull(inInventory, "Inventory");
     this.loaders =
       Objects.requireNonNull(inLoaders, "Loaders");
-    this.audioSystemAttributes =
-      Objects.requireNonNull(
-        inAudioSystemAttributesType,
-        "AudioSystemAttributes"
-      );
+    this.audioSystem =
+      Objects.requireNonNull(inAudioSystem, "AudioSystem");
 
     this.closed =
       new AtomicBoolean(false);
@@ -191,7 +188,7 @@ public final class AREnsModel implements AREnsModelType
           database,
           configuration.inventory(),
           configuration.loaders(),
-          configuration.systemAttributes()
+          configuration.audioSystem()
         );
 
       model.load();
@@ -656,13 +653,13 @@ public final class AREnsModel implements AREnsModelType
 
         this.baseContext =
           AREnsInstrumentContext.create(
-            this.commandContext.model.audioSystemAttributes,
+            this.commandContext.model.audioSystem,
             this.coreDescription
           );
 
         this.spi1Context =
           AREnsSPI1InstrumentContextAdapter.wrap(
-            this.commandContext.model.audioSystemAttributes,
+            this.commandContext.model.audioSystem,
             this.baseContext
           );
 

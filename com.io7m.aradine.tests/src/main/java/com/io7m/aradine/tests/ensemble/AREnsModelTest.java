@@ -16,8 +16,12 @@
 
 package com.io7m.aradine.tests.ensemble;
 
+import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.instrument.ARInstrumentInstanceID;
 import com.io7m.aradine.api.progress.ARProgress;
+import com.io7m.aradine.audiosystem.main.ARAudioSystem;
+import com.io7m.aradine.audiosystem.zero.ARAudioBackendZeroProvider;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventInstrumentClosed;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventInstrumentLoaded;
 import com.io7m.aradine.ensemble.internal.events.AREnsEventType;
@@ -30,7 +34,6 @@ import com.io7m.aradine.instrument.loader.ARInstrumentReaders;
 import com.io7m.aradine.inventory.ARInventories;
 import com.io7m.aradine.inventory.api.ARInventoryConfiguration;
 import com.io7m.aradine.inventory.api.ARInventoryType;
-import com.io7m.aradine.api.system.ARAudioSystemAttributes;
 import com.io7m.aradine.tests.ARFunctionSubscriber;
 import com.io7m.aradine.tests.inventory.ARInventoryTest;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -60,8 +64,19 @@ public final class AREnsModelTest
   private ARInventoryConfiguration inventoryConfiguration;
   private ARInventoryType inventory;
   private ARInstrumentLoaders loaders;
-  private ARAudioSystemAttributes audioSystem;
+  private ARAudioSystemUsableType audioSystem;
   private ConcurrentLinkedQueue<AREnsEventType> events;
+
+  private static ARAudioSystemUsableType createAudioSystem()
+    throws ARException
+  {
+    final var provider =
+      new ARAudioBackendZeroProvider();
+
+    return ARAudioSystem.open(
+      List.of(provider)
+    );
+  }
 
   private static void logProgress(
     final ARProgress progress)
@@ -97,10 +112,10 @@ public final class AREnsModelTest
       ARInventories.open(this.inventoryConfiguration);
     this.loaders =
       new ARInstrumentLoaders();
-    this.audioSystem =
-      new ARAudioSystemAttributes();
     this.events =
-      new ConcurrentLinkedQueue<AREnsEventType>();
+      new ConcurrentLinkedQueue<>();
+    this.audioSystem =
+      createAudioSystem();
   }
 
   @AfterEach

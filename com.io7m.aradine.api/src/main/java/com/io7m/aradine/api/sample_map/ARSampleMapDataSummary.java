@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.api.sample_map;
 
-import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.data.ARBlob;
 
 import java.util.Objects;
 

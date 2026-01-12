@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.inventory.internal;
 
-import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.data.ARBlob;
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
 import com.io7m.aradine.api.instrument.ARInstrumentData;

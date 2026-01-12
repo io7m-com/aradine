@@ -16,10 +16,10 @@
 
 package com.io7m.aradine.tests.inventory;
 
-import com.io7m.aradine.api.ARBlob;
-import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.data.ARBlob;
+import com.io7m.aradine.api.data.ARBytes;
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.ARHash;
+import com.io7m.aradine.api.data.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentDataSummary;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
@@ -59,7 +59,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.io7m.aradine.api.ARHashAlgorithm.SHA_256;
+import static com.io7m.aradine.api.data.ARHashAlgorithm.SHA_256;
 import static com.io7m.aradine.inventory.api.queries.ARInventoryUnit.UNIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

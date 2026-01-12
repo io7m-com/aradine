@@ -23,7 +23,7 @@ import com.io7m.aradine.api.parameters.ARParameterID;
 import com.io7m.aradine.api.ports.ARPortID;
 import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentType;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterType;
-import com.io7m.aradine.ensemble.internal.model.AREnsPortInstanceType;
+import com.io7m.aradine.ensemble.internal.model.AREnsPortType;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
 
 import java.util.Map;
@@ -63,7 +63,7 @@ public final class AREnsSPI1Instrument
   }
 
   @Override
-  public Map<ARPortID, AREnsPortInstanceType> ports()
+  public Map<ARPortID, AREnsPortType> ports()
   {
     return this.context.baseContext().ports();
   }

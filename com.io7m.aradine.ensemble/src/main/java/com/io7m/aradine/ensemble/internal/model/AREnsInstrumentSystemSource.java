@@ -38,8 +38,8 @@ public final class AREnsInstrumentSystemSource
   implements AREnsInstrumentType
 {
   private final ARInstrumentInstanceID instanceID;
-  private final HashMap<ARPortID, AREnsPortInstanceType> ports;
-  private final Map<ARPortID, AREnsPortInstanceType> portsRead;
+  private final HashMap<ARPortID, AREnsPortType> ports;
+  private final Map<ARPortID, AREnsPortType> portsRead;
   private final ARInstrumentDescription description;
 
   AREnsInstrumentSystemSource(
@@ -63,7 +63,7 @@ public final class AREnsInstrumentSystemSource
   }
 
   @Override
-  public Map<ARPortID, AREnsPortInstanceType> ports()
+  public Map<ARPortID, AREnsPortType> ports()
   {
     return this.portsRead;
   }

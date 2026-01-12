@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.inventory.api.queries;
 
-import com.io7m.aradine.api.ARHash;
+import com.io7m.aradine.api.data.ARHash;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aradine.database.api.ARDBQueryType;

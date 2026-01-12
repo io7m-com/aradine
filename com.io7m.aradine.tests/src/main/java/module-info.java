@@ -22,6 +22,10 @@ open module com.io7m.aradine.tests
 {
   requires com.io7m.aradine.annotations;
   requires com.io7m.aradine.api;
+  requires com.io7m.aradine.audiosystem.jnajack;
+  requires com.io7m.aradine.audiosystem.main;
+  requires com.io7m.aradine.audiosystem.spi;
+  requires com.io7m.aradine.audiosystem.zero;
   requires com.io7m.aradine.cmdline;
   requires com.io7m.aradine.database.api;
   requires com.io7m.aradine.ensemble;
@@ -87,5 +91,4 @@ open module com.io7m.aradine.tests
   requires org.junit.platform.commons;
   requires org.junit.platform.engine;
   requires org.junit.platform.launcher;
-  requires com.io7m.aradine.system.jnajack;
 }

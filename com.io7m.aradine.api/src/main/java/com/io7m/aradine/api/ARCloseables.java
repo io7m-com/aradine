@@ -18,6 +18,8 @@ package com.io7m.aradine.api;
 
 import com.io7m.jmulticlose.core.CloseableCollection;
 import com.io7m.jmulticlose.core.CloseableCollectionType;
+import com.io7m.jmulticlose.core.CloseableTracker;
+import com.io7m.jmulticlose.core.CloseableTrackerType;
 
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +42,22 @@ public final class ARCloseables
   public static CloseableCollectionType<ARException> create()
   {
     return CloseableCollection.create(() -> {
+      return new ARException(
+        "Closing a resource failed.",
+        "error-resource-close",
+        Map.of(),
+        Optional.empty()
+      );
+    });
+  }
+
+  /**
+   * @return A new collection
+   */
+
+  public static CloseableTrackerType<ARException> createTracked()
+  {
+    return CloseableTracker.create(() -> {
       return new ARException(
         "Closing a resource failed.",
         "error-resource-close",

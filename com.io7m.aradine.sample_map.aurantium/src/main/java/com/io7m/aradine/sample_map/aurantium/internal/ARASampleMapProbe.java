@@ -16,11 +16,11 @@
 
 package com.io7m.aradine.sample_map.aurantium.internal;
 
-import com.io7m.aradine.api.ARBlob;
+import com.io7m.aradine.api.data.ARBlob;
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.ARHash;
-import com.io7m.aradine.api.ARHashAlgorithm;
+import com.io7m.aradine.api.data.ARHash;
+import com.io7m.aradine.api.data.ARHashAlgorithm;
 import com.io7m.aradine.api.sample_map.ARSampleMapDataSummary;
 import com.io7m.aradine.api.sample_map.ARSampleMapID;
 import com.io7m.aurantium.api.AUFileReadableType;

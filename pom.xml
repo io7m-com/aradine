@@ -21,6 +21,10 @@
   <modules>
     <module>com.io7m.aradine.annotations</module>
     <module>com.io7m.aradine.api</module>
+    <module>com.io7m.aradine.audiosystem.jnajack</module>
+    <module>com.io7m.aradine.audiosystem.main</module>
+    <module>com.io7m.aradine.audiosystem.spi</module>
+    <module>com.io7m.aradine.audiosystem.zero</module>
     <module>com.io7m.aradine.cmdline</module>
     <module>com.io7m.aradine.database.api</module>
     <module>com.io7m.aradine.documentation</module>
@@ -48,7 +52,6 @@
     <module>com.io7m.aradine.inventory</module>
     <module>com.io7m.aradine.maven_plugin</module>
     <module>com.io7m.aradine.sample_map.aurantium</module>
-    <module>com.io7m.aradine.system.jnajack</module>
     <module>com.io7m.aradine.tests.arbitraries</module>
     <module>com.io7m.aradine.tests</module>
   </modules>

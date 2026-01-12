@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.tests;
 
-import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.data.ARBytes;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import org.junit.jupiter.api.Assertions;

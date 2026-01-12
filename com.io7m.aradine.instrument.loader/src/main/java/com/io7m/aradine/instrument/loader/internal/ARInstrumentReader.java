@@ -17,12 +17,12 @@
 package com.io7m.aradine.instrument.loader.internal;
 
 import com.io7m.anethum.api.ParsingException;
-import com.io7m.aradine.api.ARBlob;
-import com.io7m.aradine.api.ARBytes;
+import com.io7m.aradine.api.data.ARBlob;
+import com.io7m.aradine.api.data.ARBytes;
 import com.io7m.aradine.api.ARCloseables;
 import com.io7m.aradine.api.ARException;
-import com.io7m.aradine.api.ARHash;
-import com.io7m.aradine.api.ARHashAlgorithm;
+import com.io7m.aradine.api.data.ARHash;
+import com.io7m.aradine.api.data.ARHashAlgorithm;
 import com.io7m.aradine.api.instrument.ARInstrumentData;
 import com.io7m.aradine.api.instrument.ARInstrumentID;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentReadResultType;

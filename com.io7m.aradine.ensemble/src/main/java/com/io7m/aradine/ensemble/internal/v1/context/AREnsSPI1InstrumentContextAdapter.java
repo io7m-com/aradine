@@ -19,17 +19,17 @@ package com.io7m.aradine.ensemble.internal.v1.context;
 import com.io7m.aradine.annotations.ARTimeFrames;
 import com.io7m.aradine.annotations.ARTimeMilliseconds;
 import com.io7m.aradine.api.ARException;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.api.parameters.ARParameterID;
 import com.io7m.aradine.api.ports.ARPortID;
-import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
 import com.io7m.aradine.ensemble.internal.model.AREnsInstrumentContext;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterInteger;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterReal;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterSampleMap;
 import com.io7m.aradine.ensemble.internal.model.AREnsParameterType;
 import com.io7m.aradine.ensemble.internal.model.AREnsPortAudio;
-import com.io7m.aradine.ensemble.internal.model.AREnsPortInstanceType;
 import com.io7m.aradine.ensemble.internal.model.AREnsPortNote;
+import com.io7m.aradine.ensemble.internal.model.AREnsPortType;
 import com.io7m.aradine.instrument.spi1.ARI1EventBufferType;
 import com.io7m.aradine.instrument.spi1.ARI1EventType;
 import com.io7m.aradine.instrument.spi1.ARI1InstrumentContextType;
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 public final class AREnsSPI1InstrumentContextAdapter
   implements ARI1InstrumentContextType, AutoCloseable
 {
-  private final ARAudioSystemAttributesType audioSystemAttributes;
+  private final ARAudioSystemUsableType audioSystem;
   private final AREnsInstrumentContext context;
   private Map<ARPortID, ARI1PortType> ports;
   private Map<ARParameterID, ARI1ParameterType> parameters;
@@ -63,11 +63,11 @@ public final class AREnsSPI1InstrumentContextAdapter
   private Map<ARI1ParameterNumber, ARI1ParameterType> parametersByNumber;
 
   private AREnsSPI1InstrumentContextAdapter(
-    final ARAudioSystemAttributesType inAudioSystemAttributes,
+    final ARAudioSystemUsableType inAudioSystem,
     final AREnsInstrumentContext inContext)
   {
-    this.audioSystemAttributes =
-      Objects.requireNonNull(inAudioSystemAttributes, "AudioSystemAttributes");
+    this.audioSystem =
+      Objects.requireNonNull(inAudioSystem, "AudioSystem");
     this.context =
       Objects.requireNonNull(inContext, "Context");
   }
@@ -75,21 +75,21 @@ public final class AREnsSPI1InstrumentContextAdapter
   /**
    * Create a new context.
    *
-   * @param audioSystemAttributes The audio system attributes
-   * @param context               The core context
+   * @param audioSystem The audio system attributes
+   * @param context     The core context
    *
    * @return An SPI1 context
    */
 
   public static AREnsSPI1InstrumentContextAdapter wrap(
-    final ARAudioSystemAttributesType audioSystemAttributes,
+    final ARAudioSystemUsableType audioSystem,
     final AREnsInstrumentContext context)
   {
-    Objects.requireNonNull(audioSystemAttributes, "AudioSystemAttributes");
+    Objects.requireNonNull(audioSystem, "AudioSystem");
     Objects.requireNonNull(context, "Context");
 
     final var adapter =
-      new AREnsSPI1InstrumentContextAdapter(audioSystemAttributes, context);
+      new AREnsSPI1InstrumentContextAdapter(audioSystem, context);
 
     adapter.wrapParameters();
     adapter.wrapPorts();
@@ -147,13 +147,13 @@ public final class AREnsSPI1InstrumentContextAdapter
 
   private Map.Entry<ARPortID, ARI1PortType>
   wrapPortEntry(
-    final Map.Entry<ARPortID, AREnsPortInstanceType> entry)
+    final Map.Entry<ARPortID, AREnsPortType> entry)
   {
     return Map.entry(entry.getKey(), this.wrapPort(entry.getValue()));
   }
 
   private ARI1PortType wrapPort(
-    final AREnsPortInstanceType value)
+    final AREnsPortType value)
   {
     return switch (value) {
       case final AREnsPortAudio portAudio -> {
@@ -211,13 +211,13 @@ public final class AREnsSPI1InstrumentContextAdapter
   @Override
   public int statusCurrentSampleRate()
   {
-    return this.audioSystemAttributes.sampleRate().get().intValue();
+    return this.audioSystem.attributes().sampleRate().get().intValue();
   }
 
   @Override
   public int statusCurrentBufferSize()
   {
-    return this.audioSystemAttributes.bufferSize().get().intValue();
+    return this.audioSystem.attributes().bufferSize().get().intValue();
   }
 
   @Override

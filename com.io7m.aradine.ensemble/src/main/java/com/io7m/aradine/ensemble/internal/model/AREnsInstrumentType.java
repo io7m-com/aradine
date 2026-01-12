@@ -37,7 +37,7 @@ public interface AREnsInstrumentType
    * @return The ports
    */
 
-  Map<ARPortID, AREnsPortInstanceType> ports();
+  Map<ARPortID, AREnsPortType> ports();
 
   /**
    * @return The parameters

@@ -16,7 +16,7 @@
 
 package com.io7m.aradine.ensemble.internal.model;
 
-import com.io7m.aradine.api.system.ARAudioSystemAttributesType;
+import com.io7m.aradine.api.audiosystem.ARAudioSystemUsableType;
 import com.io7m.aradine.instrument.loader.api.ARInstrumentLoaderFactoryType;
 import com.io7m.aradine.inventory.api.ARInventoryType;
 
@@ -26,25 +26,25 @@ import java.util.Objects;
 /**
  * The model configuration.
  *
- * @param file             The model file
- * @param inventory        The local inventory
- * @param loaders          The instrument loaders
- * @param systemAttributes The audio system attributes
+ * @param file        The model file
+ * @param inventory   The local inventory
+ * @param loaders     The instrument loaders
+ * @param audioSystem The audio system
  */
 
 public record AREnsModelConfiguration(
   Path file,
   ARInventoryType inventory,
   ARInstrumentLoaderFactoryType loaders,
-  ARAudioSystemAttributesType systemAttributes)
+  ARAudioSystemUsableType audioSystem)
 {
   /**
    * The model configuration.
    *
-   * @param file             The model file
-   * @param inventory        The local inventory
-   * @param loaders          The instrument loaders
-   * @param systemAttributes The audio system attributes
+   * @param file        The model file
+   * @param inventory   The local inventory
+   * @param loaders     The instrument loaders
+   * @param audioSystem The audio system
    */
 
   public AREnsModelConfiguration
@@ -52,6 +52,6 @@ public record AREnsModelConfiguration(
     Objects.requireNonNull(file, "File");
     Objects.requireNonNull(inventory, "Inventory");
     Objects.requireNonNull(loaders, "Loaders");
-    Objects.requireNonNull(systemAttributes, "SystemAttributes");
+    Objects.requireNonNull(audioSystem, "AudioSystem");
   }
 }

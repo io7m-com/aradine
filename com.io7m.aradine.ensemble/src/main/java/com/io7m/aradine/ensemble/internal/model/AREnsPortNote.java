@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 
 public final class AREnsPortNote
-  implements AREnsPortInstanceType
+  implements AREnsPortType
 {
   private final AREnsInstrumentContext context;
   private final AREnsEventBuffer<AREnsEventInstrumentType> eventBuffer;

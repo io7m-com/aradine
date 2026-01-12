@@ -155,7 +155,22 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.aradine.system.jnajack</artifactId>
+      <artifactId>com.io7m.aradine.audiosystem.jnajack</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.audiosystem.zero</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.audiosystem.main</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.aradine.audiosystem.spi</artifactId>
       <version>${project.version}</version>
     </dependency>
 

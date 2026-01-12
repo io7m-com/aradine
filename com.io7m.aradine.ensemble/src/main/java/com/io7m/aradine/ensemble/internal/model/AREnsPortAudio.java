@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 
 public final class AREnsPortAudio
-  implements AREnsPortInstanceType
+  implements AREnsPortType
 {
   private final AREnsInstrumentContext context;
   private final ARPortDescription port;

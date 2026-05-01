@@ -76,7 +76,7 @@
     <io7m.maven-api.version>3.9.11</io7m.maven-api.version>
     <org.junit.version>5.10.1</org.junit.version>
     <org.mockito.version>5.8.0</org.mockito.version>
-    <net.bytebuddy.version>1.18.2</net.bytebuddy.version>
+    <net.bytebuddy.version>1.18.8</net.bytebuddy.version>
     <org.immutables.value.version>2.11.6</org.immutables.value.version>
   </properties>
 
